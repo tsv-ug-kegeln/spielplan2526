@@ -15,12 +15,14 @@
     header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:10px 0 16px;}
     h1{font-size:clamp(1.4rem,2.4vw,2rem);margin:0;color:var(--accent);}
     .card{background:var(--card);border:1px solid #ddd;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 2px 6px rgba(0,0,0,.05);}
-    .filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;align-items:end}
+    .filters{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:end}
     .filters label{font-size:.85rem;color:var(--muted);display:block;margin:0 0 6px}
     .filters input,.filters select{width:100%;padding:10px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;color:var(--text);}
     .filters .btn{padding:10px 12px;border-radius:6px;border:1px solid #ccc;background:var(--accent);color:#fff;font-weight:600;cursor:pointer}
     .filters .btn.light{background:#fff;color:var(--text)}
-    .under-filters{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+    .under-filters{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;align-items:center}
+    .toggle{background:#fff;color:#111;border:1px solid #bbb}
+    .toggle.active{background:#1e3a8a;color:#fff;border-color:#1e3a8a}
     table{width:100%;border-collapse:collapse}
     thead th{font-size:.8rem;color:var(--muted);font-weight:600;text-align:left;padding:8px 12px;border-bottom:2px solid #ddd;background:#fafafa}
     tbody td{background:#fff;border-bottom:1px solid #eee;padding:10px 12px;vertical-align:middle}
@@ -52,22 +54,30 @@
 
     <section class="card">
       <div class="filters">
-        <div><label for="from">Von (Datum)</label><input type="date" id="from"></div>
-        <div><label for="to">Bis (Datum)</label><input type="date" id="to"></div>
-        <div><label for="weekday">Wochentag</label>
-          <select id="weekday"><option value="">Alle</option><option>Mo</option><option>Di</option><option>Mi</option><option>Do</option><option>Fr</option><option>Sa</option><option>So</option></select>
-        </div>
-        <div><label for="homeAway">Heim/Auswärts</label>
+        <div>
+          <label for="homeAway">Heim/Auswärts</label>
           <select id="homeAway"><option value="">Alle</option><option value="Heim">Heim</option><option value="Auswärts">Auswärts</option></select>
         </div>
-        <div><label for="team">Team</label>
-          <select id="team"><option value="">Alle</option><option value="G1">G1</option><option value="G2">G2</option><option value="G3">G3</option></select>
+        <div>
+          <label for="teamLeague">Mannschaft · Liga</label>
+          <select id="teamLeague"><option value="">Alle</option></select>
         </div>
-        <div><label for="league">Liga</label>
-          <select id="league"><option value="">Alle</option><option value="Kreisliga 2">Kreisliga 2</option><option value="Kreisklasse 1">Kreisklasse 1</option><option value="Kreisklasse 2">Kreisklasse 2</option></select>
+        <div>
+          <label for="hidePastLabel">&nbsp;</label>
+          <button class="btn light toggle" id="hidePast">Vergangene Spiele ausblenden</button>
         </div>
-        <div><button class="btn" id="apply">Filter anwenden</button></div>
-        <div><button class="btn light" id="reset">Zurücksetzen</button></div>
+        <div>
+          <label for="applyBtn">&nbsp;</label>
+          <button class="btn" id="apply">Filter anwenden</button>
+        </div>
+        <div>
+          <label for="resetBtn">&nbsp;</label>
+          <button class="btn light" id="reset">Zurücksetzen</button>
+        </div>
+        <div>
+          <label for="weekday">Wochentag</label>
+          <select id="weekday"><option value="">Alle</option><option>Mo</option><option>Di</option><option>Mi</option><option>Do</option><option>Fr</option><option>Sa</option><option>So</option></select>
+        </div>
       </div>
       <div class="under-filters">
         <button class="btn" id="pdf">Als PDF herunterladen</button>
@@ -92,61 +102,50 @@
   <script>
     let DATA = [];
 
-    // Venue mapping (aus deinen Daten)
-    const VENUES = {
-      // TSV Heim
+    // Basis-Venue-Mapping (vereinheitlicht, ohne G-Anhang)
+    const BASE_VENUES = {
       "TSV Upf.-Germering": {name:"TSV Unterpfaffenhofen-Germering", addr:"Alfons-Baumann-Straße 7, 82110 Germering"},
-      "TSV Upf.-Germering G1": {name:"TSV Unterpfaffenhofen-Germering", addr:"Alfons-Baumann-Straße 7, 82110 Germering"},
-      "TSV Upf.-Germering G2": {name:"TSV Unterpfaffenhofen-Germering", addr:"Alfons-Baumann-Straße 7, 82110 Germering"},
-      "TSV Upf.-Germering G3": {name:"TSV Unterpfaffenhofen-Germering", addr:"Alfons-Baumann-Straße 7, 82110 Germering"},
-
-      // Kreisklasse 2
-      "SKC Waldfrieden G3": {name:"SKC Waldfrieden", addr:"Bürgermeister Rabl Str. 1, 85241 Hebertshausen"},
-      "SKK 98 Poing G2": {name:"SKK 98 Poing", addr:"Plieningerstr. 24, 85586 Poing"},
-      "SpG Germ/Alt/Alem München G2": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
-      "SpG MarktSchw/Siem.Ost G4": {name:"SG Siemens-Ost", addr:"St. Cajetan Str. 33, 81669 München"},
-      "SpG Neuhausen/1860TSV G2": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
-      "SpG Sendling/Fasangarten G2": {name:"DJK Fasangarten e.V.", addr:"Görzer Straße 193, 81549 München"},
-      "SpG Zwölfer-Ost G2": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
-      "SV Haimhausen G2": {name:"SV Haimhausen", addr:"Hauptstr. 62, 85778 Haimhausen"},
-
-      // Kreisklasse 1
-      "ESV Neuaubing G2": {name:"ESV Neuaubing", addr:"Papinstraße 22, 81249 München Neuaubing"},
-      "FC Bayern München G2": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
-      "KFSR Eichenau G2": {name:"KFSR Eichenau", addr:"Birkensteinerstr. 9, 82223 Eichenau"},
-      "SC Olching G2": {name:"Sportgaststätte SC Olching", addr:"Toni-März-Str. 25, 82140 Olching"},
-      "SKC Lohhof G2": {name:"SKC Lohhof", addr:"Anna-Wimschneider-Str. 1, 85716 Unterschleißheim"},
-      "SKC Waldfrieden G2": {name:"SKC Waldfrieden", addr:"Bürgermeister Rabl Str. 1, 85241 Hebertshausen"},
-      "SpG MarktSchw/Siem.Ost G2": {name:"SG Siemens-Ost", addr:"St. Cajetan Str. 33, 81669 München"},
-      "SpG MarktSchw/Siem.Ost G3": {name:"TV Markt Schwaben", addr:"Bürgermeister Haller Weg, 85570 Markt Schwaben"},
-      "SpG Rot-Weiß BSV München G2": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
-
-      // Kreisliga 2
-      "ESV Neuaubing G1": {name:"ESV Neuaubing", addr:"Papinstraße 22, 81249 München Neuaubing"},
-      "FC Bayern München G1": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
-      "KFSR Eichenau G1": {name:"KFSR Eichenau", addr:"Birkensteinerstr. 9, 82223 Eichenau"},
-      "SKC Lohhof G2": {name:"SKC Lohhof", addr:"Anna-Wimschneider-Str. 1, 85716 Unterschleißheim"},
-      "SKC Schwarz-Rot 93 G1": {name:"SKC Waldfrieden", addr:"Bürgermeister Rabl Str. 1, 85241 Hebertshausen"},
-      "SKK 98 Poing G1": {name:"SKK 98 Poing", addr:"Plieningerstr. 24, 85586 Poing"},
-      "SpG Bavaria/Turnerbund G1": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
-      "SpG Zwölfer-Ost G1": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"}
+      "ESV Neuaubing": {name:"ESV Neuaubing", addr:"Papinstraße 22, 81249 München Neuaubing"},
+      "FC Bayern München": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
+      "KFSR Eichenau": {name:"KFSR Eichenau", addr:"Birkensteinerstr. 9, 82223 Eichenau"},
+      "SC Olching": {name:"Sportgaststätte SC Olching", addr:"Toni-März-Str. 25, 82140 Olching"},
+      "SKC Lohhof": {name:"SKC Lohhof", addr:"Anna-Wimschneider-Str. 1, 85716 Unterschleißheim"},
+      "SKC Waldfrieden": {name:"SKC Waldfrieden", addr:"Bürgermeister Rabl Str. 1, 85241 Hebertshausen"},
+      "SKK 98 Poing": {name:"SKK 98 Poing", addr:"Plieningerstr. 24, 85586 Poing"},
+      "SpG Germ/Alt/Alem München": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
+      "SpG MarktSchw/Siem.Ost": {name:"SG Siemens-Ost", addr:"St. Cajetan Str. 33, 81669 München"},
+      "SpG Neuhausen/1860TSV": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
+      "SpG Sendling/Fasangarten": {name:"DJK Fasangarten e.V.", addr:"Görzer Straße 193, 81549 München"},
+      "SpG Zwölfer-Ost": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
+      "SV Haimhausen": {name:"SV Haimhausen", addr:"Hauptstr. 62, 85778 Haimhausen"},
+      "SpG Rot-Weiß BSV München": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
+      "SpG MarktSchw/Siem.Ost (G3/TV Markt Schwaben)": {name:"TV Markt Schwaben", addr:"Bürgermeister Haller Weg, 85570 Markt Schwaben"},
+      "SpG Bavaria/Turnerbund": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"}
+      // Falls weitere Basisnamen fehlen (z. B. TSV München Ost, ESV 1995 München, München West),
+      // bleiben die Felder leer, bis wir die Adressen nachreichen.
     };
 
-    const fmtDate = (iso) => {
-      if(!iso) return '';
-      const [y,m,d] = iso.split('-'); return `${d}.${m}.${y}`;
+    const normalizeClub = (name) => {
+      if(!name) return "";
+      // Entferne " G<Zahl>" am Ende, trimme Whitespaces
+      let base = name.replace(/\s+G\d+$/,'').trim();
+      return base;
     };
+
+    const fmtDate = (iso) => { if(!iso) return ''; const [y,m,d] = iso.split('-'); return `${d}.${m}.${y}`; };
     const parseDate = (s) => new Date(s + 'T00:00:00');
+    const todayIso = () => new Date().toISOString().slice(0,10);
     const teamColor = (team)=> team==='G1' ? '#ef4444' : (team==='G2' ? '#eab308' : '#22c55e');
 
     function mapUrlFor(row){
-      // Heimspiele -> TSV-Adresse, Auswärts -> Gegner-Adresse
-      let venue = null;
+      let baseName;
       if(row["TSV Heim/Auswärts"] === "Heim"){
-        venue = VENUES["TSV Upf.-Germering"];
+        baseName = "TSV Upf.-Germering";
       }else{
-        venue = VENUES[row.Gegner] || VENUES[row.Auswärts] || null;
+        // Für Auswärts: Bevorzuge Gegner, sonst "Auswärts"-Spaltenwert
+        baseName = normalizeClub(row.Gegner) || normalizeClub(row.Auswärts);
       }
+      const venue = BASE_VENUES[baseName];
       if(!venue) return '';
       const q = encodeURIComponent(`${venue.name}, ${venue.addr}`);
       return `https://www.google.com/maps/dir//${q}`;
@@ -181,24 +180,32 @@
       });
     }
 
+    function fillTeamLeagueOptions(){
+      const select = document.getElementById('teamLeague');
+      const set = new Set();
+      DATA.forEach(r=>{ if(r.Team && r.Liga){ set.add(`${r.Team} - ${r.Liga}`); } });
+      const opts = ['<option value="">Alle</option>', ...Array.from(set).sort().map(v=>`<option>${v}</option>`)];
+      select.innerHTML = opts.join('');
+    }
+
     function applyFilters(){
-      const from = document.getElementById('from').value;
-      const to = document.getElementById('to').value;
       const wd = document.getElementById('weekday').value;
       const ha = document.getElementById('homeAway').value;
-      const team = document.getElementById('team').value;
-      const league = document.getElementById('league').value;
+      const tl = document.getElementById('teamLeague').value;
+      const hidePastActive = document.getElementById('hidePast').classList.contains('active');
       let rows=[...DATA];
-      if(from) rows=rows.filter(r=>parseDate(r.Datum)>=parseDate(from));
-      if(to) rows=rows.filter(r=>parseDate(r.Datum)<=parseDate(to));
+      if(hidePastActive){
+        const today = todayIso();
+        rows = rows.filter(r => (r.Datum||'') >= today);
+      }
       if(wd) rows=rows.filter(r=>(r.Wochentag||'')===wd);
       if(ha) rows=rows.filter(r=>(r["TSV Heim/Auswärts"]||'')===ha);
-      if(team) rows=rows.filter(r=>(r.Team||'')===team);
-      if(league) rows=rows.filter(r=>(r.Liga||'')===league);
+      if(tl) rows=rows.filter(r=>`${r.Team||''} - ${r.Liga||''}`===tl);
       rows.sort((a,b)=>{const ad=new Date((a.Datum||'1970-01-01')+'T'+(a.Uhrzeit||'00:00')); const bd=new Date((b.Datum||'1970-01-01')+'T'+(b.Uhrzeit||'00:00')); if(ad-bd!==0) return ad-bd; return (a.Team||'').localeCompare(b.Team||'');});
       renderRows(rows);
     }
-    function resetFilters(){ ['from','to','weekday','homeAway','team','league'].forEach(id=>{const el=document.getElementById(id); if(el.tagName==='SELECT') el.selectedIndex=0; else el.value='';}); renderRows(DATA); }
+    function resetFilters(){ ['weekday','homeAway','teamLeague'].forEach(id=>{const el=document.getElementById(id); if(el.tagName==='SELECT') el.selectedIndex=0;}); document.getElementById('hidePast').classList.remove('active'); renderRows(DATA); }
+
     function downloadPDF(){ window.print(); }
     function exportICS(){
       const rows=[...document.querySelectorAll('#games tbody tr')].map(tr=>{const tds=tr.querySelectorAll('td');return{Datum:tds[0]?.textContent.trim().split('.').reverse().join('-'),Uhrzeit:tds[2]?.textContent.trim(),Team:tds[3]?.innerText.trim(),Heim:tds[4]?.textContent.trim(),Auswärts:tds[6]?.textContent.trim(),Liga:tds[9]?.textContent.trim(),}}).filter(r=>r.Datum&&r.Team);
@@ -206,11 +213,35 @@
       rows.forEach(r=>{const dt=new Date(r.Datum+'T'+(r.Uhrzeit||'00:00')); const y=dt.getFullYear(),M=pad(dt.getMonth()+1),D=pad(dt.getDate()),h=pad(dt.getHours()),m=pad(dt.getMinutes()); const start=`${y}${M}${D}T${h}${m}00`; const summary=`${r.Team} · ${r.Heim} - ${r.Auswärts}`; const desc=`${r.Liga}`; ics.push('BEGIN:VEVENT','DTSTART:'+start,'DTEND:'+start,'SUMMARY:'+summary.replace(/,/g,'\,'),'DESCRIPTION:'+desc.replace(/,/g,'\,'),'END:VEVENT');}); ics.push('END:VCALENDAR');
       const blob=new Blob([ics.join('\n')],{type:'text/calendar;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='tsv-spielplan.ics'; a.click(); URL.revokeObjectURL(url);
     }
-    async function loadData(){ const status=document.getElementById('status'); try{ const res=await fetch('tsv_spiele_gesamt.json',{cache:'no-store'}); if(!res.ok) throw new Error('HTTP '+res.status); DATA=await res.json(); renderRows(DATA);}catch(err){ status.style.display='block'; status.textContent='Fehler: tsv_spiele_gesamt.json nicht gefunden oder ungültig.'; renderRows([]);} }
+
+    async function loadData(){
+      const status=document.getElementById('status');
+      try{
+        const res=await fetch('tsv_spiele_gesamt.json',{cache:'no-store'});
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        DATA=await res.json();
+        fillTeamLeagueOptions();
+        renderRows(DATA);
+      }catch(err){
+        status.style.display='block';
+        status.textContent='Fehler: tsv_spiele_gesamt.json nicht gefunden oder ungültig.';
+        renderRows([]);
+      }
+    }
+
+    // Toggle for past games
+    document.addEventListener('click', (e)=>{
+      if(e.target && e.target.id==='hidePast'){
+        e.target.classList.toggle('active');
+        applyFilters();
+      }
+    });
+
     document.getElementById('apply').addEventListener('click', applyFilters);
     document.getElementById('reset').addEventListener('click', resetFilters);
     document.getElementById('pdf').addEventListener('click', downloadPDF);
     document.getElementById('ics').addEventListener('click', exportICS);
+
     loadData();
   </script>
 </body>
