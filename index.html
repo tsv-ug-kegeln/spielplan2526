@@ -17,51 +17,57 @@
       --danger:#dc2626;
       --line:#e5e7eb;
     }
-    html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial,"Noto Sans",sans-serif;background:var(--bg);color:var(--text);} 
+    html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial,"Noto Sans",sans-serif;background:var(--bg);color:var(--text);}
     .topbar{background:var(--tsv-blue);color:#fff;}
     .topbar .wrap{max-width:1100px;margin:0 auto;display:flex;gap:12px;align-items:center;padding:14px 20px;}
     .topbar img{height:40px;background:#fff;border-radius:8px;padding:4px;}
     .title{font-size:clamp(1.1rem,2.2vw,1.6rem);font-weight:800;margin:0;}
     .container{max-width:1100px;margin:0 auto;padding:20px;}
     header{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:10px 0 16px;}
-    h1{font-size:clamp(1.4rem,2.4vw,2rem);margin:0;color:var(--accent);} 
-    .subtitle{color:var(--muted);} 
+    h1{font-size:clamp(1.4rem,2.4vw,2rem);margin:0;color:var(--accent);}
+    .subtitle{color:var(--muted);}
 
-    .card{background:var(--card);border:1px solid #ddd;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 2px 6px rgba(0,0,0,.05);} 
+    .card{background:var(--card);border:1px solid #ddd;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 2px 6px rgba(0,0,0,.05);}
 
-    .filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;align-items:end}
-    .filters label{font-size:.85rem;color:var(--muted);display:block;margin:0 0 6px}
-    .filters input,.filters select{width:100%;padding:10px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;color:var(--text);}  
-    .filters .btn{padding:10px 12px;border-radius:6px;border:1px solid #ccc;background:var(--accent);color:#fff;font-weight:600;cursor:pointer}
-    .filters .btn.secondary{background:#fff;color:var(--text)}
+    .filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;align-items:end;}
+    .filters label{font-size:.85rem;color:var(--muted);display:block;margin:0 0 6px;}
+    .filters input,.filters select{width:100%;padding:10px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;color:var(--text);}
+    .filters .btn{padding:10px 12px;border-radius:6px;border:1px solid #ccc;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;}
+    .filters .btn.secondary{background:#fff;color:var(--text);}
 
-    .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:.9rem;color:var(--muted);margin-top:8px}
-    .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid #ccc;border-radius:999px;padding:6px 10px;background:#fff}
-    .dot{width:12px;height:12px;border-radius:50%}
-    .g1{background:#ef4444}
-    .g2{background:#eab308}
-    .g3{background:#22c55e}
+    .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:.9rem;color:var(--muted);margin-top:8px;}
+    .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid #ccc;border-radius:999px;padding:6px 10px;background:#fff;}
+    .dot{width:12px;height:12px;border-radius:50%;}
+    .g1{background:#ef4444;}
+    .g2{background:#eab308;}
+    .g3{background:#22c55e;}
 
-    table{width:100%;border-collapse:collapse}
-    thead th{font-size:.8rem;color:var(--muted);font-weight:600;text-align:left;padding:8px 12px;border-bottom:2px solid #ddd;background:#fafafa}
-    tbody td{background:#fff;border-bottom:1px solid #eee;padding:10px 12px}
-    tbody tr:hover{background:#f9f9f9}
-    .tag{font-size:.75rem;font-weight:700;letter-spacing:.02em;padding:4px 8px;border-radius:4px;background:#eee}
-    .tag.home{background:rgba(37,99,235,.1);color:#1e40af;border:1px solid rgba(37,99,235,.3)}
-    .tag.away{background:rgba(234,179,8,.15);color:#92400e;border:1px solid rgba(234,179,8,.4)}
+    table{width:100%;border-collapse:collapse;}
+    thead th{font-size:.8rem;color:var(--muted);font-weight:600;text-align:left;padding:8px 12px;border-bottom:2px solid #ddd;background:#fafafa;}
+    tbody td{background:#fff;border-bottom:1px solid #eee;padding:10px 12px;vertical-align:middle;}
+    tbody tr:hover{background:#f9f9f9;}
+    tbody td:first-child{border-left:4px solid transparent;}
+    .tag{font-size:.75rem;font-weight:700;letter-spacing:.02em;padding:4px 8px;border-radius:4px;background:#eee;}
+    .tag.home{background:rgba(37,99,235,.1);color:#1e40af;border:1px solid rgba(37,99,235,.3);}
+    .tag.away{background:rgba(234,179,8,.15);color:#92400e;border:1px solid rgba(234,179,8,.4);}
 
-    .team-chip{display:inline-flex;gap:6px;align-items:center;padding:4px 8px;border-radius:4px;background:#f0f0f0;border:1px solid #ccc}
+    .team-chip{display:inline-flex;gap:6px;align-items:center;padding:4px 8px;border-radius:4px;background:#f0f0f0;border:1px solid #ccc;}
+    .team-chip .dot{border:1px solid rgba(0,0,0,.08);}
 
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-    .btn{padding:10px 14px;border-radius:6px;border:1px solid #ccc;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
-    .btn.light{background:#fff;color:var(--text)}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+    .btn{padding:10px 14px;border-radius:6px;border:1px solid #ccc;background:var(--accent);color:#fff;font-weight:700;cursor:pointer;}
+    .btn.light{background:#fff;color:var(--text);}
+
+    @media (max-width: 880px){
+      .filters{grid-template-columns:1fr 1fr;}
+    }
 
     @media print {
-      body{background:#fff;color:#000}
-      .topbar,.filters, .actions, .legend, header img{display:none!important}
-      .container{max-width:100%;padding:0}
-      table{border-spacing:0}
-      tbody td{border:1px solid #999}
+      body{background:#fff;color:#000;}
+      .topbar,.filters,.actions,.legend{display:none!important;}
+      .container{max-width:100%;padding:0;}
+      table{border-spacing:0;}
+      tbody td{border:1px solid #999;}
     }
   </style>
 </head>
@@ -162,8 +168,8 @@
   </div>
 
   <script>
-    // Eingebettete Daten – hier bitte bei Updates ersetzen oder extern nachladen
-    const DATA = [{"Datum":"2025-09-22","Wochentag":"Mo","Uhrzeit":"20:15","Heim":"TSV Upf.-Germering G2","Auswärts":"SC Olching G2","Paarung":"TSV Upf.-Germering G2 - SC Olching G2","TSV Heim/Auswärts":"Heim","Gegner":"SC Olching G2","Team":"G2","Liga":"Kreisklasse 1"},{"Datum":"2025-09-25","Wochentag":"Do","Uhrzeit":"18:15","Heim":"SpG Neuhausen/1860TSV G2","Auswärts":"TSV Upf.-Germering G3","Paarung":"SpG Neuhausen/1860TSV G2 - TSV Upf.-Germering G3","TSV Heim/Auswärts":"Auswärts","Gegner":"SpG Neuhausen/1860TSV G2","Team":"G3","Liga":"Kreisklasse 2"},{"Datum":"2025-09-25","Wochentag":"Do","Uhrzeit":"19:00","Heim":"TSV Upf.-Germering G1","Auswärts":"SKC Schwarz-Rot 93 G1","Paarung":"TSV Upf.-Germering G1 - SKC Schwarz-Rot 93 G1","TSV Heim/Auswärts":"Heim","Gegner":"SKC Schwarz-Rot 93 G1","Team":"G1","Liga":"Kreisliga 2"},{"Datum":"2025-09-30","Wochentag":"Di","Uhrzeit":"18:15","Heim":"ESV Neuaubing G2","Auswärts":"TSV Upf.-Germering G2","Paarung":"ESV Neuaubing G2 - TSV Upf.-Germering G2","TSV Heim/Auswärts":"Auswärts","Gegner":"ESV Neuaubing G2","Team":"G2","Liga":"Kreisklasse 1"},{"Datum":"2025-10-04","Wochentag":"Sa","Uhrzeit":"13:00","Heim":"ESV Neuaubing G1","Auswärts":"TSV Upf.-Germering G1","Paarung":"ESV Neuaubing G1 - TSV Upf.-Germering G1","TSV Heim/Auswärts":"Auswärts","Gegner":"ESV Neuaubing G1","Team":"G1","Liga":"Kreisliga 2"},{"Datum":"2025-10-06","Wochentag":"Mo","Uhrzeit":"18:15","Heim":"TSV Upf.-Germering G3","Auswärts":"KSC Schlösselhof G1","Paarung":"TSV Upf.-Germering G3 - KSC Schlösselhof G1","TSV Heim/Auswärts":"Heim","Gegner":"KSC Schlösselhof G1","Team":"G3","Liga":"Kreisklasse 2"},{"Datum":"2025-10-17","Wochentag":"Fr","Uhrzeit":"18:15","Heim":"SKC Rot-Weiß Zsg Augsburg G1","Auswärts":"TSV Upf.-Germering G3","Paarung":"SKC Rot-Weiß Zsg Augsburg G1 - TSV Upf.-Germering G3","TSV Heim/Auswärts":"Auswärts","Gegner":"SKC Rot-Weiß Zsg Augsburg G1","Team":"G3","Liga":"Kreisklasse 2"},{"Datum":"2025-10-20","Wochentag":"Mo","Uhrzeit":"18:15","Heim":"TSV Upf.-Germering G3","Auswärts":"SpG Zwölfer-Ost G2","Paarung":"TSV Upf.-Germering G3 - SpG Zwölfer-Ost G2","TSV Heim/Auswärts":"Heim","Gegner":"SpG Zwölfer-Ost G2","Team":"G3","Liga":"Kreisklasse 2"},{"Datum":"2025-10-21","Wochentag":"Di","Uhrzeit":"18:15","Heim":"TSV Upf.-Germering G2","Auswärts":"SV Lohhof G2","Paarung":"TSV Upf.-Germering G2 - SV Lohhof G2","TSV Heim/Auswärts":"Heim","Gegner":"SV Lohhof G2","Team":"G2","Liga":"Kreisklasse 1"},{"Datum":"2025-10-24","Wochentag":"Fr","Uhrzeit":"18:15","Heim":"TSV München Ost G1","Auswärts":"TSV Upf.-Germering G3","Paarung":"TSV München Ost G1 - TSV Upf.-Germering G3","TSV Heim/Auswärts":"Auswärts","Gegner":"TSV München Ost G1","Team":"G3","Liga":"Kreisklasse 2"},{"Datum":"2025-10-27","Wochentag":"Mo","Uhrzeit":"20:15","Heim":"TSV Upf.-Germering G2","Auswärts":"ESV 1995 München G4","Paarung":"TSV Upf.-Germering G2 - ESV 1995 München G4","TSV Heim/Auswärts":"Heim","Gegner":"ESV 1995 München G4","Team":"G2","Liga":"Kreisklasse 1"},{"Datum":"2025-11-06","Wochentag":"Do","Uhrzeit":"19:00","Heim":"SKC Schwarz-Rot 93 G1","Auswärts":"TSV Upf.-Germering G1","Paarung":"SKC Schwarz-Rot 93 G1 - TSV Upf.-Germering G1","TSV Heim/Auswärts":"Auswärts","Gegner":"SKC Schwarz-Rot 93 G1","Team":"G1","Liga":"Kreisliga 2"},{"Datum":"2025-11-17","Wochentag":"Mo","Uhrzeit":"18:15","Heim":"SpG Zwölfer-Ost G2","Auswärts":"TSV Upf.-Germering G3","Paarung":"SpG Zwölfer-Ost G2 - TSV Upf.-Germering G3","TSV Heim/Auswärts":"Auswärts","Gegner":"SpG Zwölfer-Ost G2","Team":"G3","Liga":"Kreisklasse 2"},{"Datum":"2025-11-18","Wochentag":"Di","Uhrzeit":"18:15","Heim":"SV Lohhof G2","Auswärts":"TSV Upf.-Germering G2","Paarung":"SV Lohhof G2 - TSV Upf.-Germering G2","TSV Heim/Auswärts":"Auswärts","Gegner":"SV Lohhof G2","Team":"G2","Liga":"Kreisklasse 1"},{"Datum":"2025-11-20","Wochentag":"Do","Uhrzeit":"19:00","Heim":"TSV Upf.-Germering G1","Auswärts":"ESV Neuaubing G1","Paarung":"TSV Upf.-Germering G1 - ESV Neuaubing G1","TSV Heim/Auswärts":"Heim","Gegner":"ESV Neuaubing G1","Team":"G1","Liga":"Kreisliga 2"},{"Datum":"2025-12-02","Wochentag":"Di","Uhrzeit":"20:15","Heim":"ESV 1995 München G4","Auswärts":"TSV Upf.-Germering G2","Paarung":"ESV 1995 München G4 - TSV Upf.-Germering G2","TSV Heim/Auswärts":"Auswärts","Gegner":"ESV 1995 München G4","Team":"G2","Liga":"Kreisklasse 1"},{"Datum":"2025-12-04","Wochentag":"Do","Uhrzeit":"19:00","Heim":"TSV Upf.-Germering G1","Auswärts":"München West G1","Paarung":"TSV Upf.-Germering G1 - München West G1","TSV Heim/Auswärts":"Heim","Gegner":"München West G1","Team":"G1","Liga":"Kreisliga 2"},{"Datum":"2025-12-08","Wochentag":"Mo","Uhrzeit":"18:15","Heim":"TSV Upf.-Germering G3","Auswärts":"TSV München Ost G1","Paarung":"TSV Upf.-Germering G3 - TSV München Ost G1","TSV Heim/Auswärts":"Heim","Gegner":"TSV München Ost G1","Team":"G3","Liga":"Kreisklasse 2"},{"Datum":"2025-12-15","Wochentag":"Mo","Uhrzeit":"20:15","Heim":"TSV Upf.-Germering G2","Auswärts":"ESV Neuaubing G2","Paarung":"TSV Upf.-Germering G2 - ESV Neuaubing G2","TSV Heim/Auswärts":"Heim","Gegner":"ESV Neuaubing G2","Team":"G2","Liga":"Kreisklasse 1"},{"Datum":"2026-01-12","Wochentag":"Mo","Uhrzeit":"18:15","Heim":"KSC Schlösselhof G1","Auswärts":"TSV Upf.-Germering G3","Paarung":"KSC Schlösselhof G1 - TSV Upf.-Germering G3","TSV Heim/Auswärts":"Auswärts","Gegner":"KSC Schlösselhof G1","Team":"G3","Liga":"Kreisklasse 2"},{"Datum":"2026-01-13","Wochentag":"Di","Uhrzeit":"18:15","Heim":"TSV Upf.-Germering G2","Auswärts":"ESV 1995 München G4","Paarung":"TSV Upf.-Germering G2 - ESV 1995 München G4","TSV Heim/Auswärts":"Heim","Gegner":"ESV 1995 München G4","Team":"G2","Liga":"Kreisklasse 1"},{"Datum":"2026-01-15","Wochentag":"Do","Uhrzeit":"19:00","Heim":"ESV Neuaubing G1","Auswärts":"TSV Upf.-Germering G1","Paarung":"ESV Neuaubing G1 - TSV Upf.-Germering G1","TSV Heim/Auswärts":"Auswärts","Gegner":"ESV Neuaubing G1","Team":"G1","Liga":"Kreisliga 2"},{"Datum":"2026-01-26","Wochentag":"Mo","Uhrzeit":"18:15","Heim":"TSV Upf.-Germering G3","Auswärts":"SKC Rot-Weiß Zsg Augsburg G1","Paarung":"TSV Upf.-Germering G3 - SKC Rot-Weiß Zsg Augsburg G1","TSV Heim/Auswärts":"Heim","Gegner":"SKC Rot-Weiß Zsg Augsburg G1","Team":"G3","Liga":"Kreisklasse 2"},{"Datum":"2026-01-27","Wochentag":"Di","Uhrzeit":"18:15","Heim":"ESV Neuaubing G2","Auswärts":"TSV Upf.-Germering G2","Paarung":"ESV Neuaubing G2 - TSV Upf.-Germering G2","TSV Heim/Auswärts":"Auswärts","Gegner":"ESV Neuaubing G2","Team":"G2","Liga":"Kreisklasse 1"},{"Datum":"2026-01-29","Wochentag":"Do","Uhrzeit":"19:00","Heim":"TSV Upf.-Germering G1","Auswärts":"TSV München-Ost G1","Paarung":"TSV Upf.-Germering G1 - TSV München-Ost G1","TSV Heim/Auswärts":"Heim","Gegner":"TSV München-Ost G1","Team":"G1","Liga":"Kreisliga 2"},{"Datum":"2026-02-09","Wochentag":"Mo","Uhrzeit":"18:15","Heim":"TSV Upf.-Germering G3","Auswärts":"SV Hochstadt G1","Paarung":"TSV Upf.-Germering G3 - SV Hochstadt G1","TSV Heim/Auswärts":"Heim","Gegner":"SV Hochstadt G1","Team":"G3","Liga":"Kreisklasse 2"},{"Datum":"2026-02-10","Wochentag":"Di","Uhrzeit":"18:15","Heim":"TSV Upf.-Germering G2","Auswärts":"SV Lohhof G2","Paarung":"TSV Upf.-Germering G2 - SV Lohhof G2","TSV Heim/Auswärts":"Heim","Gegner":"SV Lohhof G2","Team":"G2","Liga":"Kreisklasse 1"},{"Datum":"2026-02-12","Wochentag":"Do","Uhrzeit":"19:00","Heim":"München West G1","Auswärts":"TSV Upf.-Germering G1","Paarung":"München West G1 - TSV Upf.-Germering G1","TSV Heim/Auswärts":"Auswärts","Gegner":"München West G1","Team":"G1","Liga":"Kreisliga 2"},{"Datum":"2026-02-16","Wochentag":"Mo","Uhrzeit":"18:15","Heim":"SpG Zwölfer-Ost G2","Auswärts":"TSV Upf.-Germering G3","Paarung":"SpG Zwölfer-Ost G2 - TSV Upf.-Germering G3","TSV Heim/Auswärts":"Auswärts","Gegner":"SpG Zwölfer-Ost G2","Team":"G3","Liga":"Kreisklasse 2"},{"Datum":"2026-02-17","Wochentag":"Di","Uhrzeit":"18:15","Heim":"ESV 1995 München G4","Auswärts":"TSV Upf.-Germering G2","Paarung":"ESV 1995 München G4 - TSV Upf.-Germering G2","TSV Heim/Auswärts":"Auswärts","Gegner":"ESV 1995 München G4","Team":"G2","Liga":"Kreisklasse 1"},{"Datum":"2026-02-26","Wochentag":"Do","Uhrzeit":"19:00","Heim":"TSV München-Ost G1","Auswärts":"TSV Upf.-Germering G1","Paarung":"TSV München-Ost G1 - TSV Upf.-Germering G1","TSV Heim/Auswärts":"Auswärts","Gegner":"TSV München-Ost G1","Team":"G1","Liga":"Kreisliga 2"},{"Datum":"2026-03-02","Wochentag":"Mo","Uhrzeit":"18:15","Heim":"SV Hochstadt G1","Auswärts":"TSV Upf.-Germering G3","Paarung":"SV Hochstadt G1 - TSV Upf.-Germering G3","TSV Heim/Auswärts":"Auswärts","Gegner":"SV Hochstadt G1","Team":"G3","Liga":"Kreisklasse 2"},{"Datum":"2026-03-03","Wochentag":"Di","Uhrzeit":"18:15","Heim":"SV Lohhof G2","Auswärts":"TSV Upf.-Germering G2","Paarung":"SV Lohhof G2 - TSV Upf.-Germering G2","TSV Heim/Auswärts":"Auswärts","Gegner":"SV Lohhof G2","Team":"G2","Liga":"Kreisklasse 1"},{"Datum":"2026-03-05","Wochentag":"Do","Uhrzeit":"19:00","Heim":"TSV Upf.-Germering G1","Auswärts":"ESV Neuaubing G1","Paarung":"TSV Upf.-Germering G1 - ESV Neuaubing G1","TSV Heim/Auswärts":"Heim","Gegner":"ESV Neuaubing G1","Team":"G1","Liga":"Kreisliga 2"},{"Datum":"2026-03-09","Wochentag":"Mo","Uhrzeit":"18:15","Heim":"TSV Upf.-Germering G3","Auswärts":"KSC Schlösselhof G1","Paarung":"TSV Upf.-Germering G3 - KSC Schlösselhof G1","TSV Heim/Auswärts":"Heim","Gegner":"KSC Schlösselhof G1","Team":"G3","Liga":"Kreisklasse 2"},{"Datum":"2026-03-17","Wochentag":"Di","Uhrzeit":"18:15","Heim":"TSV Upf.-Germering G2","Auswärts":"ESV Neuaubing G2","Paarung":"TSV Upf.-Germering G2 - ESV Neuaubing G2","TSV Heim/Auswärts":"Heim","Gegner":"ESV Neuaubing G2","Team":"G2","Liga":"Kreisklasse 1"},{"Datum":"2026-03-19","Wochentag":"Do","Uhrzeit":"19:00","Heim":"ESV Neuaubing G1","Auswärts":"TSV Upf.-Germering G1","Paarung":"ESV Neuaubing G1 - TSV Upf.-Germering G1","TSV Heim/Auswärts":"Auswärts","Gegner":"ESV Neuaubing G1","Team":"G1","Liga":"Kreisliga 2"},{"Datum":"2026-04-13","Wochentag":"Mo","Uhrzeit":"18:15","Heim":"SKC Rot-Weiß Zsg Augsburg G1","Auswärts":"TSV Upf.-Germering G3","Paarung":"SKC Rot-Weiß Zsg Augsburg G1 - TSV Upf.-Germering G3","TSV Heim/Auswärts":"Auswärts","Gegner":"SKC Rot-Weiß Zsg Augsburg G1","Team":"G3","Liga":"Kreisklasse 2"},{"Datum":"2026-04-14","Wochentag":"Di","Uhrzeit":"18:15","Heim":"ESV Neuaubing G2","Auswärts":"TSV Upf.-Germering G2","Paarung":"ESV Neuaubing G2 - TSV Upf.-Germering G2","TSV Heim/Auswärts":"Auswärts","Gegner":"ESV Neuaubing G2","Team":"G2","Liga":"Kreisklasse 1"},{"Datum":"2026-04-16","Wochentag":"Do","Uhrzeit":"19:00","Heim":"TSV Upf.-Germering G1","Auswärts":"SKC Schwarz-Rot 93 G1","Paarung":"TSV Upf.-Germering G1 - SKC Schwarz-Rot 93 G1","TSV Heim/Auswärts":"Heim","Gegner":"SKC Schwarz-Rot 93 G1","Team":"G1","Liga":"Kreisliga 2"},{"Datum":"2026-04-27","Wochentag":"Mo","Uhrzeit":"18:15","Heim":"TSV Upf.-Germering G3","Auswärts":"TSV München Ost G1","Paarung":"TSV Upf.-Germering G3 - TSV München Ost G1","TSV Heim/Auswärts":"Heim","Gegner":"TSV München Ost G1","Team":"G3","Liga":"Kreisklasse 2"},{"Datum":"2026-04-28","Wochentag":"Di","Uhrzeit":"18:15","Heim":"ESV 1995 München G4","Auswärts":"TSV Upf.-Germering G2","Paarung":"ESV 1995 München G4 - TSV Upf.-Germering G2","TSV Heim/Auswärts":"Auswärts","Gegner":"ESV 1995 München G4","Team":"G2","Liga":"Kreisklasse 1"},{"Datum":"2026-04-30","Wochentag":"Do","Uhrzeit":"19:00","Heim":"München West G1","Auswärts":"TSV Upf.-Germering G1","Paarung":"München West G1 - TSV Upf.-Germering G1","TSV Heim/Auswärts":"Auswärts","Gegner":"München West G1","Team":"G1","Liga":"Kreisliga 2"}];
+    // Eingebettete Daten
+    const DATA = [];
   </script>
   <script>
     const fmtDate = (d) => d;
@@ -265,9 +271,9 @@
         const D = pad(dt.getDate());
         const h = pad(dt.getHours());
         const m = pad(dt.getMinutes());
-        const start = `${y}${M}${D}T${h}${m}00`;
-        const summary = `${r.Team} · ${r.Heim} - ${r.Auswärts}`;
-        const desc = `${r.Liga}`;
+        const start = `${{y}}${{M}}${{D}}T${{h}}${{m}}00`;
+        const summary = `${{r.Team}} · ${{r.Heim}} - ${{r.Auswärts}}`;
+        const desc = `${{r.Liga}}`;
         icsLines.push('BEGIN:VEVENT');
         icsLines.push('DTSTART:'+start);
         icsLines.push('DTEND:'+start);
@@ -276,8 +282,7 @@
         icsLines.push('END:VEVENT');
       });
       icsLines.push('END:VCALENDAR');
-      const blob = new Blob([icsLines.join('
-')], {type: 'text/calendar;charset=utf-8'});
+      const blob = new Blob([icsLines.join('\n')], {type: 'text/calendar;charset=utf-8'});
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url; a.download = 'tsv-spielplan.ics';
