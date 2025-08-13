@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TSV Unterpfaffenhofen – Spielpläne G1/G2/G3</title>
   <style>
-    :root{
-      --tsv-blue:#0056b3; --tsv-yellow:#ffcc00; --bg:#f5f5f5; --card:#ffffff;
-      --text:#333; --muted:#666; --accent:#0056b3; --line:#e5e7eb;
-    }
+    :root{ --tsv-blue:#0056b3; --tsv-yellow:#ffcc00; --bg:#f5f5f5; --card:#ffffff; --text:#333; --muted:#666; --accent:#0056b3; --line:#e5e7eb; }
     html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial,"Noto Sans",sans-serif;background:var(--bg);color:var(--text);}
     .topbar{background:var(--tsv-blue);color:#fff;}
     .topbar .wrap{max-width:1100px;margin:0 auto;display:flex;gap:12px;align-items:center;padding:14px 20px;}
@@ -23,6 +20,7 @@
     .filters input,.filters select{width:100%;padding:10px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;color:var(--text);}
     .filters .btn{padding:10px 12px;border-radius:6px;border:1px solid #ccc;background:var(--accent);color:#fff;font-weight:600;cursor:pointer}
     .filters .btn.light{background:#fff;color:var(--text)}
+    .under-filters{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
     table{width:100%;border-collapse:collapse}
     thead th{font-size:.8rem;color:var(--muted);font-weight:600;text-align:left;padding:8px 12px;border-bottom:2px solid #ddd;background:#fafafa}
     tbody td{background:#fff;border-bottom:1px solid #eee;padding:10px 12px;vertical-align:middle}
@@ -31,11 +29,11 @@
     .tag.home{background:rgba(37,99,235,.1);color:#1e40af;border:1px solid rgba(37,99,235,.3)}
     .tag.away{background:rgba(234,179,8,.15);color:#92400e;border:1px solid rgba(234,179,8,.4)}
     .team-chip{display:inline-flex;gap:6px;align-items:center;padding:4px 8px;border-radius:4px;background:#f0f0f0;border:1px solid #ccc}
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto}
-    .btn{padding:10px 14px;border-radius:6px;border:1px solid #ccc;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
-    .btn.light{background:#fff;color:var(--text)}
+    .dot{width:12px;height:12px;border-radius:50%}
+    .maplink a{font-weight:600;text-decoration:none}
+    .maplink a:hover{text-decoration:underline}
     @media (max-width: 880px){ .filters{grid-template-columns:1fr 1fr} }
-    @media print { body{background:#fff;color:#000} .topbar,.filters,.actions,header img{display:none!important} .container{max-width:100%;padding:0} table{border-spacing:0} tbody td{border:1px solid #999} }
+    @media print { body{background:#fff;color:#000} .topbar,.filters,.under-filters,header img{display:none!important} .container{max-width:100%;padding:0} table{border-spacing:0} tbody td{border:1px solid #999} }
   </style>
 </head>
 <body>
@@ -49,10 +47,7 @@
   <div class="container">
     <header>
       <h1>Spielpläne G1/G2/G3</h1>
-      <div class="actions">
-        <button class="btn" id="pdf2">Als PDF</button>
-        <button class="btn light" id="ics">ICS</button>
-      </div>
+      <div class="actions"></div>
     </header>
 
     <section class="card">
@@ -74,6 +69,10 @@
         <div><button class="btn" id="apply">Filter anwenden</button></div>
         <div><button class="btn light" id="reset">Zurücksetzen</button></div>
       </div>
+      <div class="under-filters">
+        <button class="btn" id="pdf">Als PDF herunterladen</button>
+        <button class="btn light" id="ics">Kalender (ICS) exportieren</button>
+      </div>
     </section>
 
     <section class="card">
@@ -81,7 +80,7 @@
         <thead>
           <tr>
             <th>Datum</th><th>Wochentag</th><th>Uhrzeit</th><th>Team</th>
-            <th>Heim</th><th></th><th>Auswärts</th><th>TSV</th><th>Gegner</th><th>Liga</th>
+            <th>Heim</th><th></th><th>Auswärts</th><th>TSV</th><th>Gegner</th><th>Liga</th><th>Anfahrt</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -92,20 +91,81 @@
 
   <script>
     let DATA = [];
-    const fmtDate = (d) => d;
+
+    // Venue mapping (aus deinen Daten)
+    const VENUES = {
+      // TSV Heim
+      "TSV Upf.-Germering": {name:"TSV Unterpfaffenhofen-Germering", addr:"Alfons-Baumann-Straße 7, 82110 Germering"},
+      "TSV Upf.-Germering G1": {name:"TSV Unterpfaffenhofen-Germering", addr:"Alfons-Baumann-Straße 7, 82110 Germering"},
+      "TSV Upf.-Germering G2": {name:"TSV Unterpfaffenhofen-Germering", addr:"Alfons-Baumann-Straße 7, 82110 Germering"},
+      "TSV Upf.-Germering G3": {name:"TSV Unterpfaffenhofen-Germering", addr:"Alfons-Baumann-Straße 7, 82110 Germering"},
+
+      // Kreisklasse 2
+      "SKC Waldfrieden G3": {name:"SKC Waldfrieden", addr:"Bürgermeister Rabl Str. 1, 85241 Hebertshausen"},
+      "SKK 98 Poing G2": {name:"SKK 98 Poing", addr:"Plieningerstr. 24, 85586 Poing"},
+      "SpG Germ/Alt/Alem München G2": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
+      "SpG MarktSchw/Siem.Ost G4": {name:"SG Siemens-Ost", addr:"St. Cajetan Str. 33, 81669 München"},
+      "SpG Neuhausen/1860TSV G2": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
+      "SpG Sendling/Fasangarten G2": {name:"DJK Fasangarten e.V.", addr:"Görzer Straße 193, 81549 München"},
+      "SpG Zwölfer-Ost G2": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
+      "SV Haimhausen G2": {name:"SV Haimhausen", addr:"Hauptstr. 62, 85778 Haimhausen"},
+
+      // Kreisklasse 1
+      "ESV Neuaubing G2": {name:"ESV Neuaubing", addr:"Papinstraße 22, 81249 München Neuaubing"},
+      "FC Bayern München G2": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
+      "KFSR Eichenau G2": {name:"KFSR Eichenau", addr:"Birkensteinerstr. 9, 82223 Eichenau"},
+      "SC Olching G2": {name:"Sportgaststätte SC Olching", addr:"Toni-März-Str. 25, 82140 Olching"},
+      "SKC Lohhof G2": {name:"SKC Lohhof", addr:"Anna-Wimschneider-Str. 1, 85716 Unterschleißheim"},
+      "SKC Waldfrieden G2": {name:"SKC Waldfrieden", addr:"Bürgermeister Rabl Str. 1, 85241 Hebertshausen"},
+      "SpG MarktSchw/Siem.Ost G2": {name:"SG Siemens-Ost", addr:"St. Cajetan Str. 33, 81669 München"},
+      "SpG MarktSchw/Siem.Ost G3": {name:"TV Markt Schwaben", addr:"Bürgermeister Haller Weg, 85570 Markt Schwaben"},
+      "SpG Rot-Weiß BSV München G2": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
+
+      // Kreisliga 2
+      "ESV Neuaubing G1": {name:"ESV Neuaubing", addr:"Papinstraße 22, 81249 München Neuaubing"},
+      "FC Bayern München G1": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
+      "KFSR Eichenau G1": {name:"KFSR Eichenau", addr:"Birkensteinerstr. 9, 82223 Eichenau"},
+      "SKC Lohhof G2": {name:"SKC Lohhof", addr:"Anna-Wimschneider-Str. 1, 85716 Unterschleißheim"},
+      "SKC Schwarz-Rot 93 G1": {name:"SKC Waldfrieden", addr:"Bürgermeister Rabl Str. 1, 85241 Hebertshausen"},
+      "SKK 98 Poing G1": {name:"SKK 98 Poing", addr:"Plieningerstr. 24, 85586 Poing"},
+      "SpG Bavaria/Turnerbund G1": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
+      "SpG Zwölfer-Ost G1": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"}
+    };
+
+    const fmtDate = (iso) => {
+      if(!iso) return '';
+      const [y,m,d] = iso.split('-'); return `${d}.${m}.${y}`;
+    };
     const parseDate = (s) => new Date(s + 'T00:00:00');
-    function teamColor(team){ if(team==='G1') return '#ef4444'; if(team==='G2') return '#eab308'; return '#22c55e'; }
+    const teamColor = (team)=> team==='G1' ? '#ef4444' : (team==='G2' ? '#eab308' : '#22c55e');
+
+    function mapUrlFor(row){
+      // Heimspiele -> TSV-Adresse, Auswärts -> Gegner-Adresse
+      let venue = null;
+      if(row["TSV Heim/Auswärts"] === "Heim"){
+        venue = VENUES["TSV Upf.-Germering"];
+      }else{
+        venue = VENUES[row.Gegner] || VENUES[row.Auswärts] || null;
+      }
+      if(!venue) return '';
+      const q = encodeURIComponent(`${venue.name}, ${venue.addr}`);
+      return `https://www.google.com/maps/dir//${q}`;
+    }
 
     function renderRows(rows){
       const tb = document.querySelector('#games tbody'); tb.innerHTML = '';
-      if(!rows.length){ const tr = document.createElement('tr'); const td = document.createElement('td');
-        td.colSpan=10; td.textContent='Keine Spiele in der aktuellen Auswahl.'; td.style.color='#666'; td.style.fontStyle='italic';
-        tr.appendChild(td); tb.appendChild(tr); return; }
+      if(!rows.length){
+        const tr = document.createElement('tr'); const td = document.createElement('td');
+        td.colSpan = 11; td.textContent='Keine Spiele in der aktuellen Auswahl.'; td.style.color='#666'; td.style.fontStyle='italic';
+        tr.appendChild(td); tb.appendChild(tr); return;
+      }
       rows.forEach(r=>{
         const tr=document.createElement('tr');
         const tsvSide=r["TSV Heim/Auswärts"]||'';
         const tag= tsvSide==='Heim'? '<span class="tag home">Heim</span>' : (tsvSide==='Auswärts'? '<span class="tag away">Auswärts</span>':'' );
-        tr.innerHTML=`
+        const mapUrl = mapUrlFor(r);
+        const mapCell = mapUrl ? `<span class="maplink"><a href="${mapUrl}" target="_blank" rel="noopener">Maps</a></span>` : '';
+        tr.innerHTML = `
           <td>${fmtDate(r.Datum||'')}</td>
           <td>${r.Wochentag||''}</td>
           <td>${r.Uhrzeit||''}</td>
@@ -115,7 +175,8 @@
           <td>${r.Auswärts||''}</td>
           <td>${tag}</td>
           <td>${r.Gegner||''}</td>
-          <td>${r.Liga||''}</td>`;
+          <td>${r.Liga||''}</td>
+          <td>${mapCell}</td>`;
         tb.appendChild(tr);
       });
     }
@@ -140,7 +201,7 @@
     function resetFilters(){ ['from','to','weekday','homeAway','team','league'].forEach(id=>{const el=document.getElementById(id); if(el.tagName==='SELECT') el.selectedIndex=0; else el.value='';}); renderRows(DATA); }
     function downloadPDF(){ window.print(); }
     function exportICS(){
-      const rows=[...document.querySelectorAll('#games tbody tr')].map(tr=>{const tds=tr.querySelectorAll('td');return{Datum:tds[0]?.textContent.trim(),Uhrzeit:tds[2]?.textContent.trim(),Team:tds[3]?.innerText.trim(),Heim:tds[4]?.textContent.trim(),Auswärts:tds[6]?.textContent.trim(),Liga:tds[9]?.textContent.trim(),}}).filter(r=>r.Datum&&r.Team);
+      const rows=[...document.querySelectorAll('#games tbody tr')].map(tr=>{const tds=tr.querySelectorAll('td');return{Datum:tds[0]?.textContent.trim().split('.').reverse().join('-'),Uhrzeit:tds[2]?.textContent.trim(),Team:tds[3]?.innerText.trim(),Heim:tds[4]?.textContent.trim(),Auswärts:tds[6]?.textContent.trim(),Liga:tds[9]?.textContent.trim(),}}).filter(r=>r.Datum&&r.Team);
       const pad=n=>String(n).padStart(2,'0'); const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//TSV Unterpfaffenhofen//Spielpläne//DE'];
       rows.forEach(r=>{const dt=new Date(r.Datum+'T'+(r.Uhrzeit||'00:00')); const y=dt.getFullYear(),M=pad(dt.getMonth()+1),D=pad(dt.getDate()),h=pad(dt.getHours()),m=pad(dt.getMinutes()); const start=`${y}${M}${D}T${h}${m}00`; const summary=`${r.Team} · ${r.Heim} - ${r.Auswärts}`; const desc=`${r.Liga}`; ics.push('BEGIN:VEVENT','DTSTART:'+start,'DTEND:'+start,'SUMMARY:'+summary.replace(/,/g,'\,'),'DESCRIPTION:'+desc.replace(/,/g,'\,'),'END:VEVENT');}); ics.push('END:VCALENDAR');
       const blob=new Blob([ics.join('\n')],{type:'text/calendar;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='tsv-spielplan.ics'; a.click(); URL.revokeObjectURL(url);
@@ -148,7 +209,7 @@
     async function loadData(){ const status=document.getElementById('status'); try{ const res=await fetch('tsv_spiele_gesamt.json',{cache:'no-store'}); if(!res.ok) throw new Error('HTTP '+res.status); DATA=await res.json(); renderRows(DATA);}catch(err){ status.style.display='block'; status.textContent='Fehler: tsv_spiele_gesamt.json nicht gefunden oder ungültig.'; renderRows([]);} }
     document.getElementById('apply').addEventListener('click', applyFilters);
     document.getElementById('reset').addEventListener('click', resetFilters);
-    document.getElementById('pdf2').addEventListener('click', downloadPDF);
+    document.getElementById('pdf').addEventListener('click', downloadPDF);
     document.getElementById('ics').addEventListener('click', exportICS);
     loadData();
   </script>
