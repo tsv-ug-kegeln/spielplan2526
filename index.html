@@ -74,6 +74,7 @@
       <div class="under-filters">
         <button class="btn" id="pdf">Als PDF herunterladen</button>
         <button class="btn light" id="ics">Kalender (ICS) exportieren</button>
+        <button class="btn light" id="excel">Als Excel herunterladen</button>
       </div>
     </section>
 
@@ -210,6 +211,35 @@
       const blob=new Blob([ics.join('\n')],{type:'text/calendar;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='tsv-spielplan.ics'; a.click(); URL.revokeObjectURL(url);
     }
 
+    
+    function downloadCSV(){
+      // Collect visible rows from table
+      const rows = [...document.querySelectorAll('#games tbody tr')];
+      if(!rows.length) return;
+      const headers = ['Datum','Wochentag','Uhrzeit','Team','Heim','-','Auswärts','TSV','Gegner','Liga','Anfahrt'];
+      const csv = [headers.join(';')];
+      rows.forEach(tr=>{
+        const tds = tr.querySelectorAll('td');
+        if(!tds.length) return;
+        const cells = [...tds].map((td,i)=>{
+          let text = td.textContent.trim();
+          // replace semicolons to avoid breaking CSV; wrap with quotes if needed
+          if(text.includes(';') || text.includes('"') || text.includes('\n')){
+            text = '"' + text.replace(/"/g,'""') + '"';
+          }
+          return text;
+        });
+        csv.push(cells.join(';'));
+      });
+      const blob = new Blob([csv.join('\n')], {type: 'text/csv;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'tsv-spielplan.csv'; // Excel-kompatibel
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
     async function loadData(){
       const status=document.getElementById('status');
       try{
@@ -228,6 +258,7 @@
 
     document.getElementById('pdf').addEventListener('click', downloadPDF);
     document.getElementById('ics').addEventListener('click', exportICS);
+    document.getElementById('excel').addEventListener('click', downloadCSV);
 
     loadData();
   </script>
