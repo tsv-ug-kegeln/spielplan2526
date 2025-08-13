@@ -34,8 +34,30 @@
     .dot{width:12px;height:12px;border-radius:50%}
     .maplink a{font-weight:600;text-decoration:none}
     .maplink a:hover{text-decoration:underline}
-    @media (max-width: 880px){ .filters{grid-template-columns:1fr 1fr} }
-    @media print { body{background:#fff;color:#000} .topbar,.filters,.under-filters,header img{display:none!important} .container{max-width:100%;padding:0} table{border-spacing:0} tbody td{border:1px solid #999} }
+    /* Mobile enhancements */
+    .btn, .toggle, .filters select { min-height: 44px; } /* comfortable touch targets */
+    @media (max-width: 880px){
+      .filters{grid-template-columns:1fr}
+      .under-filters{gap:8px}
+      .under-filters .btn{width:100%}
+      .under-filters .btn.light{width:100%}
+    }
+    /* Stack table rows into cards on small screens */
+    @media (max-width: 640px){
+      table thead{display:none}
+      table, thead, tbody, th, td, tr{display:block}
+      tbody tr{background:#fff;border:1px solid #e5e7eb;border-radius:10px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+      tbody td{border:none;border-bottom:1px solid #f1f1f1;padding:10px 14px}
+      tbody td:last-child{border-bottom:none}
+      tbody td::before{
+        content: attr(data-label);
+        display:block;
+        font-size:.8rem;
+        color:var(--muted);
+        margin-bottom:4px;
+      }
+      .team-chip{padding:0}
+    }
   </style>
 </head>
 <body>
@@ -151,17 +173,17 @@
         const mapUrl = mapUrlFor(r);
         const mapCell = mapUrl ? `<span class="maplink"><a href="${mapUrl}" target="_blank" rel="noopener">Maps</a></span>` : '';
         tr.innerHTML = `
-          <td>${fmtDate(r.Datum||'')}</td>
-          <td>${r.Wochentag||''}</td>
-          <td>${r.Uhrzeit||''}</td>
-          <td><span class="team-chip"><span class="dot" style="background:${teamColor(r.Team||'')}"></span>${r.Team||''}</span></td>
-          <td>${r.Heim||''}</td>
-          <td style="text-align:center">–</td>
-          <td>${r.Auswärts||''}</td>
-          <td>${tag}</td>
-          <td>${r.Gegner||''}</td>
-          <td>${r.Liga||''}</td>
-          <td>${mapCell}</td>`;
+          <td data-label="Datum">${fmtDate(r.Datum||'')}</td>
+          <td data-label="Wochentag">${r.Wochentag||''}</td>
+          <td data-label="Uhrzeit">${r.Uhrzeit||''}</td>
+          <td data-label="Team"><span class="team-chip"><span class="dot" style="background:${teamColor(r.Team||'')}"></span>${r.Team||''}</span></td>
+          <td data-label="Heim">${r.Heim||''}</td>
+          <td data-label="" style="text-align:center">–</td>
+          <td data-label="Auswärts">${r.Auswärts||''}</td>
+          <td data-label="TSV">${tag}</td>
+          <td data-label="Gegner">${r.Gegner||''}</td>
+          <td data-label="Liga">${r.Liga||''}</td>
+          <td data-label="Anfahrt">${mapCell}</td>`;
         tb.appendChild(tr);
       });
     }
@@ -191,7 +213,7 @@
       renderRows(rows);
     }
 
-    // Auto-apply on change (no apply/reset buttons)
+    // Auto-apply on change
     function bindAutoFilters(){
       ["weekday","homeAway","teamLeague"].forEach(id=>{
         const el = document.getElementById(id);
@@ -210,10 +232,7 @@
       rows.forEach(r=>{const dt=new Date(r.Datum+'T'+(r.Uhrzeit||'00:00')); const y=dt.getFullYear(),M=pad(dt.getMonth()+1),D=pad(dt.getDate()),h=pad(dt.getHours()),m=pad(dt.getMinutes()); const start=`${y}${M}${D}T${h}${m}00`; const summary=`${r.Team} · ${r.Heim} - ${r.Auswärts}`; const desc=`${r.Liga}`; ics.push('BEGIN:VEVENT','DTSTART:'+start,'DTEND:'+start,'SUMMARY:'+summary.replace(/,/g,'\,'),'DESCRIPTION:'+desc.replace(/,/g,'\,'),'END:VEVENT');}); ics.push('END:VCALENDAR');
       const blob=new Blob([ics.join('\n')],{type:'text/calendar;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='tsv-spielplan.ics'; a.click(); URL.revokeObjectURL(url);
     }
-
-    
     function downloadCSV(){
-      // Collect visible rows from table
       const rows = [...document.querySelectorAll('#games tbody tr')];
       if(!rows.length) return;
       const headers = ['Datum','Wochentag','Uhrzeit','Team','Heim','-','Auswärts','TSV','Gegner','Liga','Anfahrt'];
@@ -221,9 +240,8 @@
       rows.forEach(tr=>{
         const tds = tr.querySelectorAll('td');
         if(!tds.length) return;
-        const cells = [...tds].map((td,i)=>{
+        const cells = [...tds].map(td=>{
           let text = td.textContent.trim();
-          // replace semicolons to avoid breaking CSV; wrap with quotes if needed
           if(text.includes(';') || text.includes('"') || text.includes('\n')){
             text = '"' + text.replace(/"/g,'""') + '"';
           }
@@ -235,7 +253,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'tsv-spielplan.csv'; // Excel-kompatibel
+      a.download = 'tsv-spielplan.csv';
       a.click();
       URL.revokeObjectURL(url);
     }
