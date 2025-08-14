@@ -1,1 +1,28 @@
-[]
+[
+  {
+    "datum": "2025-09-22",
+    "wochentag": "Mo",
+    "uhrzeit": "20:15",
+    "heim": "TSV Unterpfaffenhofen-Germering G2",
+    "auswärts": "Sportgaststätte SC Olching G2",
+    "liga": "Kreisklasse 1",
+    "team": "G2",
+    "heim_auswärts": "Heim",
+    "gegner": "Sportgaststätte SC Olching G2",
+    "adresse": "Toni-März-Str. 25, 82140 Olching",
+    "maps": "https://www.google.com/maps/dir//Toni-März-Str.+25,+82140+Olching"
+  },
+  {
+    "datum": "2026-01-15",
+    "wochentag": "Do",
+    "uhrzeit": "18:30",
+    "heim": "Sportgaststätte SC Olching G2",
+    "auswärts": "TSV Unterpfaffenhofen-Germering G2",
+    "liga": "Kreisklasse 1",
+    "team": "G2",
+    "heim_auswärts": "Auswärts",
+    "gegner": "Sportgaststätte SC Olching G2",
+    "adresse": "Toni-März-Str. 25, 82140 Olching",
+    "maps": "https://www.google.com/maps/dir//Toni-März-Str.+25,+82140+Olching"
+  }
+]
