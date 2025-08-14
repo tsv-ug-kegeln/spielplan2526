@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TSV Unterpfaffenhofen – Spielpläne G1/G2/G3</title>
   <style>
-    :root{ --tsv-blue:#0056b3; --tsv-yellow:#ffcc00; --bg:#f5f5f5; --card:#ffffff; --text:#333; --muted:#666; --accent:#0056b3; --line:#e5e7eb; }
+    :root{ --tsv-blue:#0056b3; --tsv-yellow:#ffcc00; --bg:#f7f7f8; --card:#ffffff; --text:#1f2937; --muted:#6b7280; --accent:#0056b3; --line:#e5e7eb; }
+    *,*::before,*::after{box-sizing:border-box}
     html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial,"Noto Sans",sans-serif;background:var(--bg);color:var(--text);}
     .topbar{background:var(--tsv-blue);color:#fff;}
     .topbar .wrap{max-width:1100px;margin:0 auto;display:flex;gap:12px;align-items:center;padding:14px 20px;}
@@ -14,50 +15,42 @@
     .container{max-width:1100px;margin:0 auto;padding:20px;}
     header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:10px 0 16px;}
     h1{font-size:clamp(1.4rem,2.4vw,2rem);margin:0;color:var(--accent);}
-    .card{background:var(--card);border:1px solid #ddd;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 2px 6px rgba(0,0,0,.05);}
-    .filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:end}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 2px 6px rgba(0,0,0,.05);overflow:hidden}
+    .filters{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:end}
     .filters label{font-size:.85rem;color:var(--muted);display:block;margin:0 0 6px}
-    .filters select{width:100%;padding:10px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;color:var(--text);}
+    .filters select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #d1d5db;background:#fff;color:var(--text);min-height:44px}
     .under-filters{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;align-items:center}
-    .toggle{background:#fff;color:#111;border:1px solid #bbb;padding:10px 12px;border-radius:6px;cursor:pointer}
+    .toggle{background:#fff;color:#111;border:1px solid #bbb;padding:10px 12px;border-radius:8px;cursor:pointer;min-height:44px}
     .toggle.active{background:#1e3a8a;color:#fff;border-color:#1e3a8a}
-    .btn{padding:10px 12px;border-radius:6px;border:1px solid #ccc;background:var(--accent);color:#fff;font-weight:600;cursor:pointer}
+    .btn{padding:10px 12px;border-radius:8px;border:1px solid #d1d5db;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;min-height:44px}
     .btn.light{background:#fff;color:#111}
-    table{width:100%;border-collapse:collapse}
-    thead th{font-size:.8rem;color:var(--muted);font-weight:600;text-align:left;padding:8px 12px;border-bottom:2px solid #ddd;background:#fafafa}
-    tbody td{background:#fff;border-bottom:1px solid #eee;padding:10px 12px;vertical-align:middle}
-    tbody tr:hover{background:#f9f9f9}
-    .tag{font-size:.75rem;font-weight:700;letter-spacing:.02em;padding:4px 8px;border-radius:4px;background:#eee}
-    .tag.home{background:rgba(37,99,235,.1);color:#1e40af;border:1px solid rgba(37,99,235,.3)}
-    .tag.away{background:rgba(234,179,8,.15);color:#92400e;border:1px solid rgba(234,179,8,.4)}
-    .team-chip{display:inline-flex;gap:6px;align-items:center;padding:4px 8px;border-radius:4px;background:#f0f0f0;border:1px solid #ccc}
+    /* Table base */
+    .table-wrap{width:100%;overflow:auto;border-radius:8px}
+    table{width:100%;border-collapse:collapse;table-layout:fixed}
+    thead th{font-size:.8rem;color:var(--muted);font-weight:600;text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);background:#fafafa;position:relative}
+    tbody td{background:#fff;border-bottom:1px solid #f0f0f0;padding:10px 12px;vertical-align:middle;word-break:break-word;overflow-wrap:anywhere}
+    tbody tr:hover{background:#f9fafb}
+    .tag{font-size:.75rem;font-weight:700;letter-spacing:.02em;padding:4px 8px;border-radius:6px;background:#eee;display:inline-block}
+    .tag.home{background:rgba(37,99,235,.1);color:#1e40af;border:1px solid rgba(37,99,235,.25)}
+    .tag.away{background:rgba(234,179,8,.15);color:#92400e;border:1px solid rgba(234,179,8,.25)}
+    .team-chip{display:inline-flex;gap:6px;align-items:center;padding:4px 8px;border-radius:6px;background:#f3f4f6;border:1px solid #e5e7eb;max-width:100%}
     .dot{width:12px;height:12px;border-radius:50%}
     .maplink a{font-weight:600;text-decoration:none}
     .maplink a:hover{text-decoration:underline}
-    /* Mobile enhancements */
-    .btn, .toggle, .filters select { min-height: 44px; } /* comfortable touch targets */
-    @media (max-width: 880px){
-      .filters{grid-template-columns:1fr}
-      .under-filters{gap:8px}
-      .under-filters .btn{width:100%}
-      .under-filters .btn.light{width:100%}
-    }
-    /* Stack table rows into cards on small screens */
+    /* Mobile improvements */
+    @media (max-width: 920px){ .filters{grid-template-columns:1fr 1fr} .under-filters .btn{flex:1 1 100%} .under-filters .btn.light{flex:1 1 100%} }
     @media (max-width: 640px){
+      .filters{grid-template-columns:1fr}
+      .table-wrap{overflow:visible}
       table thead{display:none}
       table, thead, tbody, th, td, tr{display:block}
-      tbody tr{background:#fff;border:1px solid #e5e7eb;border-radius:10px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-      tbody td{border:none;border-bottom:1px solid #f1f1f1;padding:10px 14px}
+      tbody tr{background:#fff;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.04);overflow:hidden}
+      tbody td{border:none;border-bottom:1px solid #f1f5f9;padding:10px 14px}
       tbody td:last-child{border-bottom:none}
-      tbody td::before{
-        content: attr(data-label);
-        display:block;
-        font-size:.8rem;
-        color:var(--muted);
-        margin-bottom:4px;
-      }
-      .team-chip{padding:0}
+      tbody td::before{content: attr(data-label); display:block; font-size:.8rem; color:var(--muted); margin-bottom:4px}
+      .team-chip{padding:0;border:none;background:transparent}
     }
+    @media print { body{background:#fff;color:#000} .topbar,.filters,.under-filters,header img{display:none!important} .container{max-width:100%;padding:0} table{border-spacing:0} tbody td{border:1px solid #999} }
   </style>
 </head>
 <body>
@@ -85,11 +78,15 @@
           <select id="teamLeague"><option value="">Alle</option></select>
         </div>
         <div>
+          <label for="opponent">Gegner</label>
+          <select id="opponent"><option value="">Alle</option></select>
+        </div>
+        <div>
           <label for="weekday">Wochentag</label>
           <select id="weekday"><option value="">Alle</option><option>Mo</option><option>Di</option><option>Mi</option><option>Do</option><option>Fr</option><option>Sa</option><option>So</option></select>
         </div>
         <div>
-          <label for="hidePastLabel">&nbsp;</label>
+          <label for="hidePast">&nbsp;</label>
           <button class="toggle" id="hidePast">Vergangene Spiele ausblenden</button>
         </div>
       </div>
@@ -101,15 +98,26 @@
     </section>
 
     <section class="card">
-      <table id="games">
-        <thead>
-          <tr>
-            <th>Datum</th><th>Wochentag</th><th>Uhrzeit</th><th>Team</th>
-            <th>Heim</th><th></th><th>Auswärts</th><th>TSV</th><th>Gegner</th><th>Liga</th><th>Anfahrt</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-wrap">
+        <table id="games">
+          <thead>
+            <tr>
+              <th style="width:110px">Datum</th>
+              <th style="width:80px">Wochentag</th>
+              <th style="width:80px">Uhrzeit</th>
+              <th style="width:90px">Team</th>
+              <th>Heim</th>
+              <th style="width:24px"></th>
+              <th>Auswärts</th>
+              <th style="width:70px">TSV</th>
+              <th>Gegner</th>
+              <th style="width:130px">Liga</th>
+              <th style="width:80px">Anfahrt</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
       <div id="status" style="margin-top:10px;color:#b91c1c;font-weight:600;display:none"></div>
     </section>
   </div>
@@ -117,7 +125,7 @@
   <script>
     let DATA = [];
 
-    // Basis-Venue-Mapping (vereinheitlicht, ohne G-Anhang)
+    // === Name handling: keep raw 1:1 for display; derive maps from base names ===
     const BASE_VENUES = {
       "TSV Upf.-Germering": {name:"TSV Unterpfaffenhofen-Germering", addr:"Alfons-Baumann-Straße 7, 82110 Germering"},
       "ESV Neuaubing": {name:"ESV Neuaubing", addr:"Papinstraße 22, 81249 München Neuaubing"},
@@ -134,24 +142,21 @@
       "SpG Zwölfer-Ost": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
       "SV Haimhausen": {name:"SV Haimhausen", addr:"Hauptstr. 62, 85778 Haimhausen"},
       "SpG Rot-Weiß BSV München": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"},
-      "SpG MarktSchw/Siem.Ost (G3/TV Markt Schwaben)": {name:"TV Markt Schwaben", addr:"Bürgermeister Haller Weg, 85570 Markt Schwaben"},
-      "SpG Bavaria/Turnerbund": {name:"MKV Sportkegelzentrum", addr:"Säbenerstr. 49, 81547 München"}
+      "TV Markt Schwaben": {name:"TV Markt Schwaben", addr:"Bürgermeister Haller Weg, 85570 Markt Schwaben"}
     };
 
     const normalizeClub = (name) => {
       if(!name) return "";
-      let base = name.replace(/\s+G\d+$/,'').trim();
-      return base;
+      return name.replace(/\s+G\d+$/,'').trim().replace(/\s*G\d+\b/,''); // tolerate Gx anywhere at end
     };
 
     const fmtDate = (iso) => { if(!iso) return ''; const [y,m,d] = iso.split('-'); return `${d}.${m}.${y}`; };
-    const parseDate = (s) => new Date(s + 'T00:00:00');
     const todayIso = () => new Date().toISOString().slice(0,10);
     const teamColor = (team)=> team==='G1' ? '#ef4444' : (team==='G2' ? '#eab308' : '#22c55e');
 
     function mapUrlFor(row){
       let baseName;
-      if(row["TSV Heim/Auswärts"] === "Heim"){ baseName = "TSV Upf.-Germering"; }
+      if((row["TSV Heim/Auswärts"]||'') === "Heim"){ baseName = "TSV Upf.-Germering"; }
       else{ baseName = normalizeClub(row.Gegner) || normalizeClub(row.Auswärts); }
       const venue = BASE_VENUES[baseName];
       if(!venue) return '';
@@ -188,20 +193,48 @@
       });
     }
 
-    function fillTeamLeagueOptions(){
-      const select = document.getElementById('teamLeague');
-      const set = new Set();
-      DATA.forEach(r=>{ if(r.Team && r.Liga){ set.add(`${r.Team} - ${r.Liga}`); } });
-      const opts = ['<option value="">Alle</option>', ...Array.from(set).sort().map(v=>`<option>${v}</option>`)];
-      select.innerHTML = opts.join('');
+    function deriveRowFixups(raw){
+      // Ensure Heim/Auswärts split correctly if someone stored the whole 'Paarung' in Heim
+      const out = {...raw};
+      if(out.Heim && out.Heim.includes(' - ') && (!out.Auswärts || out.Auswärts==='')){
+        const [h,a] = out.Heim.split(' - ');
+        out.Heim = h.trim(); out.Auswärts = a.trim();
+      }
+      if(!out.Gegner){
+        out.Gegner = (out["TSV Heim/Auswärts"]==='Heim') ? (out.Auswärts||'') : (out.Heim||'');
+      }
+      if(!out.Wochentag && out.Datum){
+        const dt = new Date(out.Datum+'T00:00:00');
+        out.Wochentag = ['So','Mo','Di','Mi','Do','Fr','Sa'][dt.getDay()];
+      }
+      if(!out.Liga && out.Team){
+        if(out.Team==='G1') out.Liga='Kreisliga 2';
+        if(out.Team==='G2') out.Liga='Kreisklasse 1';
+        if(out.Team==='G3') out.Liga='Kreisklasse 2';
+      }
+      return out;
+    }
+
+    function fillSelects(){
+      const tlSel = document.getElementById('teamLeague');
+      const oppSel = document.getElementById('opponent');
+      const tlSet = new Set(), oppSet = new Set();
+      DATA.forEach(r=>{
+        const row=deriveRowFixups(r);
+        if(row.Team && row.Liga) tlSet.add(`${row.Team} - ${row.Liga}`);
+        if(row.Gegner) oppSet.add(row.Gegner);
+      });
+      tlSel.innerHTML = ['<option value="">Alle</option>',...Array.from(tlSet).sort().map(v=>`<option>${v}</option>`)].join('');
+      oppSel.innerHTML = ['<option value="">Alle</option>',...Array.from(oppSet).sort().map(v=>`<option>${v}</option>`)].join('');
     }
 
     function applyFilters(){
       const wd = document.getElementById('weekday').value;
       const ha = document.getElementById('homeAway').value;
       const tl = document.getElementById('teamLeague').value;
+      const opp = document.getElementById('opponent').value;
       const hidePastActive = document.getElementById('hidePast').classList.contains('active');
-      let rows=[...DATA];
+      let rows=DATA.map(deriveRowFixups);
       if(hidePastActive){
         const today = todayIso();
         rows = rows.filter(r => (r.Datum||'') >= today);
@@ -209,13 +242,13 @@
       if(wd) rows=rows.filter(r=>(r.Wochentag||'')===wd);
       if(ha) rows=rows.filter(r=>(r["TSV Heim/Auswärts"]||'')===ha);
       if(tl) rows=rows.filter(r=>`${r.Team||''} - ${r.Liga||''}`===tl);
+      if(opp) rows=rows.filter(r=>(r.Gegner||'')===opp);
       rows.sort((a,b)=>{const ad=new Date((a.Datum||'1970-01-01')+'T'+(a.Uhrzeit||'00:00')); const bd=new Date((b.Datum||'1970-01-01')+'T'+(b.Uhrzeit||'00:00')); if(ad-bd!==0) return ad-bd; return (a.Team||'').localeCompare(b.Team||'');});
       renderRows(rows);
     }
 
-    // Auto-apply on change
     function bindAutoFilters(){
-      ["weekday","homeAway","teamLeague"].forEach(id=>{
+      ["weekday","homeAway","teamLeague","opponent"].forEach(id=>{
         const el = document.getElementById(id);
         el.addEventListener('change', applyFilters);
       });
@@ -240,22 +273,11 @@
       rows.forEach(tr=>{
         const tds = tr.querySelectorAll('td');
         if(!tds.length) return;
-        const cells = [...tds].map(td=>{
-          let text = td.textContent.trim();
-          if(text.includes(';') || text.includes('"') || text.includes('\n')){
-            text = '"' + text.replace(/"/g,'""') + '"';
-          }
-          return text;
-        });
+        const cells = [...tds].map(td=>{let text = td.textContent.trim(); if(text.includes(';') || text.includes('"') || text.includes('\n')){text = '"' + text.replace(/"/g,'""') + '"';} return text;});
         csv.push(cells.join(';'));
       });
       const blob = new Blob([csv.join('\n')], {type: 'text/csv;charset=utf-8'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'tsv-spielplan.csv';
-      a.click();
-      URL.revokeObjectURL(url);
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'tsv-spielplan.csv'; a.click(); URL.revokeObjectURL(url);
     }
 
     async function loadData(){
@@ -264,9 +286,9 @@
         const res=await fetch('tsv_spiele_gesamt.json',{cache:'no-store'});
         if(!res.ok) throw new Error('HTTP '+res.status);
         DATA=await res.json();
-        fillTeamLeagueOptions();
+        fillSelects();
         bindAutoFilters();
-        renderRows(DATA);
+        applyFilters();
       }catch(err){
         status.style.display='block';
         status.textContent='Fehler: tsv_spiele_gesamt.json nicht gefunden oder ungültig.';
