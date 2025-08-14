@@ -1,222 +1,319 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spielplan 2025/26 – TSV Unterpfaffenhofen-Germering Kegeln</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TSV Unterpfaffenhofen – Spielpläne G1/G2/G3</title>
 <style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  background: #f5f5f5;
-}
+  :root{
+    --tsv-blue:#0056b3;
+    --bg:#f6f7f9;
+    --card:#fff;
+    --text:#1f2937;
+    --muted:#6b7280;
+    --line:#e5e7eb;
+  }
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial,"Noto Sans",sans-serif}
+  .topbar{background:var(--tsv-blue);color:#fff}
+  .topbar .wrap{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;gap:12px;align-items:center}
+  .topbar img{height:40px;background:#fff;border-radius:8px;padding:4px}
+  .title{font-weight:800}
 
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
-}
+  .container{max-width:1100px;margin:0 auto;padding:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.05);padding:14px;margin-bottom:14px}
 
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 15px;
-  justify-content: center;
-}
+  /* Filter */
+  .filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+  .filters label{font-size:.85rem;color:var(--muted);display:block;margin:0 0 6px}
+  .filters select,.filters input[type="checkbox"]{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:#fff}
+  .filters .toggle{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff}
 
-select {
-  padding: 5px;
-}
+  /* Legend */
+  .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:.9rem;color:var(--muted);margin-top:8px}
+  .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:#fff}
+  .dot{width:12px;height:12px;border-radius:50%}
+  .g1{background:#ef4444}
+  .g2{background:#eab308}
+  .g3{background:#22c55e}
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-}
+  /* Exports */
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .btn{padding:10px 14px;border-radius:8px;border:1px solid var(--line);background:var(--tsv-blue);color:#fff;font-weight:700;cursor:pointer}
+  .btn.light{background:#fff;color:var(--text)}
 
-th, td {
-  border: 1px solid #ccc;
-  padding: 6px 8px;
-  text-align: left;
-}
+  /* Table */
+  .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+  table{width:100%;border-collapse:collapse;min-width:860px}
+  thead th{font-size:.8rem;color:var(--muted);font-weight:700;text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);background:#fafafa;position:sticky;top:0}
+  tbody td{padding:10px 12px;border-bottom:1px solid var(--line);background:#fff;vertical-align:middle}
+  tbody tr:hover{background:#f9fafb}
+  .team-chip{display:inline-flex;gap:6px;align-items:center;padding:4px 8px;border-radius:6px;background:#f3f4f6;border:1px solid var(--line)}
+  .heim-auswaerts{white-space:nowrap}
 
-th {
-  background: #004080;
-  color: white;
-}
+  /* MS Teams (!) – grauer Kreis, weißes Ausrufezeichen */
+  .ms-alert{display:inline-grid;place-items:center;background:#6b7280;color:#fff;font-weight:800;font-size:.7rem;width:18px;height:18px;border-radius:50%;margin-left:6px;line-height:18px;vertical-align:middle}
 
-tr:nth-child(even) {
-  background: #f9f9f9;
-}
+  /* Print */
+  @media print{
+    .topbar,.filters,.actions,.legend{display:none!important}
+    .container{max-width:100%;padding:0}
+    table{min-width:auto}
+    tbody td{border:1px solid #999}
+  }
 
-.team-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.team-chip .dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.heim-auswaerts {
-  white-space: nowrap;
-}
-
-.ms-alert {
-  display: inline-block;
-  margin-left: 4px;
-  background-color: #666;
-  color: #fff;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  text-align: center;
-  font-size: 12px;
-  line-height: 18px;
-  font-weight: bold;
-}
-
+  /* Mobile */
+  @media (max-width: 760px){
+    .filters{grid-template-columns:1fr 1fr}
+    .table-wrap{border-radius:8px}
+    table{min-width:680px}
+    .actions .btn{flex:1 1 auto}
+  }
 </style>
 </head>
 <body>
+  <div class="topbar">
+    <div class="wrap">
+      <img src="https://tsv-ug.de/wp-content/uploads/2024/02/tsv-logo.webp" alt="TSV Logo">
+      <div class="title">TSV UG Kegeln – Spielpläne 2025/26</div>
+    </div>
+  </div>
 
-<h1>Spielplan 2025/26</h1>
+  <div class="container">
+    <section class="card">
+      <div class="filters" id="filters">
+        <div>
+          <label for="ha">Heim/Auswärts</label>
+          <select id="ha">
+            <option value="">Alle</option>
+            <option value="Heim">Heim</option>
+            <option value="Auswärts">Auswärts</option>
+          </select>
+        </div>
+        <div>
+          <label for="teamLiga">Mannschaft · Liga</label>
+          <select id="teamLiga">
+            <option value="">Alle</option>
+            <option value="G1|Kreisliga 2">G1 – Kreisliga 2</option>
+            <option value="G2|Kreisklasse 1">G2 – Kreisklasse 1</option>
+            <option value="G3|Kreisklasse 2">G3 – Kreisklasse 2</option>
+          </select>
+        </div>
+        <div>
+          <label for="gegner">Gegner</label>
+          <select id="gegner"><option value="">Alle</option></select>
+        </div>
+        <div>
+          <label for="weekday">Wochentag</label>
+          <select id="weekday">
+            <option value="">Alle</option>
+            <option>Mo</option><option>Di</option><option>Mi</option><option>Do</option><option>Fr</option><option>Sa</option><option>So</option>
+          </select>
+        </div>
+        <div class="toggle">
+          <input type="checkbox" id="hidePast" />
+          <label for="hidePast" style="margin:0">Vergangene Spiele ausblenden</label>
+        </div>
+      </div>
+      <div class="legend">
+        <span class="pill"><span class="dot g1"></span> G1</span>
+        <span class="pill"><span class="dot g2"></span> G2</span>
+        <span class="pill"><span class="dot g3"></span> G3</span>
+        <span class="pill">(!) kennzeichnet Tage mit mehreren Spielen</span>
+      </div>
+      <div class="actions">
+        <button class="btn" id="btnPdf">Als PDF herunterladen</button>
+        <button class="btn light" id="btnIcs">Kalender (ICS) exportieren</button>
+        <button class="btn light" id="btnExcel">Als Excel herunterladen</button>
+      </div>
+    </section>
 
-<div class="filters">
-  <label>Team:
-    <select id="teamFilter">
-      <option value="">Alle</option>
-    </select>
-  </label>
-  <label>Gegner:
-    <select id="gegnerFilter">
-      <option value="">Alle</option>
-    </select>
-  </label>
-  <label>Heim/Auswärts:
-    <select id="heimFilter">
-      <option value="">Alle</option>
-      <option value="Heim">Heim</option>
-      <option value="Auswärts">Auswärts</option>
-    </select>
-  </label>
-</div>
-
-<table id="spielplan">
-<thead>
-  <tr>
-    <th>Datum</th>
-    <th>Wochentag</th>
-    <th>Uhrzeit</th>
-    <th>Team</th>
-    <th>Heim</th>
-    <th></th>
-    <th>Auswärts</th>
-    <th>H/A</th>
-    <th>Liga</th>
-  </tr>
-</thead>
-<tbody></tbody>
-</table>
+    <section class="card">
+      <div class="table-wrap">
+        <table id="games">
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Wochentag</th>
+              <th>Uhrzeit</th>
+              <th>Team</th>
+              <th>Heim</th>
+              <th></th>
+              <th>Auswärts</th>
+              <th>TSV</th>
+              <th>Liga</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
 
 <script>
-let SPIELE = [];
-let DATE_COUNT = {};
+  // ------ Utils ------
+  const fmtDE = (iso) => {
+    if(!iso) return '';
+    const [y,m,d] = iso.split('-');
+    return `${d}.${m}.${y}`;
+  };
+  const parseISO = (iso, time='00:00') => new Date(`${iso}T${time}`);
 
-function fmtDE(d){
-  const [y,m,day] = d.split("-");
-  return `${day}.${m}.${y}`;
-}
+  function teamColor(t){
+    if(t==='G1') return '#ef4444';
+    if(t==='G2') return '#eab308';
+    return '#22c55e';
+  }
 
-function teamColor(team){
-  if (team === 'G1') return 'red';
-  if (team === 'G2') return 'yellow';
-  if (team === 'G3') return 'green';
-  return '#ccc';
-}
+  // ------ State ------
+  let ALL = [];
+  let DATE_COUNT = {};
 
-function render(){
-  const tbody = document.querySelector('#spielplan tbody');
-  tbody.innerHTML = "";
-  const tf = document.getElementById('teamFilter').value;
-  const gf = document.getElementById('gegnerFilter').value;
-  const hf = document.getElementById('heimFilter').value;
-
-  SPIELE.filter(r => 
-    (!tf || r.Team === tf) &&
-    (!gf || r.Gegner === gf) &&
-    (!hf || r.HeimAuswärts === hf)
-  ).forEach(r => {
-    const tr = document.createElement('tr');
-
-    // Datum + (!) falls mehrere Spiele am Tag
-    const tdDate = document.createElement('td');
-    tdDate.style.whiteSpace = 'nowrap';
-    tdDate.textContent = fmtDE(r.Datum);
-    if ((DATE_COUNT[r.Datum]||0) > 1){
-      const alert = document.createElement('span');
-      alert.className = 'ms-alert';
-      alert.textContent = '!';
-      tdDate.appendChild(alert);
-    }
-    tr.appendChild(tdDate);
-
-    tr.innerHTML += `
-      <td>${r.Wochentag||''}</td>
-      <td>${r.Uhrzeit||''}</td>
-      <td>
-        <span class="team-chip">
-          <span class="dot" style="background:${teamColor(r.Team||'')}"></span>
-          ${r.Team||''}
-        </span>
-      </td>
-      <td>${r.Heim||''}</td>
-      <td style="text-align:center">–</td>
-      <td>${r.Auswärts||''}</td>
-      <td class="heim-auswaerts">${r.HeimAuswärts||''}</td>
-      <td>${r.Liga||''}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-fetch('tsv_spiele_gesamt.json')
-  .then(r => r.json())
-  .then(data => {
-    SPIELE = data;
+  // ------ Load JSON ------
+  async function loadData(){
+    const res = await fetch('tsv_spiele_gesamt.json', {cache:'no-store'});
+    const data = await res.json();
+    // Berechne DATE_COUNT pro ISO-Datum
     DATE_COUNT = {};
-    SPIELE.forEach(r => {
-      DATE_COUNT[r.Datum] = (DATE_COUNT[r.Datum]||0)+1;
+    data.forEach(r => {
+      const k = r.Datum;
+      DATE_COUNT[k] = (DATE_COUNT[k]||0)+1;
     });
-    const teamSet = new Set(), gegnerSet = new Set();
-    SPIELE.forEach(r=>{
-      teamSet.add(r.Team);
-      gegnerSet.add(r.Gegner);
-    });
-    const tsel = document.getElementById('teamFilter');
-    [...teamSet].sort().forEach(t=>{
-      const opt = document.createElement('option');
-      opt.value = t;
-      opt.textContent = t;
-      tsel.appendChild(opt);
-    });
-    const gsel = document.getElementById('gegnerFilter');
-    [...gegnerSet].sort().forEach(t=>{
-      const opt = document.createElement('option');
-      opt.value = t;
-      opt.textContent = t;
-      gsel.appendChild(opt);
-    });
+    ALL = data;
+    populateOpponentFilter(data);
     render();
+  }
+
+  // ------ Filters ------
+  function getFilters(){
+    const ha = document.getElementById('ha').value;
+    const tl = document.getElementById('teamLiga').value; // "G1|Kreisliga 2"
+    const gegner = document.getElementById('gegner').value;
+    const wd = document.getElementById('weekday').value;
+    const hidePast = document.getElementById('hidePast').checked;
+    return {ha, tl, gegner, wd, hidePast};
+  }
+
+  function applyFilters(rows){
+    const f = getFilters();
+    let out = [...rows];
+    if(f.ha) out = out.filter(r => (r["TSV Heim/Auswärts"]||'') === f.ha);
+    if(f.tl){
+      const [team, liga] = f.tl.split('|');
+      out = out.filter(r => (r.Team||'')===team && (r.Liga||'')===liga);
+    }
+    if(f.gegner) out = out.filter(r => (r.Gegner||'')===f.gegner);
+    if(f.wd) out = out.filter(r => (r.Wochentag||'')===f.wd);
+    if(f.hidePast){
+      const today = new Date(); today.setHours(0,0,0,0);
+      out = out.filter(r => parseISO(r.Datum, r.Uhrzeit||'00:00') >= today);
+    }
+    out.sort((a,b)=>{
+      const ad = parseISO(a.Datum, a.Uhrzeit||'00:00');
+      const bd = parseISO(b.Datum, b.Uhrzeit||'00:00');
+      if(ad - bd !== 0) return ad - bd;
+      return (a.Team||'').localeCompare(b.Team||'');
+    });
+    return out;
+  }
+
+  function populateOpponentFilter(rows){
+    const sel = document.getElementById('gegner');
+    const vals = Array.from(new Set(rows.map(r => r.Gegner).filter(Boolean))).sort((a,b)=>a.localeCompare(b));
+    sel.innerHTML = '<option value="">Alle</option>' + vals.map(v=>`<option>${v}</option>`).join('');
+  }
+
+  // ------ Render ------
+  function render(){
+    const tb = document.querySelector('#games tbody');
+    tb.innerHTML = '';
+    const rows = applyFilters(ALL);
+    rows.forEach(r=>{
+      const tr = document.createElement('tr');
+
+      // Datum (mit (!) direkt dahinter, kein Zeilenumbruch)
+      const tdDate = document.createElement('td');
+      tdDate.style.whiteSpace = 'nowrap';
+      tdDate.textContent = fmtDE(r.Datum);
+      if ((DATE_COUNT[r.Datum]||0) > 1){
+        const alert = document.createElement('span');
+        alert.className = 'ms-alert';
+        alert.textContent = '!';
+        tdDate.appendChild(alert);
+      }
+      tr.appendChild(tdDate);
+
+      // Rest
+      const tsvSide = r["TSV Heim/Auswärts"]||'';
+      const tag = tsvSide==='Heim' ? '<span class="team-chip heim-auswaerts">Heim</span>' :
+                  (tsvSide==='Auswärts' ? '<span class="team-chip heim-auswaerts">Auswärts</span>' : '');
+
+      tr.innerHTML += `
+        <td>${r.Wochentag||''}</td>
+        <td>${r.Uhrzeit||''}</td>
+        <td>
+          <span class="team-chip">
+            <span class="dot" style="background:${teamColor(r.Team||'')}"></span>
+            ${r.Team||''}
+          </span>
+        </td>
+        <td>${r.Heim||''}</td>
+        <td style="text-align:center">–</td>
+        <td>${r.Auswärts||''}</td>
+        <td class="heim-auswaerts">${tag}</td>
+        <td>${r.Liga||''}</td>
+      `;
+      tb.appendChild(tr);
+    });
+  }
+
+  // ------ Exports ------
+  function downloadPDF(){ window.print(); }
+
+  function exportICS(){
+    const rows = applyFilters(ALL);
+    const pad = n => String(n).padStart(2,'0');
+    const lines = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//TSV Unterpfaffenhofen//Spielpläne//DE'];
+    rows.forEach(r=>{
+      if(!r.Datum) return;
+      const dt = parseISO(r.Datum, r.Uhrzeit||'00:00');
+      const start = dt.getFullYear()+pad(dt.getMonth()+1)+pad(dt.getDate())+'T'+pad(dt.getHours())+pad(dt.getMinutes())+'00';
+      const summary = `${r.Team||''} · ${r.Heim||''} - ${r.Auswärts||''}`;
+      const desc = `${r.Liga||''}`;
+      lines.push('BEGIN:VEVENT');
+      lines.push('DTSTART:'+start);
+      lines.push('DTEND:'+start);
+      lines.push('SUMMARY:'+summary.replace(/,/g,'\\,'));
+      lines.push('DESCRIPTION:'+desc.replace(/,/g,'\\,'));
+      lines.push('END:VEVENT');
+    });
+    lines.push('END:VCALENDAR');
+    const blob = new Blob([lines.join('\n')], {type:'text/calendar;charset=utf-8'});
+    const url = URL.createObjectURL(blob); const a = document.createElement('a');
+    a.href = url; a.download = 'tsv-spielplan.ics'; a.click(); URL.revokeObjectURL(url);
+  }
+
+  function exportExcel(){ // CSV (Excel-lesbar)
+    const rows = applyFilters(ALL);
+    // Gegner bleibt im CSV erhalten (nützlich, auch wenn Spalte in der UI entfernt wurde)
+    const header = ['Datum','Wochentag','Uhrzeit','Team','Heim','Auswärts','TSV Heim/Auswärts','Gegner','Liga'];
+    const csv = [header.join(';')].concat(
+      rows.map(r => [fmtDE(r.Datum), r.Wochentag||'', r.Uhrzeit||'', r.Team||'', (r.Heim||'').replace(/;/g,','), (r.Auswärts||'').replace(/;/g,','), r["TSV Heim/Auswärts"]||'', (r.Gegner||'').replace(/;/g,','), r.Liga||''].join(';'))
+    ).join('\n');
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+    const url = URL.createObjectURL(blob); const a = document.createElement('a');
+    a.href = url; a.download = 'tsv-spielplan.csv'; a.click(); URL.revokeObjectURL(url);
+  }
+
+  // ------ Events ------
+  ['ha','teamLiga','gegner','weekday','hidePast'].forEach(id=>{
+    document.getElementById(id).addEventListener('change', render);
   });
+  document.getElementById('btnPdf').addEventListener('click', downloadPDF);
+  document.getElementById('btnIcs').addEventListener('click', exportICS);
+  document.getElementById('btnExcel').addEventListener('click', exportExcel);
 
-document.querySelectorAll('.filters select').forEach(sel=>{
-  sel.addEventListener('change', render);
-});
+  // Init
+  loadData();
 </script>
-
 </body>
 </html>
