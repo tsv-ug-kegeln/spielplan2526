@@ -38,9 +38,21 @@
   .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
   table{width:100%;border-collapse:collapse;min-width:1000px}
   thead th{font-size:.8rem;color:var(--muted);font-weight:700;text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);background:#fafafa;position:sticky;top:0}
-  tbody td{padding:10px 12px;border-bottom:1px solid var(--line);background:#fff;vertical-align:middle;white-space:nowrap}
+  tbody td{padding:10px 12px;border-bottom:1px solid var(--line);background:#fff;vertical-align:middle;/* kein global nowrap */}
   tbody tr:hover{background:#f9fafb}
   tbody tr.month-sep td{border-top:3px solid var(--line-strong);}
+
+  /* Zielgerichtete Spalten-Steuerung (dynamisch) */
+  td.date-cell{white-space:nowrap;}
+  td.wd-cell{width:clamp(48px,6vw,72px);}
+  td.time-cell{white-space:nowrap;width:clamp(56px,7vw,80px);text-align:center;}
+  td.team-cell{white-space:nowrap;}
+  td.sep-cell{width:18px;text-align:center;}
+  td.club-cell{ /* Heim/Auswärts – darf umbrechen, Breite abhängig vom Viewport */
+    white-space:normal;
+    max-width:clamp(140px,18vw,320px);
+  }
+  td.tsv-cell{white-space:nowrap;width:clamp(80px,10vw,120px);}
   td.liga-cell{white-space:nowrap;}
 
   /* Chips */
@@ -67,11 +79,17 @@
   .roster-team li{padding:2px 0;}
 
   /* Mobile */
-  @media (max-width: 760px){
+  @media (max-width:760px){
     .filters{grid-template-columns:1fr 1fr}
     table{min-width:680px}
     .actions .btn{flex:1 1 auto}
     .roster-grid{ grid-template-columns:1fr; }
+
+    /* Wochentag mobil ausblenden (Platz sparen) */
+    #games th:nth-child(2), #games td:nth-child(2){ display:none; }
+
+    /* Vereinsnamen dürfen mobil breiter werden */
+    td.club-cell{ max-width:clamp(160px,40vw,360px); }
   }
 
   /* Print */
@@ -230,7 +248,7 @@
 
       // Datum + Badge
       const tdDate=document.createElement('td');
-      tdDate.style.whiteSpace='nowrap';
+      tdDate.className='date-cell';
       tdDate.textContent=fmtDE(r.Datum);
       const cnt=(DATE_COUNT[r.Datum]||0);
       if(cnt>1){
@@ -245,32 +263,30 @@
       tr.appendChild(tdDate);
 
       // Wochentag / Uhrzeit
-      tr.innerHTML+=`<td>${r.Wochentag||''}</td><td>${r.Uhrzeit||''}</td>`;
+      const tdWd=document.createElement('td'); tdWd.className='wd-cell'; tdWd.textContent=r.Wochentag||''; tr.appendChild(tdWd);
+      const tdTime=document.createElement('td'); tdTime.className='time-cell'; tdTime.textContent=r.Uhrzeit||''; tr.appendChild(tdTime);
 
       // Team (Chip)
-      const teamTd=document.createElement('td');
+      const teamTd=document.createElement('td'); teamTd.className='team-cell';
       const t=(r.Team||'').toUpperCase();
       let teamClass='team-g3'; if(t==='G1')teamClass='team-g1'; else if(t==='G2')teamClass='team-g2';
       teamTd.innerHTML=`<span class="chip ${teamClass}">${t||''}</span>`;
       tr.appendChild(teamTd);
 
       // Heim – Auswärts
-      tr.innerHTML+=`<td>${r.Heim||''}</td><td style="text-align:center">–</td><td>${r.Auswärts||''}</td>`;
+      const tdHeim=document.createElement('td'); tdHeim.className='club-cell'; tdHeim.textContent=r.Heim||''; tr.appendChild(tdHeim);
+      const tdSep=document.createElement('td'); tdSep.className='sep-cell'; tdSep.textContent='–'; tr.appendChild(tdSep);
+      const tdAus=document.createElement('td'); tdAus.className='club-cell'; tdAus.textContent=r.Auswärts||''; tr.appendChild(tdAus);
 
       // TSV Heim/Auswärts
-      const haTd=document.createElement('td');
+      const haTd=document.createElement('td'); haTd.className='tsv-cell';
       const side=r["TSV Heim/Auswärts"]||'';
       if(side==='Heim') haTd.innerHTML=`<span class="chip chip-heim">Heim</span>`;
       else if(side==='Auswärts') haTd.innerHTML=`<span class="chip chip-auswaerts">Auswärts</span>`;
-      else haTd.textContent='';
-      haTd.className='heim-auswaerts';
       tr.appendChild(haTd);
 
-      // Liga (no wrap)
-      const ligaTd=document.createElement('td');
-      ligaTd.textContent=r.Liga||'';
-      ligaTd.className='liga-cell';
-      tr.appendChild(ligaTd);
+      // Liga
+      const ligaTd=document.createElement('td'); ligaTd.className='liga-cell'; ligaTd.textContent=r.Liga||''; tr.appendChild(ligaTd);
 
       tb.appendChild(tr);
     });
