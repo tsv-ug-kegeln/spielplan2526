@@ -12,7 +12,7 @@
     --text:#1f2937;
     --muted:#6b7280;
     --line:#e5e7eb;
-    --line-strong:#cbd5e1; /* NEW: stärkere Linie z.B. für Monatswechsel */
+    --line-strong:#cbd5e1; /* stärkere Linie z.B. für Monatswechsel */
   }
   html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial,"Noto Sans",sans-serif}
   .topbar{background:var(--tsv-blue);color:#fff}
@@ -56,22 +56,41 @@
 
   .heim-auswaerts{white-space:nowrap}
 
-  /* NEW – Badge mit Anzahl Spiele am Datum */
+  /* Badge mit Anzahl Spiele am Datum */
   .ms-badge{
     display:inline-grid;place-items:center;
     min-width:18px;height:18px;padding:0 5px;margin-left:6px;
     border-radius:999px;background:#e5e7eb;color:#111827;
     font-weight:800;font-size:.7rem;line-height:18px;vertical-align:middle;
   }
-  .ms-badge.two{ color:#dc2626; background:#fee2e2; } /* nur Schrift rot? -> Text rot, sehr sanfter roter Hintergrund */
+  .ms-badge.two{ color:#dc2626; background:#fee2e2; } /* Text rot, dezentes Rot als Hintergrund */
 
-  /* Druck */
-  @media print{
-    .topbar,.filters,.actions{display:none!important}
-    .container{max-width:100%;padding:0}
-    table{min-width:auto}
-    tbody td{border:1px solid #999}
-    tbody tr.month-sep td{border-top:3px solid #000}
+  /* Roster (ausklappbar) */
+  details.roster summary{
+    list-style:none;
+    cursor:pointer;
+    font-weight:800;
+    font-size:1.05rem;
+    display:flex;align-items:center;gap:.6rem;
+    padding:8px 0;
+  }
+  details.roster summary::-webkit-details-marker{display:none}
+  details.roster summary::before{
+    content:"▸";transition:transform .2s ease;display:inline-block;
+  }
+  details[open].roster summary::before{ transform:rotate(90deg); }
+
+  .roster-grid{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:10px
+  }
+  .roster-team h3{
+    margin:.2rem 0 .4rem;font-size:1rem;
+  }
+  .roster-team ul{
+    margin:0;padding-left:1.1rem;
+  }
+  .roster-team li{
+    padding:2px 0;
   }
 
   /* Mobile */
@@ -80,6 +99,16 @@
     .table-wrap{border-radius:8px}
     table{min-width:680px}
     .actions .btn{flex:1 1 auto}
+    .roster-grid{ grid-template-columns:1fr; }
+  }
+
+  /* Druck */
+  @media print{
+    .topbar,.filters,.actions{display:none!important}
+    .container{max-width:100%;padding:0}
+    table{min-width:auto}
+    tbody td{border:1px solid #999}
+    tbody tr.month-sep td{border-top:3px solid #000}
   }
 </style>
 </head>
@@ -132,7 +161,7 @@
         <button class="btn" id="btnPdf">Als PDF herunterladen</button>
         <button class="btn" id="btnIcs">Kalender (ICS) exportieren</button>
         <button class="btn" id="btnExcel">Als Excel herunterladen</button>
-        <button class="btn" id="btnReset">Filter zurücksetzen</button><!-- NEW -->
+        <button class="btn" id="btnReset">Filter zurücksetzen</button>
       </div>
     </section>
 
@@ -156,6 +185,48 @@
         </table>
       </div>
     </section>
+
+    <!-- Ausklappbarer Bereich: Aktuelle Mannschaftsbesetzung -->
+    <section class="card">
+      <details class="roster" id="roster">
+        <summary>Aktuelle Mannschaftsbesetzung</summary>
+        <div class="roster-grid">
+          <div class="roster-team">
+            <h3>Team G1</h3>
+            <ul>
+              <li>Name 1</li>
+              <li>Name 2</li>
+              <li>Name 3</li>
+              <li>Name 4</li>
+              <li>Name 5</li>
+              <li>Name 6</li>
+            </ul>
+          </div>
+          <div class="roster-team">
+            <h3>Team G2</h3>
+            <ul>
+              <li>Name 1</li>
+              <li>Name 2</li>
+              <li>Name 3</li>
+              <li>Name 4</li>
+              <li>Name 5</li>
+              <li>Name 6</li>
+            </ul>
+          </div>
+          <div class="roster-team">
+            <h3>Team G3</h3>
+            <ul>
+              <li>Name 1</li>
+              <li>Name 2</li>
+              <li>Name 3</li>
+              <li>Name 4</li>
+              <li>Name 5</li>
+              <li>Name 6</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+    </section>
   </div>
 
 <script>
@@ -166,7 +237,6 @@
     return `${d}.${m}.${y}`;
   };
   const parseISO = (iso, time='00:00') => {
-    // robuste Zeit-Parse (z.B. leere Uhrzeit)
     const t = (time && /^\d{1,2}:\d{2}$/.test(time)) ? time : '00:00';
     return new Date(`${iso}T${t}`);
   };
@@ -256,7 +326,7 @@
         lastMonth = mk;
       }
 
-      // Datum (kein Zeilenumbruch) + Badge mit Anzahl Spiele (wenn >1)
+      // Datum + Badge (wenn >1 Spiel)
       const tdDate = document.createElement('td');
       tdDate.style.whiteSpace = 'nowrap';
       tdDate.textContent = fmtDE(r.Datum);
