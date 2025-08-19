@@ -73,15 +73,38 @@
   .expand-field{font-size:.9rem;color:var(--text);font-weight:500;}
   .expand-link a{display:inline-block;text-decoration:none;border:1px solid var(--line);padding:8px 12px;border-radius:8px;font-weight:700;color:var(--text);background:#fff;}
 
-  /* Roster (unten) */
-  details.roster summary{list-style:none;cursor:pointer;font-weight:800;font-size:1.05rem;display:flex;align-items:center;gap:.6rem;padding:8px 0;}
-  details.roster summary::-webkit-details-marker{display:none}
-  details.roster summary::before{content:"▸";transition:transform .2s ease;display:inline-block;}
-  details[open].roster summary::before{ transform:rotate(90deg); }
-  .roster-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:10px}
-  .roster-team h3{margin:.2rem 0 .4rem;font-size:1rem;}
-  .roster-team ul{margin:0;padding-left:1.1rem;}
-  .roster-team li{padding:2px 0;}
+ /* Roster (unten) */
+details.roster summary{
+  list-style:none;
+  cursor:pointer;
+  font-weight:700;
+  font-size:.95rem;           /* ähnlich Filter */
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  padding:10px 0;
+}
+details.roster summary::-webkit-details-marker{display:none}
+details.roster summary::before{content:"▸";transition:transform .2s ease;display:inline-block;}
+details[open].roster summary::before{ transform:rotate(90deg); }
+
+.roster-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:10px}
+.roster-team h3{margin:.2rem 0 .4rem;font-size:.9rem;color:var(--muted);}
+.roster-team ul{margin:0;padding-left:1.1rem;}
+.roster-team li{padding:2px 0;font-size:.9rem;}
+
+.expand-link a{ 
+  display:inline-block;
+  text-decoration:none;
+  padding:10px 14px;
+  border-radius:8px;
+  font-weight:700;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--text);
+}
+.expand-link a:hover{ background:#f3f4f6; }
 
   /* Mobile */
   @media (max-width:760px){
