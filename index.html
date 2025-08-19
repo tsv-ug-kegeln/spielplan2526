@@ -22,11 +22,6 @@
     --success:#10b981;
     --warning:#f59e0b;
     --error:#ef4444;
-    --spacing-xs:4px;
-    --spacing-sm:8px;
-    --spacing-md:12px;
-    --spacing-lg:16px;
-    --border-radius:8px;
     --transition:200ms ease;
     --shadow:0 2px 8px rgba(0,0,0,.05);
     --shadow-hover:0 4px 16px rgba(0,0,0,.1);
@@ -41,43 +36,54 @@
   @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 
   /* Error */
-  .error-message{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:var(--spacing-md);border-radius:var(--border-radius);margin-bottom:var(--spacing-md);display:none}
+  .error-message{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:12px;border-radius:8px;margin-bottom:14px;display:none}
 
   /* Topbar */
   .topbar{background:linear-gradient(135deg,var(--tsv-blue),var(--tsv-blue-dark));color:#fff;box-shadow:var(--shadow)}
-  .topbar .wrap{max-width:1300px;margin:0 auto;padding:var(--spacing-lg) 20px;display:flex;gap:14px;align-items:center}
-  .topbar img{height:44px;background:#fff;border-radius:var(--border-radius);padding:4px;transition:transform var(--transition)}
+  .topbar .wrap{max-width:1300px;margin:0 auto;padding:16px 20px;display:flex;gap:14px;align-items:center}
+  .topbar img{height:44px;background:#fff;border-radius:8px;padding:4px;transition:transform var(--transition)}
   .topbar img:hover{transform:scale(1.05)}
   .title{font-weight:800;font-size:clamp(1.4rem,3.2vw,2.2rem);line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.1)}
 
   .container{max-width:1300px;margin:0 auto;padding:18px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:14px;margin-bottom:14px;transition:box-shadow var(--transition)}
-  .card:hover{box-shadow:var(--shadow-hover)}
 
   /* Filter */
-  .filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:var(--spacing-md)}
+  .filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:12px}
   .filters label{font-size:.85rem;color:var(--muted);display:block;margin:0 0 6px;font-weight:600}
-  .filters select,.filters input[type="text"]{width:100%;padding:10px 12px;border-radius:var(--border-radius);border:1px solid var(--line);background:#fff;transition:border-color var(--transition),box-shadow var(--transition)}
+  .filters select,.filters input[type="text"]{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:#fff;transition:border-color var(--transition),box-shadow var(--transition)}
   .filters select:focus,.filters input[type="text"]:focus{outline:none;border-color:var(--tsv-blue);box-shadow:0 0 0 3px rgba(0,86,179,.1)}
-  .filters .toggle{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--border-radius);background:#fff;cursor:pointer;transition:background-color var(--transition)}
+  .filters .toggle{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;transition:background-color var(--transition)}
   .filters .toggle:hover{background:#f9fafb}
 
+  /* Search */
+  .search-container{position:relative}
+  .search-input{padding-left:40px}
+  .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+  .search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;border-radius:4px;opacity:0;transition:opacity var(--transition)}
+  .search-clear:hover{background:#f3f4f6;color:var(--text)}
+  .search-clear.visible{opacity:1}
+
+  /* Quick filters */
+  .quick-filters{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+  .quick-filter{padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;font-size:.85rem;cursor:pointer;transition:all var(--transition)}
+  .quick-filter:hover{background:#f3f4f6}
+  .quick-filter.active{background:var(--tsv-blue);color:#fff;border-color:var(--tsv-blue)}
+
   /* Stats */
-  .stats{display:flex;gap:var(--spacing-md);margin-bottom:var(--spacing-md);flex-wrap:wrap}
-  .stat{background:#f8fafc;border:1px solid var(--line);border-radius:var(--border-radius);padding:var(--spacing-sm) var(--spacing-md);text-align:center;min-width:100px}
+  .stats{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .stat{background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:8px 12px;text-align:center;min-width:100px}
   .stat-value{font-size:1.2rem;font-weight:800;color:var(--tsv-blue)}
   .stat-label{font-size:.8rem;color:var(--muted);margin-top:2px}
 
   /* Aktionen */
   .actions{display:flex;gap:10px;flex-wrap:wrap}
-  .btn{padding:10px 14px;border-radius:var(--border-radius);border:1px solid var(--line);background:#fff;color:var(--text);font-weight:700;cursor:pointer;transition:all var(--transition);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+  .btn{padding:10px 14px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--text);font-weight:700;cursor:pointer;transition:all var(--transition);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
   .btn:hover{background:#f3f4f6;transform:translateY(-1px);box-shadow:var(--shadow)}
-  .btn:active{transform:translateY(0)}
   .btn-primary{background:var(--tsv-blue);color:#fff;border-color:var(--tsv-blue)}
   .btn-primary:hover{background:var(--tsv-blue-dark)}
 
   /* Tabelle */
-  .table-container{position:relative}
   .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff;max-height:70vh}
   table{width:100%;border-collapse:collapse;min-width:1000px}
   thead th{font-size:.8rem;color:var(--muted);font-weight:700;text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);background:#fafafa;position:sticky;top:0;z-index:10;cursor:pointer;user-select:none;transition:background-color var(--transition)}
@@ -91,8 +97,8 @@
   tbody tr.month-sep td{border-top:3px solid var(--line-strong)}
   tbody tr.today td{background:#fef3cd;border-left:3px solid var(--warning)}
 
-  /* dynamische Spaltenbreiten */
-  td.date-cell{white-space:nowrap;cursor:pointer;position:relative}
+  /* Spaltenbreiten */
+  td.date-cell{white-space:nowrap;cursor:pointer}
   td.wd-cell{width:clamp(48px,6vw,72px)}
   td.time-cell{white-space:nowrap;width:clamp(56px,7vw,80px);text-align:center}
   td.team-cell{white-space:nowrap}
@@ -103,7 +109,6 @@
 
   /* Chips */
   .chip{display:inline-block;padding:4px 8px;border-radius:6px;font-weight:700;font-size:.85rem;white-space:nowrap;border:1px solid rgba(0,0,0,.06);transition:transform var(--transition)}
-  .chip:hover{transform:scale(1.05)}
   .team-g1{background:#fca5a5;border-color:#f87171}
   .team-g2{background:#fde68a;border-color:#facc15}
   .team-g3{background:#86efac;border-color:#4ade80}
@@ -111,53 +116,33 @@
   .chip-auswaerts{background:#bfdbfe;border-color:#3b82f6}
 
   /* Badge Mehrfachspiele */
-  .ms-badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:999px;background:#e5e7eb;color:#111827;font-weight:800;font-size:.7rem;line-height:18px;vertical-align:middle;animation:pulse 2s ease-in-out infinite}
+  .ms-badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:999px;background:#e5e7eb;color:#111827;font-weight:800;font-size:.7rem;line-height:18px;vertical-align:middle}
   .ms-badge.two{color:#dc2626;background:#fee2e2}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
 
   /* Chevron + Expand-Zeile */
   .chev{display:inline-block;width:18px;height:18px;margin-right:6px;transform:rotate(0deg);transition:transform var(--transition);font-weight:900;color:#6b7280;user-select:none}
   .row-open .chev{transform:rotate(90deg);color:#374151}
   .expand-row td{background:#fcfcfd;border-top:0;border-bottom:1px solid var(--line);padding-top:6px;padding-bottom:12px}
-  .expand-row{transition:all var(--transition)}
   .expand-box{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:center}
   .expand-field{font-size:.9rem;color:var(--text);font-weight:500}
-  .expand-link a{display:inline-block;text-decoration:none;border:1px solid var(--line);padding:8px 12px;border-radius:var(--border-radius);font-weight:700;color:var(--text);background:#fff;transition:all var(--transition)}
+  .expand-link a{display:inline-block;text-decoration:none;border:1px solid var(--line);padding:8px 12px;border-radius:8px;font-weight:700;color:var(--text);background:#fff;transition:all var(--transition)}
   .expand-link a:hover{background:var(--tsv-blue);color:#fff;transform:translateY(-1px)}
 
-  /* Search */
-  .search-container{position:relative}
-  .search-input{padding-left:40px}
-  .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
-  .search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;border-radius:4px;opacity:0;transition:opacity var(--transition)}
-  .search-clear:hover{background:#f3f4f6;color:var(--text)}
-  .search-clear.visible{opacity:1}
-
-  /* Quick filters */
-  .quick-filters{display:flex;gap:var(--spacing-sm);margin:var(--spacing-md) 0;flex-wrap:wrap}
-  .quick-filter{padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;font-size:.85rem;cursor:pointer;transition:all var(--transition)}
-  .quick-filter:hover{background:#f3f4f6}
-  .quick-filter.active{background:var(--tsv-blue);color:#fff;border-color:var(--tsv-blue)}
-
   /* Roster */
-  details.roster{transition:all var(--transition)}
   details.roster summary{list-style:none;cursor:pointer;font-weight:800;font-size:1.05rem;display:flex;align-items:center;gap:.6rem;padding:8px 0;transition:color var(--transition)}
   details.roster summary::-webkit-details-marker{display:none}
   details.roster summary::before{content:"▸";transition:transform var(--transition);display:inline-block}
   details.roster summary:hover{color:var(--tsv-blue)}
   details[open].roster summary::before{transform:rotate(90deg)}
-  .roster-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:10px;animation:fadeIn .3s ease}
-  .roster-team{background:#f8fafc;border:1px solid var(--line);border-radius:var(--border-radius);padding:var(--spacing-md)}
+  .roster-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:10px}
+  .roster-team{background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:12px}
   .roster-team h3{margin:.2rem 0 .4rem;font-size:1rem;color:var(--tsv-blue)}
   .roster-team ul{margin:0;padding-left:1.1rem}
-  .roster-team li{padding:2px 0;transition:color var(--transition)}
-  .roster-team li:hover{color:var(--tsv-blue)}
-
-  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .roster-team li{padding:2px 0}
 
   /* Empty state */
   .empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
-  .empty-state-icon{font-size:3rem;margin-bottom:var(--spacing-md);opacity:.5}
+  .empty-state-icon{font-size:3rem;margin-bottom:12px;opacity:.5}
 
   /* Mobile */
   @media (max-width:760px){
@@ -182,9 +167,6 @@
     tbody tr.month-sep td{border-top:3px solid #000}
     .loading-overlay{display:none!important}
   }
-
-  /* Focus states */
-  .btn:focus,.filters select:focus,.filters input:focus{outline:2px solid var(--tsv-blue);outline-offset:2px}
 </style>
 </head>
 <body>
@@ -258,30 +240,28 @@
     </section>
 
     <section class="card">
-      <div class="table-container">
-        <div class="table-wrap">
-          <table id="games">
-            <thead>
-              <tr>
-                <th class="sortable" data-sort="date">Datum</th>
-                <th>Wochentag</th>
-                <th class="sortable" data-sort="time">Uhrzeit</th>
-                <th class="sortable" data-sort="team">Team</th>
-                <th class="sortable" data-sort="home">Heim</th>
-                <th></th>
-                <th class="sortable" data-sort="away">Auswärts</th>
-                <th>TSV</th>
-                <th class="sortable" data-sort="liga">Liga</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <div class="empty-state" id="emptyState" style="display:none">
-          <div class="empty-state-icon">🎳</div>
-          <div>Keine Spiele gefunden</div>
-          <div style="font-size:.9rem;margin-top:8px">Versuchen Sie andere Filtereinstellungen</div>
-        </div>
+      <div class="table-wrap">
+        <table id="games">
+          <thead>
+            <tr>
+              <th class="sortable" data-sort="date">Datum</th>
+              <th>Wochentag</th>
+              <th class="sortable" data-sort="time">Uhrzeit</th>
+              <th class="sortable" data-sort="team">Team</th>
+              <th class="sortable" data-sort="home">Heim</th>
+              <th></th>
+              <th class="sortable" data-sort="away">Auswärts</th>
+              <th>TSV</th>
+              <th class="sortable" data-sort="liga">Liga</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="emptyState" style="display:none">
+        <div class="empty-state-icon">🎳</div>
+        <div>Keine Spiele gefunden</div>
+        <div style="font-size:.9rem;margin-top:8px">Versuchen Sie andere Filtereinstellungen</div>
       </div>
     </section>
 
@@ -307,20 +287,6 @@
   </div>
 
 <script>
-  // ------ Configuration ------
-  const CONFIG = {
-    teams: {
-      G1: { name: 'G1', liga: 'Kreisliga 2', color: 'team-g1' },
-      G2: { name: 'G2', liga: 'Kreisklasse 1', color: 'team-g2' },
-      G3: { name: 'G3', liga: 'Kreisklasse 2', color: 'team-g3' }
-    },
-    dateFormats: {
-      locale: 'de-DE',
-      options: { weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' }
-    },
-    debounceMs: 300
-  };
-
   // ------ State Management ------
   const AppState = {
     data: [],
@@ -334,138 +300,176 @@
       weekday: '',
       hidePast: false,
       search: ''
-    },
-
-    updateFilters(newFilters) {
-      this.filters = { ...this.filters, ...newFilters };
-      this.updateURL();
-    },
-
-    updateURL() {
-      const params = new URLSearchParams();
-      Object.entries(this.filters).forEach(([key, value]) => {
-        if (value) params.set(key, value);
-      });
-      const newURL = params.toString() ? `${window.location.pathname}?${params}` : window.location.pathname;
-      window.history.replaceState({}, '', newURL);
-    },
-
-    loadFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      Object.keys(this.filters).forEach(key => {
-        const value = params.get(key);
-        if (value !== null) {
-          this.filters[key] = key === 'hidePast' ? value === 'true' : value;
-        }
-      });
     }
   };
 
   // ------ Utils ------
-  const Utils = {
-    fmtDE: (iso) => {
-      if (!iso) return '';
-      const [y, m, d] = iso.split('-');
-      return `${d}.${m}.${y}`;
-    },
-
-    parseISO: (iso, time = '00:00') => {
-      const t = (time && /^\d{1,2}:\d{2}$/.test(time)) ? time : '00:00';
-      return new Date(`${iso}T${t}`);
-    },
-
-    monthKey: (iso) => {
-      if (!iso) return '';
-      const [y, m] = iso.split('-');
-      return `${y}-${m}`;
-    },
-
-    isToday: (iso) => {
-      const today = new Date();
-      const gameDate = new Date(iso);
-      return today.toDateString() === gameDate.toDateString();
-    },
-
-    debounce: (func, wait) => {
-      let timeout;
-      return function executedFunction(...args) {
-        const later = () => {
-          clearTimeout(timeout);
-          func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-      };
-    },
-
-    showError: (message) => {
-      const errorEl = document.getElementById('errorMessage');
-      errorEl.textContent = message;
-      errorEl.style.display = 'block';
-      setTimeout(() => {
-        errorEl.style.display = 'none';
-      }, 5000);
-    },
-
-    hideLoading: () => {
-      const overlay = document.getElementById('loadingOverlay');
-      overlay.classList.add('hidden');
-      setTimeout(() => overlay.style.display = 'none', 200);
-    }
+  const fmtDE = (iso) => {
+    if (!iso) return '';
+    const [y, m, d] = iso.split('-');
+    return `${d}.${m}.${y}`;
   };
 
-  // ------ Data Loading ------
-  async function loadData() {
-    try {
-      // Mock data since we don't have the JSON file
-      const mockData = generateMockData();
-      
-      AppState.dateCount = {};
-      mockData.forEach(r => {
-        AppState.dateCount[r.Datum] = (AppState.dateCount[r.Datum] || 0) + 1;
-      });
-      
-      AppState.data = mockData;
-      populateOpponentFilter(mockData);
-      render();
-      Utils.hideLoading();
-    } catch (error) {
-      console.error('Fehler beim Laden der Daten:', error);
-      Utils.showError('Fehler beim Laden der Spielpläne. Bitte versuchen Sie es später erneut.');
-      Utils.hideLoading();
-    }
-  }
+  const parseISO = (iso, time = '00:00') => {
+    const t = (time && /^\d{1,2}:\d{2}$/.test(time)) ? time : '00:00';
+    return new Date(`${iso}T${t}`);
+  };
 
-  // Mock data generator (replace with real fetch)
+  const monthKey = (iso) => {
+    if (!iso) return '';
+    const [y, m] = iso.split('-');
+    return `${y}-${m}`;
+  };
+
+  const isToday = (iso) => {
+    const today = new Date();
+    const gameDate = new Date(iso);
+    return today.toDateString() === gameDate.toDateString();
+  };
+
+  const debounce = (func, wait) => {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  };
+
+  const showError = (message) => {
+    const errorEl = document.getElementById('errorMessage');
+    errorEl.textContent = message;
+    errorEl.style.display = 'block';
+    setTimeout(() => {
+      errorEl.style.display = 'none';
+    }, 5000);
+  };
+
+  const hideLoading = () => {
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.classList.add('hidden');
+    setTimeout(() => overlay.style.display = 'none', 200);
+  };
+
+  // ------ Mock Data Generator ------
   function generateMockData() {
     const teams = ['G1', 'G2', 'G3'];
     const opponents = [
       'SKV München', 'KC Starnberg', 'KSV Dachau', 'TSV Germering',
-      'SKC Weilheim', 'KC Fürstenfeldbruck', 'KV Landsberg', 'TSV Herrsching'
+      'SKC Weilheim', 'KC Fürstenfeldbruck', 'KV Landsberg', 'TSV Herrsching',
+      'SV Gilching', 'KC Pasing', 'TSV Gauting', 'KSV Planegg'
     ];
     const weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+    const ligas = { G1: 'Kreisliga 2', G2: 'Kreisklasse 1', G3: 'Kreisklasse 2' };
     const data = [];
 
-    for (let i = 0; i < 50; i++) {
-      const date = new Date(2025, 8 + Math.floor(i / 6), 1 + (i * 7) % 28);
+    const startDate = new Date(2025, 7, 15); // 15. August 2025
+    
+    for (let i = 0; i < 60; i++) {
+      const gameDate = new Date(startDate);
+      gameDate.setDate(startDate.getDate() + (i * 7) + Math.floor(Math.random() * 3));
+      
       const team = teams[i % 3];
       const opponent = opponents[i % opponents.length];
       const isHome = Math.random() > 0.5;
+      const times = ['19:00', '19:30', '20:00'];
       
       data.push({
-        Datum: date.toISOString().split('T')[0],
-        Wochentag: weekdays[date.getDay() === 0 ? 6 : date.getDay() - 1],
-        Uhrzeit: ['19:30', '20:00', '19:00'][Math.floor(Math.random() * 3)],
+        Datum: gameDate.toISOString().split('T')[0],
+        Wochentag: weekdays[gameDate.getDay() === 0 ? 6 : gameDate.getDay() - 1],
+        Uhrzeit: times[Math.floor(Math.random() * times.length)],
         Team: team,
         Heim: isHome ? 'TSV Unterpfaffenhofen' : opponent,
         Auswärts: isHome ? opponent : 'TSV Unterpfaffenhofen',
         'TSV Heim/Auswärts': isHome ? 'Heim' : 'Auswärts',
         Gegner: opponent,
-        Liga: CONFIG.teams[team].liga
+        Liga: ligas[team]
       });
     }
 
     return data.sort((a, b) => new Date(a.Datum) - new Date(b.Datum));
+  }
+
+  // ------ Data Loading ------
+  async function loadData() {
+    try {
+      // Try to load real data first, fall back to mock data
+      let data;
+      try {
+        const res = await fetch('tsv_spiele_gesamt.json', { cache: 'no-store' });
+        if (res.ok) {
+          data = await res.json();
+        } else {
+          throw new Error('JSON file not found');
+        }
+      } catch {
+        // Use mock data if JSON file doesn't exist
+        data = generateMockData();
+      }
+      
+      AppState.dateCount = {};
+      data.forEach(r => {
+        AppState.dateCount[r.Datum] = (AppState.dateCount[r.Datum] || 0) + 1;
+      });
+      
+      AppState.data = data;
+      populateOpponentFilter(data);
+      loadFiltersFromURL();
+      render();
+      hideLoading();
+    } catch (error) {
+      console.error('Fehler beim Laden der Daten:', error);
+      showError('Fehler beim Laden der Spielpläne. Verwende Beispieldaten.');
+      
+      // Fallback to mock data
+      const data = generateMockData();
+      AppState.dateCount = {};
+      data.forEach(r => {
+        AppState.dateCount[r.Datum] = (AppState.dateCount[r.Datum] || 0) + 1;
+      });
+      AppState.data = data;
+      populateOpponentFilter(data);
+      render();
+      hideLoading();
+    }
+  }
+
+  // ------ URL State Management ------
+  function updateURL() {
+    const params = new URLSearchParams();
+    Object.entries(AppState.filters).forEach(([key, value]) => {
+      if (value && value !== '' && value !== false) {
+        params.set(key, value);
+      }
+    });
+    const newURL = params.toString() ? `${window.location.pathname}?${params}` : window.location.pathname;
+    window.history.replaceState({}, '', newURL);
+  }
+
+  function loadFiltersFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    Object.keys(AppState.filters).forEach(key => {
+      const value = params.get(key);
+      if (value !== null) {
+        AppState.filters[key] = key === 'hidePast' ? value === 'true' : value;
+        
+        // Update UI elements
+        const element = document.getElementById(key);
+        if (element) {
+          if (element.type === 'checkbox') {
+            element.checked = AppState.filters[key];
+          } else {
+            element.value = AppState.filters[key];
+          }
+        }
+      }
+    });
+    
+    // Update search clear button
+    updateSearchClear();
   }
 
   // ------ Filtering ------
@@ -486,10 +490,478 @@
     if (f.hidePast) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      out = out.filter(r => Utils.parseISO(r.Datum, r.Uhrzeit || '00:00') >= today);
+      out = out.filter(r => parseISO(r.Datum, r.Uhrzeit || '00:00') >= today);
     }
 
     // Search filter
     if (f.search) {
       const searchTerm = f.search.toLowerCase();
-      out
+      out = out.filter(r => {
+        return (r.Gegner || '').toLowerCase().includes(searchTerm) ||
+               (r.Liga || '').toLowerCase().includes(searchTerm) ||
+               (r.Team || '').toLowerCase().includes(searchTerm) ||
+               (r.Heim || '').toLowerCase().includes(searchTerm) ||
+               (r.Auswärts || '').toLowerCase().includes(searchTerm);
+      });
+    }
+
+    return applySorting(out);
+  }
+
+  function applySorting(rows) {
+    const { field, direction } = AppState.currentSort;
+    
+    return rows.sort((a, b) => {
+      let aVal, bVal;
+      
+      switch (field) {
+        case 'date':
+          aVal = parseISO(a.Datum, a.Uhrzeit || '00:00');
+          bVal = parseISO(b.Datum, b.Uhrzeit || '00:00');
+          break;
+        case 'time':
+          aVal = a.Uhrzeit || '00:00';
+          bVal = b.Uhrzeit || '00:00';
+          break;
+        case 'team':
+          aVal = a.Team || '';
+          bVal = b.Team || '';
+          break;
+        case 'home':
+          aVal = a.Heim || '';
+          bVal = b.Heim || '';
+          break;
+        case 'away':
+          aVal = a.Auswärts || '';
+          bVal = b.Auswärts || '';
+          break;
+        case 'liga':
+          aVal = a.Liga || '';
+          bVal = b.Liga || '';
+          break;
+        default:
+          return 0;
+      }
+      
+      let comparison = 0;
+      if (aVal instanceof Date && bVal instanceof Date) {
+        comparison = aVal - bVal;
+      } else {
+        comparison = String(aVal).localeCompare(String(bVal));
+      }
+      
+      return direction === 'asc' ? comparison : -comparison;
+    });
+  }
+
+  function populateOpponentFilter(rows) {
+    const sel = document.getElementById('gegner');
+    const vals = Array.from(new Set(rows.map(r => r.Gegner).filter(Boolean))).sort();
+    sel.innerHTML = '<option value="">Alle</option>' + vals.map(v => `<option>${v}</option>`).join('');
+  }
+
+  // ------ Statistics ------
+  function updateStats(rows) {
+    const statsEl = document.getElementById('stats');
+    const total = rows.length;
+    const home = rows.filter(r => r["TSV Heim/Auswärts"] === 'Heim').length;
+    const away = rows.filter(r => r["TSV Heim/Auswärts"] === 'Auswärts').length;
+    const teams = new Set(rows.map(r => r.Team)).size;
+    
+    statsEl.innerHTML = `
+      <div class="stat">
+        <div class="stat-value">${total}</div>
+        <div class="stat-label">Spiele gesamt</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">${home}</div>
+        <div class="stat-label">Heimspiele</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">${away}</div>
+        <div class="stat-label">Auswärtsspiele</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">${teams}</div>
+        <div class="stat-label">Teams aktiv</div>
+      </div>
+    `;
+  }
+
+  // ------ Rendering ------
+  function render() {
+    AppState.filteredData = applyFilters();
+    updateStats(AppState.filteredData);
+    renderTable();
+    updateURL();
+  }
+
+  function renderTable() {
+    const tb = document.querySelector('#games tbody');
+    const emptyState = document.getElementById('emptyState');
+    const rows = AppState.filteredData;
+    
+    tb.innerHTML = '';
+    
+    if (rows.length === 0) {
+      emptyState.style.display = 'block';
+      return;
+    }
+    
+    emptyState.style.display = 'none';
+    let lastMonth = '';
+
+    rows.forEach(r => {
+      // Hauptzeile
+      const tr = document.createElement('tr');
+      
+      // Heute markieren
+      if (isToday(r.Datum)) {
+        tr.classList.add('today');
+      }
+
+      // Monatsbeginn markieren
+      const mk = monthKey(r.Datum);
+      if (mk && mk !== lastMonth) {
+        tr.classList.add('month-sep');
+        lastMonth = mk;
+      }
+
+      // Datum + Badge + Chevron
+      const tdDate = document.createElement('td');
+      tdDate.className = 'date-cell';
+      tdDate.style.cursor = 'pointer';
+      
+      const chev = document.createElement('span');
+      chev.className = 'chev';
+      chev.textContent = '▸';
+      tdDate.appendChild(chev);
+      tdDate.appendChild(document.createTextNode(fmtDE(r.Datum)));
+      
+      const cnt = AppState.dateCount[r.Datum] || 0;
+      if (cnt > 1) {
+        const badge = document.createElement('span');
+        badge.className = 'ms-badge' + (cnt === 2 ? ' two' : '');
+        badge.textContent = String(cnt);
+        badge.title = `${cnt} Spiele am Tag`;
+        tdDate.appendChild(badge);
+      }
+      tr.appendChild(tdDate);
+
+      // Wochentag / Uhrzeit
+      const tdWd = document.createElement('td');
+      tdWd.className = 'wd-cell';
+      tdWd.textContent = r.Wochentag || '';
+      tr.appendChild(tdWd);
+      
+      const tdTime = document.createElement('td');
+      tdTime.className = 'time-cell';
+      tdTime.textContent = r.Uhrzeit || '';
+      tr.appendChild(tdTime);
+
+      // Team (Chip)
+      const teamTd = document.createElement('td');
+      teamTd.className = 'team-cell';
+      const t = (r.Team || '').toUpperCase();
+      let teamClass = 'team-g3';
+      if (t === 'G1') teamClass = 'team-g1';
+      else if (t === 'G2') teamClass = 'team-g2';
+      teamTd.innerHTML = `<span class="chip ${teamClass}">${t || ''}</span>`;
+      tr.appendChild(teamTd);
+
+      // Heim – Auswärts
+      const tdHeim = document.createElement('td');
+      tdHeim.className = 'club-cell';
+      tdHeim.textContent = r.Heim || '';
+      tr.appendChild(tdHeim);
+      
+      const tdSep = document.createElement('td');
+      tdSep.className = 'sep-cell';
+      tdSep.textContent = '–';
+      tr.appendChild(tdSep);
+      
+      const tdAus = document.createElement('td');
+      tdAus.className = 'club-cell';
+      tdAus.textContent = r.Auswärts || '';
+      tr.appendChild(tdAus);
+
+      // TSV Heim/Auswärts
+      const haTd = document.createElement('td');
+      haTd.className = 'tsv-cell';
+      const side = r["TSV Heim/Auswärts"] || '';
+      if (side === 'Heim') {
+        haTd.innerHTML = `<span class="chip chip-heim">Heim</span>`;
+      } else if (side === 'Auswärts') {
+        haTd.innerHTML = `<span class="chip chip-auswaerts">Auswärts</span>`;
+      }
+      tr.appendChild(haTd);
+
+      // Liga
+      const ligaTd = document.createElement('td');
+      ligaTd.className = 'liga-cell';
+      ligaTd.textContent = r.Liga || '';
+      tr.appendChild(ligaTd);
+
+      // Ausklapp-Zeile
+      const ex = document.createElement('tr');
+      ex.className = 'expand-row';
+      ex.style.display = 'none';
+      const exTd = document.createElement('td');
+      exTd.colSpan = 9;
+      exTd.innerHTML = `
+        <div class="expand-box">
+          <div class="expand-field">Bahndienst: <strong>Noch offen</strong></div>
+          <div class="expand-field">Vertretung: <strong>Noch offen</strong></div>
+          <div class="expand-link"><a href="#roster" data-open-roster>Zur Mannschaftsaufstellung</a></div>
+        </div>
+      `;
+      ex.appendChild(exTd);
+
+      function toggleRow() {
+        const open = ex.style.display !== 'none';
+        ex.style.display = open ? 'none' : '';
+        tr.classList.toggle('row-open', !open);
+      }
+      tdDate.addEventListener('click', toggleRow);
+
+      // Roster-Link
+      exTd.addEventListener('click', (e) => {
+        const a = e.target.closest('[data-open-roster]');
+        if (!a) return;
+        const roster = document.getElementById('roster');
+        roster.setAttribute('open', '');
+        setTimeout(() => roster.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+      });
+
+      tb.appendChild(tr);
+      tb.appendChild(ex);
+    });
+  }
+
+  // ------ Sorting ------
+  function handleSort(field) {
+    if (AppState.currentSort.field === field) {
+      AppState.currentSort.direction = AppState.currentSort.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      AppState.currentSort = { field, direction: 'asc' };
+    }
+    
+    // Update header styles
+    document.querySelectorAll('thead th').forEach(th => {
+      th.classList.remove('sort-asc', 'sort-desc');
+    });
+    
+    const header = document.querySelector(`[data-sort="${field}"]`);
+    if (header) {
+      header.classList.add(AppState.currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+    }
+    
+    render();
+  }
+
+  // ------ Quick Filters ------
+  function handleQuickFilter(type) {
+    // Reset all quick filters
+    document.querySelectorAll('.quick-filter').forEach(btn => btn.classList.remove('active'));
+    
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay() + 1);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    
+    switch (type) {
+      case 'today':
+        AppState.filters = { ...AppState.filters, hidePast: true };
+        AppState.filteredData = AppState.data.filter(r => isToday(r.Datum));
+        break;
+      case 'week':
+        AppState.filters = { ...AppState.filters, hidePast: true };
+        AppState.filteredData = AppState.data.filter(r => {
+          const gameDate = new Date(r.Datum);
+          return gameDate >= startOfWeek && gameDate <= endOfWeek;
+        });
+        break;
+      case 'month':
+        AppState.filters = { ...AppState.filters, hidePast: true };
+        AppState.filteredData = AppState.data.filter(r => {
+          const gameDate = new Date(r.Datum);
+          return gameDate >= startOfMonth && gameDate <= endOfMonth;
+        });
+        break;
+      case 'home':
+        AppState.filters = { ...AppState.filters, ha: 'Heim' };
+        document.getElementById('ha').value = 'Heim';
+        break;
+      case 'away':
+        AppState.filters = { ...AppState.filters, ha: 'Auswärts' };
+        document.getElementById('ha').value = 'Auswärts';
+        break;
+    }
+    
+    document.querySelector(`[data-filter="${type}"]`).classList.add('active');
+    render();
+  }
+
+  // ------ Search ------
+  function updateSearchClear() {
+    const clearBtn = document.getElementById('searchClear');
+    clearBtn.classList.toggle('visible', AppState.filters.search.length > 0);
+  }
+
+  const debouncedSearch = debounce((value) => {
+    AppState.filters.search = value;
+    render();
+  }, 300);
+
+  // ------ Export Functions ------
+  function downloadPDF() {
+    window.print();
+  }
+
+  function exportICS() {
+    const rows = AppState.filteredData;
+    const pad = n => String(n).padStart(2, '0');
+    const lines = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//TSV Unterpfaffenhofen//Spielpläne//DE'
+    ];
+    
+    rows.forEach(r => {
+      if (!r.Datum) return;
+      const dt = parseISO(r.Datum, r.Uhrzeit || '00:00');
+      const start = dt.getFullYear() + pad(dt.getMonth() + 1) + pad(dt.getDate()) + 'T' + pad(dt.getHours()) + pad(dt.getMinutes()) + '00';
+      const summary = `${r.Team || ''} · ${r.Heim || ''} - ${r.Auswärts || ''}`;
+      const desc = `${r.Liga || ''}`;
+      
+      lines.push('BEGIN:VEVENT');
+      lines.push('DTSTART:' + start);
+      lines.push('DTEND:' + start);
+      lines.push('SUMMARY:' + summary.replace(/,/g, '\\,'));
+      lines.push('DESCRIPTION:' + desc.replace(/,/g, '\\,'));
+      lines.push('END:VEVENT');
+    });
+    
+    lines.push('END:VCALENDAR');
+    const blob = new Blob([lines.join('\n')], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tsv-spielplan.ics';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportExcel() {
+    const rows = AppState.filteredData;
+    const header = ['Datum', 'Wochentag', 'Uhrzeit', 'Team', 'Heim', 'Auswärts', 'TSV Heim/Auswärts', 'Gegner', 'Liga'];
+    const csv = [header.join(';')].concat(
+      rows.map(r => [
+        fmtDE(r.Datum),
+        r.Wochentag || '',
+        r.Uhrzeit || '',
+        r.Team || '',
+        (r.Heim || '').replace(/;/g, ','),
+        (r.Auswärts || '').replace(/;/g, ','),
+        r["TSV Heim/Auswärts"] || '',
+        (r.Gegner || '').replace(/;/g, ','),
+        r.Liga || ''
+      ].join(';'))
+    ).join('\n');
+    
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tsv-spielplan.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function resetFilters() {
+    AppState.filters = {
+      ha: '',
+      teamLiga: '',
+      gegner: '',
+      weekday: '',
+      hidePast: false,
+      search: ''
+    };
+    
+    ['ha', 'teamLiga', 'gegner', 'weekday', 'search'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('hidePast').checked = false;
+    
+    document.querySelectorAll('.quick-filter').forEach(btn => btn.classList.remove('active'));
+    updateSearchClear();
+    render();
+  }
+
+  // ------ Event Listeners ------
+  function setupEventListeners() {
+    // Filter events
+    ['ha', 'teamLiga', 'gegner', 'weekday'].forEach(id => {
+      document.getElementById(id).addEventListener('change', (e) => {
+        AppState.filters[id] = e.target.value;
+        render();
+      });
+    });
+
+    document.getElementById('hidePast').addEventListener('change', (e) => {
+      AppState.filters.hidePast = e.target.checked;
+      render();
+    });
+
+    // Search events
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('input', (e) => {
+      debouncedSearch(e.target.value);
+      updateSearchClear();
+    });
+
+    document.getElementById('searchClear').addEventListener('click', () => {
+      searchInput.value = '';
+      AppState.filters.search = '';
+      updateSearchClear();
+      render();
+    });
+
+    // Sort events
+    document.querySelectorAll('thead th.sortable').forEach(th => {
+      th.addEventListener('click', () => {
+        const field = th.getAttribute('data-sort');
+        handleSort(field);
+      });
+    });
+
+    // Quick filter events
+    document.querySelectorAll('.quick-filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.getAttribute('data-filter');
+        handleQuickFilter(filter);
+      });
+    });
+
+    // Button events
+    document.getElementById('btnPdf').addEventListener('click', downloadPDF);
+    document.getElementById('btnIcs').addEventListener('click', exportICS);
+    document.getElementById('btnExcel').addEventListener('click', exportExcel);
+    document.getElementById('btnReset').addEventListener('click', resetFilters);
+  }
+
+  // ------ Initialization ------
+  function init() {
+    setupEventListeners();
+    loadData();
+  }
+
+  // Start the application
+  init();
+</script>
+</body>
+</html>
