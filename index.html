@@ -38,20 +38,17 @@
   .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
   table{width:100%;border-collapse:collapse;min-width:1000px}
   thead th{font-size:.8rem;color:var(--muted);font-weight:700;text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);background:#fafafa;position:sticky;top:0}
-  tbody td{padding:10px 12px;border-bottom:1px solid var(--line);background:#fff;vertical-align:middle;/* kein global nowrap */}
+  tbody td{padding:10px 12px;border-bottom:1px solid var(--line);background:#fff;vertical-align:middle}
   tbody tr:hover{background:#f9fafb}
   tbody tr.month-sep td{border-top:3px solid var(--line-strong);}
 
-  /* Zielgerichtete Spalten-Steuerung (dynamisch) */
+  /* dynamische Spaltenbreiten */
   td.date-cell{white-space:nowrap;}
   td.wd-cell{width:clamp(48px,6vw,72px);}
   td.time-cell{white-space:nowrap;width:clamp(56px,7vw,80px);text-align:center;}
   td.team-cell{white-space:nowrap;}
   td.sep-cell{width:18px;text-align:center;}
-  td.club-cell{ /* Heim/Auswärts – darf umbrechen, Breite abhängig vom Viewport */
-    white-space:normal;
-    max-width:clamp(140px,18vw,320px);
-  }
+  td.club-cell{white-space:normal;max-width:clamp(140px,18vw,320px);}
   td.tsv-cell{white-space:nowrap;width:clamp(80px,10vw,120px);}
   td.liga-cell{white-space:nowrap;}
 
@@ -68,7 +65,15 @@
   .ms-badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:999px;background:#e5e7eb;color:#111827;font-weight:800;font-size:.7rem;line-height:18px;vertical-align:middle;}
   .ms-badge.two{ color:#dc2626; background:#fee2e2; }
 
-  /* Roster */
+  /* Chevron + Expand-Zeile */
+  .chev{display:inline-block;width:18px;height:18px;margin-right:6px;transform:rotate(0deg);transition:transform .2s ease;font-weight:900;color:#6b7280;user-select:none;}
+  .row-open .chev{ transform:rotate(90deg); color:#374151; }
+  .expand-row td{background:#fcfcfd;border-top:0;border-bottom:1px solid var(--line);padding-top:6px;padding-bottom:12px;}
+  .expand-box{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:center}
+  .expand-field{font-size:.9rem;color:var(--text);font-weight:500;}
+  .expand-link a{display:inline-block;text-decoration:none;border:1px solid var(--line);padding:8px 12px;border-radius:8px;font-weight:700;color:var(--text);background:#fff;}
+
+  /* Roster (unten) */
   details.roster summary{list-style:none;cursor:pointer;font-weight:800;font-size:1.05rem;display:flex;align-items:center;gap:.6rem;padding:8px 0;}
   details.roster summary::-webkit-details-marker{display:none}
   details.roster summary::before{content:"▸";transition:transform .2s ease;display:inline-block;}
@@ -84,12 +89,10 @@
     table{min-width:680px}
     .actions .btn{flex:1 1 auto}
     .roster-grid{ grid-template-columns:1fr; }
-
-    /* Wochentag mobil ausblenden (Platz sparen) */
+    /* Wochentag mobil ausblenden */
     #games th:nth-child(2), #games td:nth-child(2){ display:none; }
-
-    /* Vereinsnamen dürfen mobil breiter werden */
     td.club-cell{ max-width:clamp(160px,40vw,360px); }
+    .expand-box{ grid-template-columns:1fr; }
   }
 
   /* Print */
@@ -170,7 +173,7 @@
 
     <!-- Mannschaftsbesetzung -->
     <section class="card">
-      <details class="roster">
+      <details class="roster" id="roster">
         <summary>Aktuelle Mannschaftsbesetzung</summary>
         <div class="roster-grid">
           <div class="roster-team"><h3>Team G1</h3><ul><li>Name 1</li><li>Name 2</li><li>Name 3</li><li>Name 4</li><li>Name 5</li><li>Name 6</li></ul></div>
@@ -182,15 +185,15 @@
   </div>
 
 <script>
-  // Utils
+  // ------ Utils ------
   const fmtDE = (iso)=>{if(!iso)return'';const[y,m,d]=iso.split('-');return`${d}.${m}.${y}`};
   const parseISO=(iso,time='00:00')=>{const t=(time&&/^\d{1,2}:\d{2}$/.test(time))?time:'00:00';return new Date(`${iso}T${t}`)};
   const monthKey=(iso)=>{if(!iso)return'';const[y,m]=iso.split('-');return`${y}-${m}`};
 
-  // State
+  // ------ State ------
   let ALL=[],DATE_COUNT={};
 
-  // Load
+  // ------ Load JSON ------
   async function loadData(){
     const res=await fetch('tsv_spiele_gesamt.json',{cache:'no-store'});
     const data=await res.json();
@@ -201,7 +204,7 @@
     render();
   }
 
-  // Filters
+  // ------ Filters ------
   function getFilters(){
     return{
       ha:document.getElementById('ha').value,
@@ -235,21 +238,24 @@
     render();
   }
 
-  // Render
+  // ------ Render ------
   function render(){
     const tb=document.querySelector('#games tbody');tb.innerHTML='';
     const rows=applyFilters(ALL);let lastMonth='';
+
     rows.forEach(r=>{
+      // Hauptzeile
       const tr=document.createElement('tr');
 
       // Monatsbeginn markieren
       const mk=monthKey(r.Datum);
       if(mk&&mk!==lastMonth){tr.classList.add('month-sep');lastMonth=mk;}
 
-      // Datum + Badge
-      const tdDate=document.createElement('td');
-      tdDate.className='date-cell';
-      tdDate.textContent=fmtDE(r.Datum);
+      // Datum + Badge + Chevron (zum Ausklappen)
+      const tdDate=document.createElement('td');tdDate.className='date-cell';tdDate.style.cursor='pointer';
+      const chev=document.createElement('span');chev.className='chev';chev.textContent='▸';
+      tdDate.appendChild(chev);
+      tdDate.appendChild(document.createTextNode(fmtDE(r.Datum)));
       const cnt=(DATE_COUNT[r.Datum]||0);
       if(cnt>1){
         const badge=document.createElement('span');
@@ -288,11 +294,40 @@
       // Liga
       const ligaTd=document.createElement('td'); ligaTd.className='liga-cell'; ligaTd.textContent=r.Liga||''; tr.appendChild(ligaTd);
 
+      // Ausklapp-Zeile
+      const ex=document.createElement('tr'); ex.className='expand-row'; ex.style.display='none';
+      const exTd=document.createElement('td'); exTd.colSpan=9;
+      exTd.innerHTML = `
+        <div class="expand-box">
+          <div class="expand-field">Bahndienst: <strong>Vorname</strong></div>
+          <div class="expand-field">Vertretung: <strong>Vorname</strong></div>
+          <div class="expand-link"><a href="#roster" data-open-roster>Zur Mannschaftsaufstellung</a></div>
+        </div>
+      `;
+      ex.appendChild(exTd);
+
+      function toggleRow(){
+        const open = ex.style.display !== 'none';
+        ex.style.display = open ? 'none' : '';
+        tr.classList.toggle('row-open', !open);
+      }
+      tdDate.addEventListener('click', toggleRow);
+
+      // Link öffnet unten den Roster-Bereich und scrollt hin
+      exTd.addEventListener('click', (e)=>{
+        const a = e.target.closest('[data-open-roster]');
+        if(!a) return;
+        const roster = document.getElementById('roster');
+        roster.setAttribute('open','');
+        setTimeout(()=>roster.scrollIntoView({behavior:'smooth', block:'start'}), 50);
+      });
+
       tb.appendChild(tr);
+      tb.appendChild(ex);
     });
   }
 
-  // Exports
+  // ------ Exports ------
   function downloadPDF(){window.print();}
   function exportICS(){
     const rows=applyFilters(ALL);
@@ -329,7 +364,7 @@
     URL.revokeObjectURL(url);
   }
 
-  // Events
+  // ------ Events ------
   ['ha','teamLiga','gegner','weekday','hidePast'].forEach(id=>{
     document.getElementById(id).addEventListener('change',render);
   });
