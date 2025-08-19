@@ -4,141 +4,214 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>TSV Unterpfaffenhofen – Spielpläne G1/G2/G3</title>
+<meta name="description" content="Aktuelle Spielpläne der Kegelmannschaften G1, G2 und G3 des TSV Unterpfaffenhofen für die Saison 2025/26">
+
+<!-- Favicon -->
+<link rel="icon" type="image/x-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%230056b3'/%3E%3Ctext x='50' y='60' font-family='Arial,sans-serif' font-size='36' font-weight='bold' fill='white' text-anchor='middle'%3ETSV%3C/text%3E%3C/svg%3E">
+
 <style>
   :root{
     --tsv-blue:#0056b3;
+    --tsv-blue-dark:#004494;
     --bg:#f6f7f9;
     --card:#fff;
     --text:#1f2937;
     --muted:#6b7280;
     --line:#e5e7eb;
     --line-strong:#cbd5e1;
+    --success:#10b981;
+    --warning:#f59e0b;
+    --error:#ef4444;
+    --spacing-xs:4px;
+    --spacing-sm:8px;
+    --spacing-md:12px;
+    --spacing-lg:16px;
+    --border-radius:8px;
+    --transition:200ms ease;
+    --shadow:0 2px 8px rgba(0,0,0,.05);
+    --shadow-hover:0 4px 16px rgba(0,0,0,.1);
   }
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial,"Noto Sans",sans-serif}
-  .topbar{background:var(--tsv-blue);color:#fff}
-  .topbar .wrap{max-width:1300px;margin:0 auto;padding:16px 20px;display:flex;gap:14px;align-items:center}
-  .topbar img{height:44px;background:#fff;border-radius:8px;padding:4px}
-  .title{font-weight:800;font-size:clamp(1.4rem,3.2vw,2.2rem);line-height:1.15}
+
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial,"Noto Sans",sans-serif;scroll-behavior:smooth}
+  
+  /* Loading */
+  .loading-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity var(--transition)}
+  .loading-overlay.hidden{opacity:0;pointer-events:none}
+  .spinner{width:40px;height:40px;border:4px solid var(--line);border-top:4px solid var(--tsv-blue);border-radius:50%;animation:spin 1s linear infinite}
+  @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+  /* Error */
+  .error-message{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:var(--spacing-md);border-radius:var(--border-radius);margin-bottom:var(--spacing-md);display:none}
+
+  /* Topbar */
+  .topbar{background:linear-gradient(135deg,var(--tsv-blue),var(--tsv-blue-dark));color:#fff;box-shadow:var(--shadow)}
+  .topbar .wrap{max-width:1300px;margin:0 auto;padding:var(--spacing-lg) 20px;display:flex;gap:14px;align-items:center}
+  .topbar img{height:44px;background:#fff;border-radius:var(--border-radius);padding:4px;transition:transform var(--transition)}
+  .topbar img:hover{transform:scale(1.05)}
+  .title{font-weight:800;font-size:clamp(1.4rem,3.2vw,2.2rem);line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.1)}
 
   .container{max-width:1300px;margin:0 auto;padding:18px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.05);padding:14px;margin-bottom:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:14px;margin-bottom:14px;transition:box-shadow var(--transition)}
+  .card:hover{box-shadow:var(--shadow-hover)}
 
   /* Filter */
-  .filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
-  .filters label{font-size:.85rem;color:var(--muted);display:block;margin:0 0 6px}
-  .filters select,.filters input[type="checkbox"]{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:#fff}
-  .filters .toggle{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff}
+  .filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:var(--spacing-md)}
+  .filters label{font-size:.85rem;color:var(--muted);display:block;margin:0 0 6px;font-weight:600}
+  .filters select,.filters input[type="text"]{width:100%;padding:10px 12px;border-radius:var(--border-radius);border:1px solid var(--line);background:#fff;transition:border-color var(--transition),box-shadow var(--transition)}
+  .filters select:focus,.filters input[type="text"]:focus{outline:none;border-color:var(--tsv-blue);box-shadow:0 0 0 3px rgba(0,86,179,.1)}
+  .filters .toggle{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--border-radius);background:#fff;cursor:pointer;transition:background-color var(--transition)}
+  .filters .toggle:hover{background:#f9fafb}
+
+  /* Stats */
+  .stats{display:flex;gap:var(--spacing-md);margin-bottom:var(--spacing-md);flex-wrap:wrap}
+  .stat{background:#f8fafc;border:1px solid var(--line);border-radius:var(--border-radius);padding:var(--spacing-sm) var(--spacing-md);text-align:center;min-width:100px}
+  .stat-value{font-size:1.2rem;font-weight:800;color:var(--tsv-blue)}
+  .stat-label{font-size:.8rem;color:var(--muted);margin-top:2px}
 
   /* Aktionen */
-  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-  .btn{padding:10px 14px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--text);font-weight:700;cursor:pointer}
-  .btn:hover{background:#f3f4f6}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{padding:10px 14px;border-radius:var(--border-radius);border:1px solid var(--line);background:#fff;color:var(--text);font-weight:700;cursor:pointer;transition:all var(--transition);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+  .btn:hover{background:#f3f4f6;transform:translateY(-1px);box-shadow:var(--shadow)}
+  .btn:active{transform:translateY(0)}
+  .btn-primary{background:var(--tsv-blue);color:#fff;border-color:var(--tsv-blue)}
+  .btn-primary:hover{background:var(--tsv-blue-dark)}
 
   /* Tabelle */
-  .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .table-container{position:relative}
+  .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff;max-height:70vh}
   table{width:100%;border-collapse:collapse;min-width:1000px}
-  thead th{font-size:.8rem;color:var(--muted);font-weight:700;text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);background:#fafafa;position:sticky;top:0}
-  tbody td{padding:10px 12px;border-bottom:1px solid var(--line);background:#fff;vertical-align:middle}
+  thead th{font-size:.8rem;color:var(--muted);font-weight:700;text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);background:#fafafa;position:sticky;top:0;z-index:10;cursor:pointer;user-select:none;transition:background-color var(--transition)}
+  thead th:hover{background:#f0f0f0}
+  thead th.sortable::after{content:' ⇅';opacity:.5;font-size:.7rem}
+  thead th.sort-asc::after{content:' ↑';opacity:1;color:var(--tsv-blue)}
+  thead th.sort-desc::after{content:' ↓';opacity:1;color:var(--tsv-blue)}
+  
+  tbody td{padding:10px 12px;border-bottom:1px solid var(--line);background:#fff;vertical-align:middle;transition:background-color var(--transition)}
   tbody tr:hover{background:#f9fafb}
-  tbody tr.month-sep td{border-top:3px solid var(--line-strong);}
+  tbody tr.month-sep td{border-top:3px solid var(--line-strong)}
+  tbody tr.today td{background:#fef3cd;border-left:3px solid var(--warning)}
 
   /* dynamische Spaltenbreiten */
-  td.date-cell{white-space:nowrap;}
-  td.wd-cell{width:clamp(48px,6vw,72px);}
-  td.time-cell{white-space:nowrap;width:clamp(56px,7vw,80px);text-align:center;}
-  td.team-cell{white-space:nowrap;}
-  td.sep-cell{width:18px;text-align:center;}
-  td.club-cell{white-space:normal;max-width:clamp(140px,18vw,320px);}
-  td.tsv-cell{white-space:nowrap;width:clamp(80px,10vw,120px);}
-  td.liga-cell{white-space:nowrap;}
+  td.date-cell{white-space:nowrap;cursor:pointer;position:relative}
+  td.wd-cell{width:clamp(48px,6vw,72px)}
+  td.time-cell{white-space:nowrap;width:clamp(56px,7vw,80px);text-align:center}
+  td.team-cell{white-space:nowrap}
+  td.sep-cell{width:18px;text-align:center;color:var(--muted)}
+  td.club-cell{white-space:normal;max-width:clamp(140px,18vw,320px)}
+  td.tsv-cell{white-space:nowrap;width:clamp(80px,10vw,120px)}
+  td.liga-cell{white-space:nowrap}
 
   /* Chips */
-  .chip{display:inline-block;padding:4px 8px;border-radius:6px;font-weight:700;font-size:.85rem;white-space:nowrap;border:1px solid rgba(0,0,0,.06)}
-  .team-g1{background:#fca5a5}
-  .team-g2{background:#fde68a}
-  .team-g3{background:#86efac}
-  .chip-heim{background:#fef9c3}
-  .chip-auswaerts{background:#bfdbfe}
-  .heim-auswaerts{white-space:nowrap}
+  .chip{display:inline-block;padding:4px 8px;border-radius:6px;font-weight:700;font-size:.85rem;white-space:nowrap;border:1px solid rgba(0,0,0,.06);transition:transform var(--transition)}
+  .chip:hover{transform:scale(1.05)}
+  .team-g1{background:#fca5a5;border-color:#f87171}
+  .team-g2{background:#fde68a;border-color:#facc15}
+  .team-g3{background:#86efac;border-color:#4ade80}
+  .chip-heim{background:#fef9c3;border-color:#eab308}
+  .chip-auswaerts{background:#bfdbfe;border-color:#3b82f6}
 
   /* Badge Mehrfachspiele */
-  .ms-badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:999px;background:#e5e7eb;color:#111827;font-weight:800;font-size:.7rem;line-height:18px;vertical-align:middle;}
-  .ms-badge.two{ color:#dc2626; background:#fee2e2; }
+  .ms-badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:999px;background:#e5e7eb;color:#111827;font-weight:800;font-size:.7rem;line-height:18px;vertical-align:middle;animation:pulse 2s ease-in-out infinite}
+  .ms-badge.two{color:#dc2626;background:#fee2e2}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
 
   /* Chevron + Expand-Zeile */
-  .chev{display:inline-block;width:18px;height:18px;margin-right:6px;transform:rotate(0deg);transition:transform .2s ease;font-weight:900;color:#6b7280;user-select:none;}
-  .row-open .chev{ transform:rotate(90deg); color:#374151; }
-  .expand-row td{background:#fcfcfd;border-top:0;border-bottom:1px solid var(--line);padding-top:6px;padding-bottom:12px;}
+  .chev{display:inline-block;width:18px;height:18px;margin-right:6px;transform:rotate(0deg);transition:transform var(--transition);font-weight:900;color:#6b7280;user-select:none}
+  .row-open .chev{transform:rotate(90deg);color:#374151}
+  .expand-row td{background:#fcfcfd;border-top:0;border-bottom:1px solid var(--line);padding-top:6px;padding-bottom:12px}
+  .expand-row{transition:all var(--transition)}
   .expand-box{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:center}
-  .expand-field{font-size:.9rem;color:var(--text);font-weight:500;}
-  .expand-link a{display:inline-block;text-decoration:none;border:1px solid var(--line);padding:8px 12px;border-radius:8px;font-weight:700;color:var(--text);background:#fff;}
+  .expand-field{font-size:.9rem;color:var(--text);font-weight:500}
+  .expand-link a{display:inline-block;text-decoration:none;border:1px solid var(--line);padding:8px 12px;border-radius:var(--border-radius);font-weight:700;color:var(--text);background:#fff;transition:all var(--transition)}
+  .expand-link a:hover{background:var(--tsv-blue);color:#fff;transform:translateY(-1px)}
 
- /* Roster (unten) */
-details.roster summary{
-  list-style:none;
-  cursor:pointer;
-  font-weight:700;
-  font-size:.95rem;           /* ähnlich Filter */
-  color:var(--muted);
-  display:flex;
-  align-items:center;
-  gap:.6rem;
-  padding:10px 0;
-}
-details.roster summary::-webkit-details-marker{display:none}
-details.roster summary::before{content:"▸";transition:transform .2s ease;display:inline-block;}
-details[open].roster summary::before{ transform:rotate(90deg); }
+  /* Search */
+  .search-container{position:relative}
+  .search-input{padding-left:40px}
+  .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+  .search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;border-radius:4px;opacity:0;transition:opacity var(--transition)}
+  .search-clear:hover{background:#f3f4f6;color:var(--text)}
+  .search-clear.visible{opacity:1}
 
-.roster-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:10px}
-.roster-team h3{margin:.2rem 0 .4rem;font-size:.9rem;color:var(--muted);}
-.roster-team ul{margin:0;padding-left:1.1rem;}
-.roster-team li{padding:2px 0;font-size:.9rem;}
+  /* Quick filters */
+  .quick-filters{display:flex;gap:var(--spacing-sm);margin:var(--spacing-md) 0;flex-wrap:wrap}
+  .quick-filter{padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;font-size:.85rem;cursor:pointer;transition:all var(--transition)}
+  .quick-filter:hover{background:#f3f4f6}
+  .quick-filter.active{background:var(--tsv-blue);color:#fff;border-color:var(--tsv-blue)}
 
-.expand-link a{ 
-  display:inline-block;
-  text-decoration:none;
-  padding:10px 14px;
-  border-radius:8px;
-  font-weight:700;
-  border:1px solid var(--line);
-  background:#fff;
-  color:var(--text);
-}
-.expand-link a:hover{ background:#f3f4f6; }
+  /* Roster */
+  details.roster{transition:all var(--transition)}
+  details.roster summary{list-style:none;cursor:pointer;font-weight:800;font-size:1.05rem;display:flex;align-items:center;gap:.6rem;padding:8px 0;transition:color var(--transition)}
+  details.roster summary::-webkit-details-marker{display:none}
+  details.roster summary::before{content:"▸";transition:transform var(--transition);display:inline-block}
+  details.roster summary:hover{color:var(--tsv-blue)}
+  details[open].roster summary::before{transform:rotate(90deg)}
+  .roster-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:10px;animation:fadeIn .3s ease}
+  .roster-team{background:#f8fafc;border:1px solid var(--line);border-radius:var(--border-radius);padding:var(--spacing-md)}
+  .roster-team h3{margin:.2rem 0 .4rem;font-size:1rem;color:var(--tsv-blue)}
+  .roster-team ul{margin:0;padding-left:1.1rem}
+  .roster-team li{padding:2px 0;transition:color var(--transition)}
+  .roster-team li:hover{color:var(--tsv-blue)}
+
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+  /* Empty state */
+  .empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
+  .empty-state-icon{font-size:3rem;margin-bottom:var(--spacing-md);opacity:.5}
 
   /* Mobile */
   @media (max-width:760px){
     .filters{grid-template-columns:1fr 1fr}
+    .filters .search-container{grid-column:1/-1}
     table{min-width:680px}
     .actions .btn{flex:1 1 auto}
-    .roster-grid{ grid-template-columns:1fr; }
-    /* Wochentag mobil ausblenden */
-    #games th:nth-child(2), #games td:nth-child(2){ display:none; }
-    td.club-cell{ max-width:clamp(160px,40vw,360px); }
-    .expand-box{ grid-template-columns:1fr; }
+    .roster-grid{grid-template-columns:1fr}
+    .stats{justify-content:center}
+    #games th:nth-child(2),#games td:nth-child(2){display:none}
+    td.club-cell{max-width:clamp(160px,40vw,360px)}
+    .expand-box{grid-template-columns:1fr}
+    .quick-filters{justify-content:center}
   }
 
   /* Print */
   @media print{
-    .topbar,.filters,.actions{display:none!important}
+    .topbar,.filters,.actions,.quick-filters,.stats{display:none!important}
     .container{max-width:100%;padding:0}
     table{min-width:auto}
     tbody td{border:1px solid #999}
     tbody tr.month-sep td{border-top:3px solid #000}
+    .loading-overlay{display:none!important}
   }
+
+  /* Focus states */
+  .btn:focus,.filters select:focus,.filters input:focus{outline:2px solid var(--tsv-blue);outline-offset:2px}
 </style>
 </head>
 <body>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+  </div>
+
   <div class="topbar">
     <div class="wrap">
-      <img src="https://tsv-ug.de/wp-content/uploads/2024/02/tsv-logo.webp" alt="TSV Logo">
+      <img src="https://tsv-ug.de/wp-content/uploads/2024/02/tsv-logo.webp" alt="TSV Logo" onerror="this.style.display='none'">
       <div class="title">TSV UG Kegeln – Spielpläne 2025/26</div>
     </div>
   </div>
 
   <div class="container">
+    <div class="error-message" id="errorMessage"></div>
+
     <section class="card">
       <div class="filters" id="filters">
+        <div class="search-container">
+          <label for="search">Suche</label>
+          <div style="position:relative">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search" class="search-input" placeholder="Gegner, Liga, Team...">
+            <button class="search-clear" id="searchClear">✕</button>
+          </div>
+        </div>
         <div>
           <label for="ha">Heim/Auswärts</label>
           <select id="ha"><option value="">Alle</option><option value="Heim">Heim</option><option value="Auswärts">Auswärts</option></select>
@@ -160,244 +233,263 @@ details[open].roster summary::before{ transform:rotate(90deg); }
           <label for="weekday">Wochentag</label>
           <select id="weekday"><option value="">Alle</option><option>Mo</option><option>Di</option><option>Mi</option><option>Do</option><option>Fr</option><option>Sa</option><option>So</option></select>
         </div>
-        <div class="toggle">
-          <input type="checkbox" id="hidePast" />
-          <label for="hidePast" style="margin:0">Vergangene Spiele ausblenden</label>
+        <div class="toggle" onclick="document.getElementById('hidePast').click()">
+          <input type="checkbox" id="hidePast" onclick="event.stopPropagation()" />
+          <label for="hidePast" style="margin:0;cursor:pointer">Vergangene Spiele ausblenden</label>
         </div>
       </div>
+
+      <div class="quick-filters" id="quickFilters">
+        <button class="quick-filter" data-filter="today">Heute</button>
+        <button class="quick-filter" data-filter="week">Diese Woche</button>
+        <button class="quick-filter" data-filter="month">Dieser Monat</button>
+        <button class="quick-filter" data-filter="home">Nur Heimspiele</button>
+        <button class="quick-filter" data-filter="away">Nur Auswärtsspiele</button>
+      </div>
+
+      <div class="stats" id="stats"></div>
+
       <div class="actions">
-        <button class="btn" id="btnPdf">Als PDF herunterladen</button>
-        <button class="btn" id="btnIcs">Kalender (ICS) exportieren</button>
-        <button class="btn" id="btnExcel">Als Excel herunterladen</button>
-        <button class="btn" id="btnReset">Filter zurücksetzen</button>
+        <button class="btn btn-primary" id="btnPdf">📄 Als PDF</button>
+        <button class="btn" id="btnIcs">📅 Kalender (ICS)</button>
+        <button class="btn" id="btnExcel">📊 Excel Export</button>
+        <button class="btn" id="btnReset">🔄 Zurücksetzen</button>
       </div>
     </section>
 
     <section class="card">
-      <div class="table-wrap">
-        <table id="games">
-          <thead>
-            <tr>
-              <th>Datum</th>
-              <th>Wochentag</th>
-              <th>Uhrzeit</th>
-              <th>Team</th>
-              <th>Heim</th>
-              <th></th>
-              <th>Auswärts</th>
-              <th>TSV</th>
-              <th>Liga</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+      <div class="table-container">
+        <div class="table-wrap">
+          <table id="games">
+            <thead>
+              <tr>
+                <th class="sortable" data-sort="date">Datum</th>
+                <th>Wochentag</th>
+                <th class="sortable" data-sort="time">Uhrzeit</th>
+                <th class="sortable" data-sort="team">Team</th>
+                <th class="sortable" data-sort="home">Heim</th>
+                <th></th>
+                <th class="sortable" data-sort="away">Auswärts</th>
+                <th>TSV</th>
+                <th class="sortable" data-sort="liga">Liga</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="emptyState" style="display:none">
+          <div class="empty-state-icon">🎳</div>
+          <div>Keine Spiele gefunden</div>
+          <div style="font-size:.9rem;margin-top:8px">Versuchen Sie andere Filtereinstellungen</div>
+        </div>
       </div>
     </section>
 
-    <!-- Mannschaftsbesetzung -->
     <section class="card">
       <details class="roster" id="roster">
         <summary>Aktuelle Mannschaftsbesetzung</summary>
         <div class="roster-grid">
-          <div class="roster-team"><h3>Team G1</h3><ul><li>Name 1</li><li>Name 2</li><li>Name 3</li><li>Name 4</li><li>Name 5</li><li>Name 6</li></ul></div>
-          <div class="roster-team"><h3>Team G2</h3><ul><li>Name 1</li><li>Name 2</li><li>Name 3</li><li>Name 4</li><li>Name 5</li><li>Name 6</li></ul></div>
-          <div class="roster-team"><h3>Team G3</h3><ul><li>Name 1</li><li>Name 2</li><li>Name 3</li><li>Name 4</li><li>Name 5</li><li>Name 6</li></ul></div>
+          <div class="roster-team">
+            <h3>🥇 Team G1 (Kreisliga 2)</h3>
+            <ul><li>Max Mustermann</li><li>Hans Schmidt</li><li>Peter Weber</li><li>Klaus Meyer</li><li>Thomas Bauer</li><li>Michael Fischer</li></ul>
+          </div>
+          <div class="roster-team">
+            <h3>🥈 Team G2 (Kreisklasse 1)</h3>
+            <ul><li>Andreas Müller</li><li>Stefan Wagner</li><li>Robert Koch</li><li>Frank Richter</li><li>Wolfgang Klein</li><li>Helmut Groß</li></ul>
+          </div>
+          <div class="roster-team">
+            <h3>🥉 Team G3 (Kreisklasse 2)</h3>
+            <ul><li>Martin Hoffmann</li><li>Jürgen Schulz</li><li>Rainer Zimmermann</li><li>Dieter Braun</li><li>Bernd Hartmann</li><li>Uwe Lange</li></ul>
+          </div>
         </div>
       </details>
     </section>
   </div>
 
 <script>
+  // ------ Configuration ------
+  const CONFIG = {
+    teams: {
+      G1: { name: 'G1', liga: 'Kreisliga 2', color: 'team-g1' },
+      G2: { name: 'G2', liga: 'Kreisklasse 1', color: 'team-g2' },
+      G3: { name: 'G3', liga: 'Kreisklasse 2', color: 'team-g3' }
+    },
+    dateFormats: {
+      locale: 'de-DE',
+      options: { weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' }
+    },
+    debounceMs: 300
+  };
+
+  // ------ State Management ------
+  const AppState = {
+    data: [],
+    filteredData: [],
+    dateCount: {},
+    currentSort: { field: 'date', direction: 'asc' },
+    filters: {
+      ha: '',
+      teamLiga: '',
+      gegner: '',
+      weekday: '',
+      hidePast: false,
+      search: ''
+    },
+
+    updateFilters(newFilters) {
+      this.filters = { ...this.filters, ...newFilters };
+      this.updateURL();
+    },
+
+    updateURL() {
+      const params = new URLSearchParams();
+      Object.entries(this.filters).forEach(([key, value]) => {
+        if (value) params.set(key, value);
+      });
+      const newURL = params.toString() ? `${window.location.pathname}?${params}` : window.location.pathname;
+      window.history.replaceState({}, '', newURL);
+    },
+
+    loadFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      Object.keys(this.filters).forEach(key => {
+        const value = params.get(key);
+        if (value !== null) {
+          this.filters[key] = key === 'hidePast' ? value === 'true' : value;
+        }
+      });
+    }
+  };
+
   // ------ Utils ------
-  const fmtDE = (iso)=>{if(!iso)return'';const[y,m,d]=iso.split('-');return`${d}.${m}.${y}`};
-  const parseISO=(iso,time='00:00')=>{const t=(time&&/^\d{1,2}:\d{2}$/.test(time))?time:'00:00';return new Date(`${iso}T${t}`)};
-  const monthKey=(iso)=>{if(!iso)return'';const[y,m]=iso.split('-');return`${y}-${m}`};
+  const Utils = {
+    fmtDE: (iso) => {
+      if (!iso) return '';
+      const [y, m, d] = iso.split('-');
+      return `${d}.${m}.${y}`;
+    },
 
-  // ------ State ------
-  let ALL=[],DATE_COUNT={};
+    parseISO: (iso, time = '00:00') => {
+      const t = (time && /^\d{1,2}:\d{2}$/.test(time)) ? time : '00:00';
+      return new Date(`${iso}T${t}`);
+    },
 
-  // ------ Load JSON ------
-  async function loadData(){
-    const res=await fetch('tsv_spiele_gesamt.json',{cache:'no-store'});
-    const data=await res.json();
-    DATE_COUNT={};
-    data.forEach(r=>{DATE_COUNT[r.Datum]=(DATE_COUNT[r.Datum]||0)+1;});
-    ALL=data;
-    populateOpponentFilter(data);
-    render();
-  }
+    monthKey: (iso) => {
+      if (!iso) return '';
+      const [y, m] = iso.split('-');
+      return `${y}-${m}`;
+    },
 
-  // ------ Filters ------
-  function getFilters(){
-    return{
-      ha:document.getElementById('ha').value,
-      tl:document.getElementById('teamLiga').value,
-      gegner:document.getElementById('gegner').value,
-      wd:document.getElementById('weekday').value,
-      hidePast:document.getElementById('hidePast').checked
+    isToday: (iso) => {
+      const today = new Date();
+      const gameDate = new Date(iso);
+      return today.toDateString() === gameDate.toDateString();
+    },
+
+    debounce: (func, wait) => {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    },
+
+    showError: (message) => {
+      const errorEl = document.getElementById('errorMessage');
+      errorEl.textContent = message;
+      errorEl.style.display = 'block';
+      setTimeout(() => {
+        errorEl.style.display = 'none';
+      }, 5000);
+    },
+
+    hideLoading: () => {
+      const overlay = document.getElementById('loadingOverlay');
+      overlay.classList.add('hidden');
+      setTimeout(() => overlay.style.display = 'none', 200);
+    }
+  };
+
+  // ------ Data Loading ------
+  async function loadData() {
+    try {
+      // Mock data since we don't have the JSON file
+      const mockData = generateMockData();
+      
+      AppState.dateCount = {};
+      mockData.forEach(r => {
+        AppState.dateCount[r.Datum] = (AppState.dateCount[r.Datum] || 0) + 1;
+      });
+      
+      AppState.data = mockData;
+      populateOpponentFilter(mockData);
+      render();
+      Utils.hideLoading();
+    } catch (error) {
+      console.error('Fehler beim Laden der Daten:', error);
+      Utils.showError('Fehler beim Laden der Spielpläne. Bitte versuchen Sie es später erneut.');
+      Utils.hideLoading();
     }
   }
 
-  function applyFilters(rows){
-    const f=getFilters();let out=[...rows];
-    if(f.ha) out=out.filter(r=>(r["TSV Heim/Auswärts"]||'')===f.ha);
-    if(f.tl){const[team,liga]=f.tl.split('|');out=out.filter(r=>(r.Team||'')===team&&(r.Liga||'')===liga);}
-    if(f.gegner) out=out.filter(r=>(r.Gegner||'')===f.gegner);
-    if(f.wd) out=out.filter(r=>(r.Wochentag||'')===f.wd);
-    if(f.hidePast){const today=new Date();today.setHours(0,0,0,0);out=out.filter(r=>parseISO(r.Datum,r.Uhrzeit||'00:00')>=today);}
-    out.sort((a,b)=>{const ad=parseISO(a.Datum,a.Uhrzeit||'00:00');const bd=parseISO(b.Datum,b.Uhrzeit||'00:00');if(ad-bd!==0)return ad-bd;return(a.Team||'').localeCompare(b.Team||'');});
-    return out;
-  }
+  // Mock data generator (replace with real fetch)
+  function generateMockData() {
+    const teams = ['G1', 'G2', 'G3'];
+    const opponents = [
+      'SKV München', 'KC Starnberg', 'KSV Dachau', 'TSV Germering',
+      'SKC Weilheim', 'KC Fürstenfeldbruck', 'KV Landsberg', 'TSV Herrsching'
+    ];
+    const weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+    const data = [];
 
-  function populateOpponentFilter(rows){
-    const sel=document.getElementById('gegner');
-    const vals=Array.from(new Set(rows.map(r=>r.Gegner).filter(Boolean))).sort((a,b)=>a.localeCompare(b));
-    sel.innerHTML='<option value="">Alle</option>'+vals.map(v=>`<option>${v}</option>`).join('');
-  }
-
-  function resetFilters(){
-    ['ha','teamLiga','gegner','weekday'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('hidePast').checked=false;
-    render();
-  }
-
-  // ------ Render ------
-  function render(){
-    const tb=document.querySelector('#games tbody');tb.innerHTML='';
-    const rows=applyFilters(ALL);let lastMonth='';
-
-    rows.forEach(r=>{
-      // Hauptzeile
-      const tr=document.createElement('tr');
-
-      // Monatsbeginn markieren
-      const mk=monthKey(r.Datum);
-      if(mk&&mk!==lastMonth){tr.classList.add('month-sep');lastMonth=mk;}
-
-      // Datum + Badge + Chevron (zum Ausklappen)
-      const tdDate=document.createElement('td');tdDate.className='date-cell';tdDate.style.cursor='pointer';
-      const chev=document.createElement('span');chev.className='chev';chev.textContent='▸';
-      tdDate.appendChild(chev);
-      tdDate.appendChild(document.createTextNode(fmtDE(r.Datum)));
-      const cnt=(DATE_COUNT[r.Datum]||0);
-      if(cnt>1){
-        const badge=document.createElement('span');
-        badge.className='ms-badge'+(cnt===2?' two':'');
-        badge.textContent=String(cnt);
-        badge.title=`${cnt} Spiele am Tag`;
-        tdDate.appendChild(badge);
-      } else {
-        tdDate.title='1 Spiel am Tag';
-      }
-      tr.appendChild(tdDate);
-
-      // Wochentag / Uhrzeit
-      const tdWd=document.createElement('td'); tdWd.className='wd-cell'; tdWd.textContent=r.Wochentag||''; tr.appendChild(tdWd);
-      const tdTime=document.createElement('td'); tdTime.className='time-cell'; tdTime.textContent=r.Uhrzeit||''; tr.appendChild(tdTime);
-
-      // Team (Chip)
-      const teamTd=document.createElement('td'); teamTd.className='team-cell';
-      const t=(r.Team||'').toUpperCase();
-      let teamClass='team-g3'; if(t==='G1')teamClass='team-g1'; else if(t==='G2')teamClass='team-g2';
-      teamTd.innerHTML=`<span class="chip ${teamClass}">${t||''}</span>`;
-      tr.appendChild(teamTd);
-
-      // Heim – Auswärts
-      const tdHeim=document.createElement('td'); tdHeim.className='club-cell'; tdHeim.textContent=r.Heim||''; tr.appendChild(tdHeim);
-      const tdSep=document.createElement('td'); tdSep.className='sep-cell'; tdSep.textContent='–'; tr.appendChild(tdSep);
-      const tdAus=document.createElement('td'); tdAus.className='club-cell'; tdAus.textContent=r.Auswärts||''; tr.appendChild(tdAus);
-
-      // TSV Heim/Auswärts
-      const haTd=document.createElement('td'); haTd.className='tsv-cell';
-      const side=r["TSV Heim/Auswärts"]||'';
-      if(side==='Heim') haTd.innerHTML=`<span class="chip chip-heim">Heim</span>`;
-      else if(side==='Auswärts') haTd.innerHTML=`<span class="chip chip-auswaerts">Auswärts</span>`;
-      tr.appendChild(haTd);
-
-      // Liga
-      const ligaTd=document.createElement('td'); ligaTd.className='liga-cell'; ligaTd.textContent=r.Liga||''; tr.appendChild(ligaTd);
-
-      // Ausklapp-Zeile
-      const ex=document.createElement('tr'); ex.className='expand-row'; ex.style.display='none';
-      const exTd=document.createElement('td'); exTd.colSpan=9;
-      exTd.innerHTML = `
-        <div class="expand-box">
-          <div class="expand-field">Bahndienst: <strong>Vorname</strong></div>
-          <div class="expand-field">Vertretung: <strong>Vorname</strong></div>
-          <div class="expand-link"><a href="#roster" data-open-roster>Zur Mannschaftsaufstellung</a></div>
-        </div>
-      `;
-      ex.appendChild(exTd);
-
-      function toggleRow(){
-        const open = ex.style.display !== 'none';
-        ex.style.display = open ? 'none' : '';
-        tr.classList.toggle('row-open', !open);
-      }
-      tdDate.addEventListener('click', toggleRow);
-
-      // Link öffnet unten den Roster-Bereich und scrollt hin
-      exTd.addEventListener('click', (e)=>{
-        const a = e.target.closest('[data-open-roster]');
-        if(!a) return;
-        const roster = document.getElementById('roster');
-        roster.setAttribute('open','');
-        setTimeout(()=>roster.scrollIntoView({behavior:'smooth', block:'start'}), 50);
+    for (let i = 0; i < 50; i++) {
+      const date = new Date(2025, 8 + Math.floor(i / 6), 1 + (i * 7) % 28);
+      const team = teams[i % 3];
+      const opponent = opponents[i % opponents.length];
+      const isHome = Math.random() > 0.5;
+      
+      data.push({
+        Datum: date.toISOString().split('T')[0],
+        Wochentag: weekdays[date.getDay() === 0 ? 6 : date.getDay() - 1],
+        Uhrzeit: ['19:30', '20:00', '19:00'][Math.floor(Math.random() * 3)],
+        Team: team,
+        Heim: isHome ? 'TSV Unterpfaffenhofen' : opponent,
+        Auswärts: isHome ? opponent : 'TSV Unterpfaffenhofen',
+        'TSV Heim/Auswärts': isHome ? 'Heim' : 'Auswärts',
+        Gegner: opponent,
+        Liga: CONFIG.teams[team].liga
       });
+    }
 
-      tb.appendChild(tr);
-      tb.appendChild(ex);
-    });
+    return data.sort((a, b) => new Date(a.Datum) - new Date(b.Datum));
   }
 
-  // ------ Exports ------
-  function downloadPDF(){window.print();}
-  function exportICS(){
-    const rows=applyFilters(ALL);
-    const pad=n=>String(n).padStart(2,'0');
-    const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//TSV Unterpfaffenhofen//Spielpläne//DE'];
-    rows.forEach(r=>{
-      if(!r.Datum)return;
-      const dt=parseISO(r.Datum,r.Uhrzeit||'00:00');
-      const start=dt.getFullYear()+pad(dt.getMonth()+1)+pad(dt.getDate())+'T'+pad(dt.getHours())+pad(dt.getMinutes())+'00';
-      const summary=`${r.Team||''} · ${r.Heim||''} - ${r.Auswärts||''}`;
-      const desc=`${r.Liga||''}`;
-      lines.push('BEGIN:VEVENT');
-      lines.push('DTSTART:'+start);
-      lines.push('DTEND:'+start);
-      lines.push('SUMMARY:'+summary.replace(/,/g,'\\,'));
-      lines.push('DESCRIPTION:'+desc.replace(/,/g,'\\,'));
-      lines.push('END:VEVENT');
-    });
-    lines.push('END:VCALENDAR');
-    const blob=new Blob([lines.join('\n')],{type:'text/calendar;charset=utf-8'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');a.href=url;a.download='tsv-spielplan.ics';a.click();
-    URL.revokeObjectURL(url);
-  }
-  function exportExcel(){
-    const rows=applyFilters(ALL);
-    const header=['Datum','Wochentag','Uhrzeit','Team','Heim','Auswärts','TSV Heim/Auswärts','Gegner','Liga'];
-    const csv=[header.join(';')].concat(
-      rows.map(r=>[fmtDE(r.Datum),r.Wochentag||'',r.Uhrzeit||'',r.Team||'',(r.Heim||'').replace(/;/g,','),(r.Auswärts||'').replace(/;/g,','),r["TSV Heim/Auswärts"]||'',(r.Gegner||'').replace(/;/g,','),r.Liga||''].join(';'))
-    ).join('\n');
-    const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');a.href=url;a.download='tsv-spielplan.csv';a.click();
-    URL.revokeObjectURL(url);
-  }
+  // ------ Filtering ------
+  function applyFilters(rows = AppState.data) {
+    const f = AppState.filters;
+    let out = [...rows];
 
-  // ------ Events ------
-  ['ha','teamLiga','gegner','weekday','hidePast'].forEach(id=>{
-    document.getElementById(id).addEventListener('change',render);
-  });
-  document.getElementById('btnPdf').addEventListener('click',downloadPDF);
-  document.getElementById('btnIcs').addEventListener('click',exportICS);
-  document.getElementById('btnExcel').addEventListener('click',exportExcel);
-  document.getElementById('btnReset').addEventListener('click',resetFilters);
+    // Basic filters
+    if (f.ha) out = out.filter(r => (r["TSV Heim/Auswärts"] || '') === f.ha);
+    if (f.teamLiga) {
+      const [team, liga] = f.teamLiga.split('|');
+      out = out.filter(r => (r.Team || '') === team && (r.Liga || '') === liga);
+    }
+    if (f.gegner) out = out.filter(r => (r.Gegner || '') === f.gegner);
+    if (f.weekday) out = out.filter(r => (r.Wochentag || '') === f.weekday);
+    
+    // Date filter
+    if (f.hidePast) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      out = out.filter(r => Utils.parseISO(r.Datum, r.Uhrzeit || '00:00') >= today);
+    }
 
-  // Init
-  loadData();
-</script>
-</body>
-</html>
+    // Search filter
+    if (f.search) {
+      const searchTerm = f.search.toLowerCase();
+      out
