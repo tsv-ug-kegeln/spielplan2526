@@ -58,9 +58,9 @@
 
   /* Search */
   .search-container{position:relative}
-  .search-input{padding-left:40px}
-  .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
-  .search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;border-radius:4px;opacity:0;transition:opacity var(--transition)}
+  .search-input{padding-left:40px;padding-right:35px}
+  .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;z-index:2}
+  .search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;border-radius:4px;opacity:0;transition:opacity var(--transition);z-index:2}
   .search-clear:hover{background:#f3f4f6;color:var(--text)}
   .search-clear.visible{opacity:1}
 
@@ -299,7 +299,8 @@
       gegner: '',
       weekday: '',
       hidePast: false,
-      search: ''
+      search: '',
+      dateRange: null
     }
   };
 
@@ -441,7 +442,7 @@
   function updateURL() {
     const params = new URLSearchParams();
     Object.entries(AppState.filters).forEach(([key, value]) => {
-      if (value && value !== '' && value !== false) {
+      if (value && value !== '' && value !== false && key !== 'dateRange') {
         params.set(key, value);
       }
     });
@@ -452,6 +453,7 @@
   function loadFiltersFromURL() {
     const params = new URLSearchParams(window.location.search);
     Object.keys(AppState.filters).forEach(key => {
+      if (key === 'dateRange') return; // Skip dateRange as it's not stored in URL
       const value = params.get(key);
       if (value !== null) {
         AppState.filters[key] = key === 'hidePast' ? value === 'true' : value;
@@ -486,8 +488,17 @@
     if (f.gegner) out = out.filter(r => (r.Gegner || '') === f.gegner);
     if (f.weekday) out = out.filter(r => (r.Wochentag || '') === f.weekday);
     
-    // Date filter
-    if (f.hidePast) {
+    // Date range filter (from quick filters)
+    if (f.dateRange) {
+      out = out.filter(r => {
+        const gameDate = new Date(r.Datum);
+        gameDate.setHours(0, 0, 0, 0);
+        return gameDate >= f.dateRange.start && gameDate <= f.dateRange.end;
+      });
+    }
+    
+    // Date filter for past games
+    if (f.hidePast && !f.dateRange) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       out = out.filter(r => parseISO(r.Datum, r.Uhrzeit || '00:00') >= today);
@@ -765,42 +776,61 @@
     document.querySelectorAll('.quick-filter').forEach(btn => btn.classList.remove('active'));
     
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - today.getDay() + 1);
+    
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
     
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    endOfMonth.setHours(23, 59, 59, 999);
+    
+    // Reset other filters but keep search and basic filters
+    AppState.filters = { 
+      ...AppState.filters, 
+      ha: '', 
+      teamLiga: '', 
+      gegner: '', 
+      weekday: '',
+      dateRange: null 
+    };
     
     switch (type) {
       case 'today':
-        AppState.filters = { ...AppState.filters, hidePast: true };
-        AppState.filteredData = AppState.data.filter(r => isToday(r.Datum));
+        AppState.filters.dateRange = { start: today, end: today };
+        AppState.filters.hidePast = true;
         break;
       case 'week':
-        AppState.filters = { ...AppState.filters, hidePast: true };
-        AppState.filteredData = AppState.data.filter(r => {
-          const gameDate = new Date(r.Datum);
-          return gameDate >= startOfWeek && gameDate <= endOfWeek;
-        });
+        AppState.filters.dateRange = { start: startOfWeek, end: endOfWeek };
+        AppState.filters.hidePast = false;
         break;
       case 'month':
-        AppState.filters = { ...AppState.filters, hidePast: true };
-        AppState.filteredData = AppState.data.filter(r => {
-          const gameDate = new Date(r.Datum);
-          return gameDate >= startOfMonth && gameDate <= endOfMonth;
-        });
+        AppState.filters.dateRange = { start: startOfMonth, end: endOfMonth };
+        AppState.filters.hidePast = false;
         break;
       case 'home':
-        AppState.filters = { ...AppState.filters, ha: 'Heim' };
+        AppState.filters.ha = 'Heim';
         document.getElementById('ha').value = 'Heim';
         break;
       case 'away':
-        AppState.filters = { ...AppState.filters, ha: 'Auswärts' };
+        AppState.filters.ha = 'Auswärts';
         document.getElementById('ha').value = 'Auswärts';
         break;
     }
+    
+    // Update UI elements
+    if (type !== 'home' && type !== 'away') {
+      document.getElementById('ha').value = '';
+      document.getElementById('teamLiga').value = '';
+      document.getElementById('gegner').value = '';
+      document.getElementById('weekday').value = '';
+    }
+    
+    document.getElementById('hidePast').checked = AppState.filters.hidePast;
     
     document.querySelector(`[data-filter="${type}"]`).classList.add('active');
     render();
@@ -889,7 +919,8 @@
       gegner: '',
       weekday: '',
       hidePast: false,
-      search: ''
+      search: '',
+      dateRange: null
     };
     
     ['ha', 'teamLiga', 'gegner', 'weekday', 'search'].forEach(id => {
