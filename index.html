@@ -49,28 +49,16 @@
   .card{background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:14px;margin-bottom:14px;transition:box-shadow var(--transition)}
 
   /* Filter */
-  .filters{
-    display:grid;
-    grid-template-columns:2fr repeat(5,minmax(0,1fr)); /* Suchfeld breiter */
-    gap:10px;
-    margin-bottom:12px;
-    align-items:end; /* saubere Unterkante */
-  }
-  .filters > *{min-width:0} /* verhindert Überlaufen/Überlappen */
-
+  .filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:12px}
   .filters label{font-size:.85rem;color:var(--muted);display:block;margin:0 0 6px;font-weight:600}
-  .filters select,.filters input[type="text"]{
-    width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:#fff;transition:border-color var(--transition),box-shadow var(--transition)
-  }
+  .filters select,.filters input[type="text"]{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:#fff;transition:border-color var(--transition),box-shadow var(--transition)}
   .filters select:focus,.filters input[type="text"]:focus{outline:none;border-color:var(--tsv-blue);box-shadow:0 0 0 3px rgba(0,86,179,.1)}
   .filters .toggle{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;transition:background-color var(--transition)}
   .filters .toggle:hover{background:#f9fafb}
 
-  /* Search (Fix: Icon über Text) */
+  /* Search */
   .search-container{position:relative}
-  .search-input{padding-left:40px} /* Basis */
-  /* höhere Spezifität + !important überschreibt das generische Padding der Grid-Inputs */
-  .filters .search-input{padding-left:40px!important}
+  .search-input{padding-left:40px}
   .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
   .search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;border-radius:4px;opacity:0;transition:opacity var(--transition)}
   .search-clear:hover{background:#f3f4f6;color:var(--text)}
@@ -137,7 +125,7 @@
   .expand-row td{background:#fcfcfd;border-top:0;border-bottom:1px solid var(--line);padding-top:6px;padding-bottom:12px}
   .expand-box{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:center}
   .expand-field{font-size:.9rem;color:var(--text);font-weight:500}
-  .expand-link a{display:inline-block;text-decoration:none;border:1px solid var(--line);padding:8px 12px;border-radius:8px;font-weight:700;color:#text;background:#fff;transition:all var(--transition)}
+  .expand-link a{display:inline-block;text-decoration:none;border:1px solid var(--line);padding:8px 12px;border-radius:8px;font-weight:700;color:var(--text);background:#fff;transition:all var(--transition)}
   .expand-link a:hover{background:var(--tsv-blue);color:#fff;transform:translateY(-1px)}
 
   /* Roster */
@@ -273,7 +261,7 @@
       <div class="empty-state" id="emptyState" style="display:none">
         <div class="empty-state-icon">🎳</div>
         <div>Keine Spiele gefunden</div>
-        <div style="font-size:.9rem;margin-top:8px">Versuche andere Filtereinstellungen</div>
+        <div style="font-size:.9rem;margin-top:8px">Versuchen Sie andere Filtereinstellungen</div>
       </div>
     </section>
 
@@ -306,7 +294,6 @@
     dateCount: {},
     currentSort: { field: 'date', direction: 'asc' },
     filters: {
-      quick: '',          // <- NEU: quick date filter (today|week|month)
       ha: '',
       teamLiga: '',
       gegner: '',
@@ -406,9 +393,10 @@
     return data.sort((a, b) => new Date(a.Datum) - new Date(b.Datum));
   }
 
-  // ------ Data Loading (echte Quelle bleibt erhalten) ------
+  // ------ Data Loading ------
   async function loadData() {
     try {
+      // Try to load real data first, fall back to mock data
       let data;
       try {
         const res = await fetch('tsv_spiele_gesamt.json', { cache: 'no-store' });
@@ -418,6 +406,7 @@
           throw new Error('JSON file not found');
         }
       } catch {
+        // Use mock data if JSON file doesn't exist
         data = generateMockData();
       }
       
@@ -435,6 +424,7 @@
       console.error('Fehler beim Laden der Daten:', error);
       showError('Fehler beim Laden der Spielpläne. Verwende Beispieldaten.');
       
+      // Fallback to mock data
       const data = generateMockData();
       AppState.dateCount = {};
       data.forEach(r => {
@@ -465,14 +455,20 @@
       const value = params.get(key);
       if (value !== null) {
         AppState.filters[key] = key === 'hidePast' ? value === 'true' : value;
+        
+        // Update UI elements
         const element = document.getElementById(key);
         if (element) {
-          if (element.type === 'checkbox') element.checked = AppState.filters[key];
-          else element.value = AppState.filters[key];
+          if (element.type === 'checkbox') {
+            element.checked = AppState.filters[key];
+          } else {
+            element.value = AppState.filters[key];
+          }
         }
       }
     });
-    syncQuickButtons();
+    
+    // Update search clear button
     updateSearchClear();
   }
 
@@ -489,32 +485,8 @@
     }
     if (f.gegner) out = out.filter(r => (r.Gegner || '') === f.gegner);
     if (f.weekday) out = out.filter(r => (r.Wochentag || '') === f.weekday);
-
-    // Quick date filters (Heute / Woche / Monat)
-    if (f.quick === 'today') {
-      out = out.filter(r => isToday(r.Datum));
-    } else if (f.quick === 'week') {
-      const today = new Date();
-      const startOfWeek = new Date(today);
-      // Montag als Wochenstart
-      startOfWeek.setDate(today.getDate() - ((today.getDay()+6)%7));
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
-      out = out.filter(r => {
-        const gameDate = new Date(r.Datum);
-        return gameDate >= startOfWeek && gameDate <= endOfWeek;
-      });
-    } else if (f.quick === 'month') {
-      const today = new Date();
-      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-      out = out.filter(r => {
-        const gameDate = new Date(r.Datum);
-        return gameDate >= startOfMonth && gameDate <= endOfMonth;
-      });
-    }
-
-    // Vergangenes ausblenden
+    
+    // Date filter
     if (f.hidePast) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -538,27 +510,47 @@
 
   function applySorting(rows) {
     const { field, direction } = AppState.currentSort;
+    
     return rows.sort((a, b) => {
       let aVal, bVal;
+      
       switch (field) {
         case 'date':
           aVal = parseISO(a.Datum, a.Uhrzeit || '00:00');
           bVal = parseISO(b.Datum, b.Uhrzeit || '00:00');
           break;
         case 'time':
-          aVal = a.Uhrzeit || '00:00'; bVal = b.Uhrzeit || '00:00'; break;
+          aVal = a.Uhrzeit || '00:00';
+          bVal = b.Uhrzeit || '00:00';
+          break;
         case 'team':
-          aVal = a.Team || ''; bVal = b.Team || ''; break;
+          aVal = a.Team || '';
+          bVal = b.Team || '';
+          break;
         case 'home':
-          aVal = a.Heim || ''; bVal = b.Heim || ''; break;
+          aVal = a.Heim || '';
+          bVal = b.Heim || '';
+          break;
         case 'away':
-          aVal = a.Auswärts || ''; bVal = b.Auswärts || ''; break;
+          aVal = a.Auswärts || '';
+          bVal = b.Auswärts || '';
+          break;
         case 'liga':
-          aVal = a.Liga || ''; bVal = b.Liga || ''; break;
-        default: return 0;
+          aVal = a.Liga || '';
+          bVal = b.Liga || '';
+          break;
+        default:
+          return 0;
       }
-      let cmp = (aVal instanceof Date && bVal instanceof Date) ? (aVal - bVal) : String(aVal).localeCompare(String(bVal));
-      return direction === 'asc' ? cmp : -cmp;
+      
+      let comparison = 0;
+      if (aVal instanceof Date && bVal instanceof Date) {
+        comparison = aVal - bVal;
+      } else {
+        comparison = String(aVal).localeCompare(String(bVal));
+      }
+      
+      return direction === 'asc' ? comparison : -comparison;
     });
   }
 
@@ -610,27 +602,42 @@
     const rows = AppState.filteredData;
     
     tb.innerHTML = '';
-    if (rows.length === 0) { emptyState.style.display = 'block'; return; }
+    
+    if (rows.length === 0) {
+      emptyState.style.display = 'block';
+      return;
+    }
+    
     emptyState.style.display = 'none';
-
     let lastMonth = '';
 
     rows.forEach(r => {
+      // Hauptzeile
       const tr = document.createElement('tr');
-      if (isToday(r.Datum)) tr.classList.add('today');
+      
+      // Heute markieren
+      if (isToday(r.Datum)) {
+        tr.classList.add('today');
+      }
 
+      // Monatsbeginn markieren
       const mk = monthKey(r.Datum);
-      if (mk && mk !== lastMonth) { tr.classList.add('month-sep'); lastMonth = mk; }
+      if (mk && mk !== lastMonth) {
+        tr.classList.add('month-sep');
+        lastMonth = mk;
+      }
 
       // Datum + Badge + Chevron
       const tdDate = document.createElement('td');
       tdDate.className = 'date-cell';
       tdDate.style.cursor = 'pointer';
+      
       const chev = document.createElement('span');
       chev.className = 'chev';
       chev.textContent = '▸';
       tdDate.appendChild(chev);
       tdDate.appendChild(document.createTextNode(fmtDE(r.Datum)));
+      
       const cnt = AppState.dateCount[r.Datum] || 0;
       if (cnt > 1) {
         const badge = document.createElement('span');
@@ -641,48 +648,93 @@
       }
       tr.appendChild(tdDate);
 
-      const tdWd = document.createElement('td'); tdWd.className = 'wd-cell'; tdWd.textContent = r.Wochentag || ''; tr.appendChild(tdWd);
-      const tdTime = document.createElement('td'); tdTime.className = 'time-cell'; tdTime.textContent = r.Uhrzeit || ''; tr.appendChild(tdTime);
+      // Wochentag / Uhrzeit
+      const tdWd = document.createElement('td');
+      tdWd.className = 'wd-cell';
+      tdWd.textContent = r.Wochentag || '';
+      tr.appendChild(tdWd);
+      
+      const tdTime = document.createElement('td');
+      tdTime.className = 'time-cell';
+      tdTime.textContent = r.Uhrzeit || '';
+      tr.appendChild(tdTime);
 
+      // Team (Chip)
       const teamTd = document.createElement('td');
       teamTd.className = 'team-cell';
       const t = (r.Team || '').toUpperCase();
-      let teamClass = 'team-g3'; if (t === 'G1') teamClass = 'team-g1'; else if (t === 'G2') teamClass = 'team-g2';
+      let teamClass = 'team-g3';
+      if (t === 'G1') teamClass = 'team-g1';
+      else if (t === 'G2') teamClass = 'team-g2';
       teamTd.innerHTML = `<span class="chip ${teamClass}">${t || ''}</span>`;
       tr.appendChild(teamTd);
 
-      const tdHeim = document.createElement('td'); tdHeim.className='club-cell'; tdHeim.textContent=r.Heim||''; tr.appendChild(tdHeim);
-      const tdSep = document.createElement('td'); tdSep.className='sep-cell'; tdSep.textContent='–'; tr.appendChild(tdSep);
-      const tdAus = document.createElement('td'); tdAus.className='club-cell'; tdAus.textContent=r.Auswärts||''; tr.appendChild(tdAus);
+      // Heim – Auswärts
+      const tdHeim = document.createElement('td');
+      tdHeim.className = 'club-cell';
+      tdHeim.textContent = r.Heim || '';
+      tr.appendChild(tdHeim);
+      
+      const tdSep = document.createElement('td');
+      tdSep.className = 'sep-cell';
+      tdSep.textContent = '–';
+      tr.appendChild(tdSep);
+      
+      const tdAus = document.createElement('td');
+      tdAus.className = 'club-cell';
+      tdAus.textContent = r.Auswärts || '';
+      tr.appendChild(tdAus);
 
-      const haTd = document.createElement('td'); haTd.className='tsv-cell';
+      // TSV Heim/Auswärts
+      const haTd = document.createElement('td');
+      haTd.className = 'tsv-cell';
       const side = r["TSV Heim/Auswärts"] || '';
-      if (side === 'Heim') haTd.innerHTML = `<span class="chip chip-heim">Heim</span>`;
-      else if (side === 'Auswärts') haTd.innerHTML = `<span class="chip chip-auswaerts">Auswärts</span>`;
+      if (side === 'Heim') {
+        haTd.innerHTML = `<span class="chip chip-heim">Heim</span>`;
+      } else if (side === 'Auswärts') {
+        haTd.innerHTML = `<span class="chip chip-auswaerts">Auswärts</span>`;
+      }
       tr.appendChild(haTd);
 
-      const ligaTd = document.createElement('td'); ligaTd.className='liga-cell'; ligaTd.textContent=r.Liga||''; tr.appendChild(ligaTd);
+      // Liga
+      const ligaTd = document.createElement('td');
+      ligaTd.className = 'liga-cell';
+      ligaTd.textContent = r.Liga || '';
+      tr.appendChild(ligaTd);
 
-      const ex = document.createElement('tr'); ex.className='expand-row'; ex.style.display='none';
-      const exTd = document.createElement('td'); exTd.colSpan=9;
+      // Ausklapp-Zeile
+      const ex = document.createElement('tr');
+      ex.className = 'expand-row';
+      ex.style.display = 'none';
+      const exTd = document.createElement('td');
+      exTd.colSpan = 9;
       exTd.innerHTML = `
         <div class="expand-box">
           <div class="expand-field">Bahndienst: <strong>Noch offen</strong></div>
           <div class="expand-field">Vertretung: <strong>Noch offen</strong></div>
           <div class="expand-link"><a href="#roster" data-open-roster>Zur Mannschaftsaufstellung</a></div>
-        </div>`;
+        </div>
+      `;
       ex.appendChild(exTd);
 
-      function toggleRow(){ const open = ex.style.display !== 'none'; ex.style.display = open ? 'none' : ''; tr.classList.toggle('row-open', !open); }
+      function toggleRow() {
+        const open = ex.style.display !== 'none';
+        ex.style.display = open ? 'none' : '';
+        tr.classList.toggle('row-open', !open);
+      }
       tdDate.addEventListener('click', toggleRow);
 
+      // Roster-Link
       exTd.addEventListener('click', (e) => {
-        const a = e.target.closest('[data-open-roster]'); if (!a) return;
-        const roster = document.getElementById('roster'); roster.setAttribute('open','');
-        setTimeout(()=>roster.scrollIntoView({behavior:'smooth',block:'start'}),50);
+        const a = e.target.closest('[data-open-roster]');
+        if (!a) return;
+        const roster = document.getElementById('roster');
+        roster.setAttribute('open', '');
+        setTimeout(() => roster.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
       });
 
-      tb.appendChild(tr); tb.appendChild(ex);
+      tb.appendChild(tr);
+      tb.appendChild(ex);
     });
   }
 
@@ -693,44 +745,71 @@
     } else {
       AppState.currentSort = { field, direction: 'asc' };
     }
-    document.querySelectorAll('thead th').forEach(th => th.classList.remove('sort-asc','sort-desc'));
+    
+    // Update header styles
+    document.querySelectorAll('thead th').forEach(th => {
+      th.classList.remove('sort-asc', 'sort-desc');
+    });
+    
     const header = document.querySelector(`[data-sort="${field}"]`);
-    if (header) header.classList.add(AppState.currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+    if (header) {
+      header.classList.add(AppState.currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+    }
+    
     render();
   }
 
   // ------ Quick Filters ------
-  function syncQuickButtons(){
-    document.querySelectorAll('.quick-filter').forEach(btn => btn.classList.remove('active'));
-    if (AppState.filters.quick){
-      const btn = document.querySelector(`[data-filter="${AppState.filters.quick}"]`);
-      if (btn) btn.classList.add('active');
-      if (['today','week','month'].includes(AppState.filters.quick)){
-        AppState.filters.hidePast = true;
-        const hp = document.getElementById('hidePast'); if (hp) hp.checked = true;
-      }
-      if (AppState.filters.quick === 'home'){ AppState.filters.ha='Heim'; const ha=document.getElementById('ha'); if(ha) ha.value='Heim'; }
-      if (AppState.filters.quick === 'away'){ AppState.filters.ha='Auswärts'; const ha=document.getElementById('ha'); if(ha) ha.value='Auswärts'; }
-    }
-  }
-
   function handleQuickFilter(type) {
-    AppState.filters.quick = type || '';
-    // Map home/away to dropdown
-    if (type === 'home'){ AppState.filters.ha='Heim'; document.getElementById('ha').value='Heim'; }
-    else if (type === 'away'){ AppState.filters.ha='Auswärts'; document.getElementById('ha').value='Auswärts'; }
-    if (['today','week','month'].includes(type)){
-      AppState.filters.hidePast = true;
-      document.getElementById('hidePast').checked = true;
+    // Reset all quick filters
+    document.querySelectorAll('.quick-filter').forEach(btn => btn.classList.remove('active'));
+    
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay() + 1);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    
+    switch (type) {
+      case 'today':
+        AppState.filters = { ...AppState.filters, hidePast: true };
+        AppState.filteredData = AppState.data.filter(r => isToday(r.Datum));
+        break;
+      case 'week':
+        AppState.filters = { ...AppState.filters, hidePast: true };
+        AppState.filteredData = AppState.data.filter(r => {
+          const gameDate = new Date(r.Datum);
+          return gameDate >= startOfWeek && gameDate <= endOfWeek;
+        });
+        break;
+      case 'month':
+        AppState.filters = { ...AppState.filters, hidePast: true };
+        AppState.filteredData = AppState.data.filter(r => {
+          const gameDate = new Date(r.Datum);
+          return gameDate >= startOfMonth && gameDate <= endOfMonth;
+        });
+        break;
+      case 'home':
+        AppState.filters = { ...AppState.filters, ha: 'Heim' };
+        document.getElementById('ha').value = 'Heim';
+        break;
+      case 'away':
+        AppState.filters = { ...AppState.filters, ha: 'Auswärts' };
+        document.getElementById('ha').value = 'Auswärts';
+        break;
     }
-    syncQuickButtons();
+    
+    document.querySelector(`[data-filter="${type}"]`).classList.add('active');
     render();
   }
 
   // ------ Search ------
   function updateSearchClear() {
     const clearBtn = document.getElementById('searchClear');
-    clearBtn.classList.toggle('visible', (AppState.filters.search||'').length > 0);
+    clearBtn.classList.toggle('visible', AppState.filters.search.length > 0);
   }
 
   const debouncedSearch = debounce((value) => {
@@ -739,7 +818,9 @@
   }, 300);
 
   // ------ Export Functions ------
-  function downloadPDF() { window.print(); }
+  function downloadPDF() {
+    window.print();
+  }
 
   function exportICS() {
     const rows = AppState.filteredData;
@@ -769,7 +850,9 @@
     const blob = new Blob([lines.join('\n')], { type: 'text/calendar;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'tsv-spielplan.ics'; a.click();
+    a.href = url;
+    a.download = 'tsv-spielplan.ics';
+    a.click();
     URL.revokeObjectURL(url);
   }
 
@@ -793,13 +876,14 @@
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'tsv-spielplan.csv'; a.click();
+    a.href = url;
+    a.download = 'tsv-spielplan.csv';
+    a.click();
     URL.revokeObjectURL(url);
   }
 
   function resetFilters() {
     AppState.filters = {
-      quick: '',
       ha: '',
       teamLiga: '',
       gegner: '',
@@ -809,10 +893,11 @@
     };
     
     ['ha', 'teamLiga', 'gegner', 'weekday', 'search'].forEach(id => {
-      const el = document.getElementById(id); if (el) el.value = '';
+      document.getElementById(id).value = '';
     });
     document.getElementById('hidePast').checked = false;
-    syncQuickButtons();
+    
+    document.querySelectorAll('.quick-filter').forEach(btn => btn.classList.remove('active'));
     updateSearchClear();
     render();
   }
@@ -874,6 +959,8 @@
     setupEventListeners();
     loadData();
   }
+
+  // Start the application
   init();
 </script>
 </body>
