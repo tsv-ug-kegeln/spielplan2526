@@ -4,39 +4,36 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>TSV Unterpfaffenhofen – Spielpläne G1/G2/G3</title>
-<meta name="description" content="Aktuelle Spielpläne der Kegelmannschaften G1, G2 und G3 des TSV Unterpfaffenhofen für die Saison 2025/26">
+<meta name="description" content="Aktuelle Spielpläne der Kegel-Teams G1, G2 und G3 des TSV Unterpfaffenhofen für die Saison 2025/26">
 
 <!-- Favicon -->
-<link rel="icon" type="image/x-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%230056b3'/%3E%3Ctext x='50' y='60' font-family='Arial,sans-serif' font-size='36' font-weight='bold' fill='white' text-anchor='middle'%3ETSV%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/x-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' rx='8' fill='%230056b3'/%3E%3Ctext x='50%' y='54%' font-family='Arial' font-weight='700' font-size='28' fill='white' text-anchor='middle'%3ETSV%3C/text%3E%3C/svg%3E">
 
 <style>
   :root{
     --tsv-blue:#0056b3;
     --tsv-blue-dark:#004494;
-    --bg:#f6f7f9;
-    --card:#fff;
-    --text:#1f2937;
-    --muted:#6b7280;
+    --bg:#f5f7fb;
+    --card:#ffffff;
     --line:#e5e7eb;
-    --line-strong:#cbd5e1;
-    --success:#10b981;
-    --warning:#f59e0b;
-    --error:#ef4444;
-    --transition:200ms ease;
-    --shadow:0 2px 8px rgba(0,0,0,.05);
-    --shadow-hover:0 4px 16px rgba(0,0,0,.1);
+    --text:#111827;
+    --muted:#6b7280;
+    --success:#16a34a;
+    --danger:#dc2626;
+    --shadow:0 2px 6px rgba(0,0,0,.06);
+    --transition:.2s ease;
   }
 
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial,"Noto Sans",sans-serif;scroll-behavior:smooth}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;scroll-behavior:smooth}
   
   /* Loading */
   .loading-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity var(--transition)}
   .loading-overlay.hidden{opacity:0;pointer-events:none}
-  .spinner{width:40px;height:40px;border:4px solid var(--line);border-top:4px solid var(--tsv-blue);border-radius:50%;animation:spin 1s linear infinite}
+  .spinner{width:40px;height:40px;border:4px solid var(--line);border-top-color:var(--tsv-blue);border-radius:50%;animation:spin 1s linear infinite}
   @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 
   /* Error */
-  .error-message{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:12px;border-radius:8px;margin-bottom:14px;display:none}
+  .error-message{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:12px;border-radius:8px;margin-bottom:14px;display:none}
 
   /* Topbar */
   .topbar{background:linear-gradient(135deg,var(--tsv-blue),var(--tsv-blue-dark));color:#fff;box-shadow:var(--shadow)}
@@ -46,27 +43,36 @@
   .title{font-weight:800;font-size:clamp(1.4rem,3.2vw,2.2rem);line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.1)}
 
   .container{max-width:1300px;margin:0 auto;padding:18px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:14px;margin-bottom:14px;transition:box-shadow var(--transition)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:14px;margin-bottom:14px;transition:box-shadow var(--transition)}
 
   /* Filter */
-  .filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:12px}
+  .filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:12px;align-items:end}
+  .filters > *{min-width:0}
   .filters label{font-size:.85rem;color:var(--muted);display:block;margin:0 0 6px;font-weight:600}
   .filters select,.filters input[type="text"]{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:#fff;transition:border-color var(--transition),box-shadow var(--transition)}
   .filters select:focus,.filters input[type="text"]:focus{outline:none;border-color:var(--tsv-blue);box-shadow:0 0 0 3px rgba(0,86,179,.1)}
-  .filters .toggle{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;transition:background-color var(--transition)}
-  .filters .toggle:hover{background:#f9fafb}
+  .filters .toggle{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;transition:background-color var(--transition)}
+  .filters .toggle:hover{background:#f8fafc}
+  .filters .toggle input{transform:scale(1.2)}
 
-  /* Search */
-  .search-container{position:relative}
-  .search-input{padding-left:40px}
+  /* Suche (fix) */
+  .search-container{position:relative;z-index:1}
+  .search-container .field{position:relative;width:100%;display:block}
+  .filters .search-input{padding-left:40px!important}
   .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
-  .search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;border-radius:4px;opacity:0;transition:opacity var(--transition)}
+  .search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:transparent;color:var(--muted);padding:4px 6px;border-radius:4px;opacity:0;transition:opacity var(--transition)}
   .search-clear:hover{background:#f3f4f6;color:var(--text)}
-  .search-clear.visible{opacity:1}
+
+  /* Chips & misc */
+  .chip{display:inline-block;padding:.2rem .5rem;border-radius:999px;font-size:.75rem;border:1px solid var(--line);background:#f8fafc}
+  .chip-heim{background:#ecfdf5;border-color:#bbf7d0;color:#065f46}
+  .chip-auswaerts{background:#eff6ff;border-color:#bfdbfe;color:#1e3a8a}
+  .ms-badge{margin-left:8px;background:#111827;color:#fff;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;font-size:.7rem;min-width:22px;height:22px}
+  .ms-badge.two{background:#0ea5e9}
 
   /* Quick filters */
   .quick-filters{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
-  .quick-filter{padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;font-size:.85rem;cursor:pointer;transition:all var(--transition)}
+  .quick-filter{padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;color:#111827;font-size:.85rem;cursor:pointer;transition:all var(--transition)}
   .quick-filter:hover{background:#f3f4f6}
   .quick-filter.active{background:var(--tsv-blue);color:#fff;border-color:var(--tsv-blue)}
 
@@ -78,7 +84,7 @@
 
   /* Aktionen */
   .actions{display:flex;gap:10px;flex-wrap:wrap}
-  .btn{padding:10px 14px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--text);font-weight:700;cursor:pointer;transition:all var(--transition);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+  .btn{padding:10px 14px;border-radius:8px;border:1px solid var(--line);background:#fff;color:#111827;cursor:pointer;transition:all var(--transition);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
   .btn:hover{background:#f3f4f6;transform:translateY(-1px);box-shadow:var(--shadow)}
   .btn-primary{background:var(--tsv-blue);color:#fff;border-color:var(--tsv-blue)}
   .btn-primary:hover{background:var(--tsv-blue-dark)}
@@ -86,67 +92,32 @@
   /* Tabelle */
   .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff;max-height:70vh}
   table{width:100%;border-collapse:collapse;min-width:1000px}
-  thead th{font-size:.8rem;color:var(--muted);font-weight:700;text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);background:#fafafa;position:sticky;top:0;z-index:10;cursor:pointer;user-select:none;transition:background-color var(--transition)}
+  thead th{font-size:.8rem;color:var(--muted);font-weight:700;text-align:left;padding:10px 12px;background:#f8fafc;border-bottom:1px solid var(--line);user-select:none;transition:background-color var(--transition)}
   thead th:hover{background:#f0f0f0}
   thead th.sortable::after{content:' ⇅';opacity:.5;font-size:.7rem}
   thead th.sort-asc::after{content:' ↑';opacity:1;color:var(--tsv-blue)}
   thead th.sort-desc::after{content:' ↓';opacity:1;color:var(--tsv-blue)}
   
-  tbody td{padding:10px 12px;border-bottom:1px solid var(--line);background:#fff;vertical-align:middle;transition:background-color var(--transition)}
+  tbody td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle;transition:background-color var(--transition)}
   tbody tr:hover{background:#f9fafb}
-  tbody tr.month-sep td{border-top:3px solid var(--line-strong)}
-  tbody tr.today td{background:#fef3cd;border-left:3px solid var(--warning)}
+  tbody tr.month-sep td{border-top:3px solid #111827}
 
-  /* Spaltenbreiten */
-  td.date-cell{white-space:nowrap;cursor:pointer}
-  td.wd-cell{width:clamp(48px,6vw,72px)}
-  td.time-cell{white-space:nowrap;width:clamp(56px,7vw,80px);text-align:center}
-  td.team-cell{white-space:nowrap}
-  td.sep-cell{width:18px;text-align:center;color:var(--muted)}
-  td.club-cell{white-space:normal;max-width:clamp(140px,18vw,320px)}
-  td.tsv-cell{white-space:nowrap;width:clamp(80px,10vw,120px)}
-  td.liga-cell{white-space:nowrap}
-
-  /* Chips */
-  .chip{display:inline-block;padding:4px 8px;border-radius:6px;font-weight:700;font-size:.85rem;white-space:nowrap;border:1px solid rgba(0,0,0,.06);transition:transform var(--transition)}
-  .team-g1{background:#fca5a5;border-color:#f87171}
-  .team-g2{background:#fde68a;border-color:#facc15}
-  .team-g3{background:#86efac;border-color:#4ade80}
-  .chip-heim{background:#fef9c3;border-color:#eab308}
-  .chip-auswaerts{background:#bfdbfe;border-color:#3b82f6}
-
-  /* Badge Mehrfachspiele */
-  .ms-badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:999px;background:#e5e7eb;color:#111827;font-weight:800;font-size:.7rem;line-height:18px;vertical-align:middle}
-  .ms-badge.two{color:#dc2626;background:#fee2e2}
-
-  /* Chevron + Expand-Zeile */
-  .chev{display:inline-block;width:18px;height:18px;margin-right:6px;transform:rotate(0deg);transition:transform var(--transition);font-weight:900;color:#6b7280;user-select:none}
-  .row-open .chev{transform:rotate(90deg);color:#374151}
-  .expand-row td{background:#fcfcfd;border-top:0;border-bottom:1px solid var(--line);padding-top:6px;padding-bottom:12px}
-  .expand-box{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:center}
-  .expand-field{font-size:.9rem;color:var(--text);font-weight:500}
-  .expand-link a{display:inline-block;text-decoration:none;border:1px solid var(--line);padding:8px 12px;border-radius:8px;font-weight:700;color:var(--text);background:#fff;transition:all var(--transition)}
-  .expand-link a:hover{background:var(--tsv-blue);color:#fff;transform:translateY(-1px)}
+  .date-cell .chev{opacity:.5;margin-right:.5rem}
+  .club-cell{max-width:360px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wd-cell,.time-cell,.liga-cell{white-space:nowrap}
 
   /* Roster */
-  details.roster summary{list-style:none;cursor:pointer;font-weight:800;font-size:1.05rem;display:flex;align-items:center;gap:.6rem;padding:8px 0;transition:color var(--transition)}
-  details.roster summary::-webkit-details-marker{display:none}
-  details.roster summary::before{content:"▸";transition:transform var(--transition);display:inline-block}
-  details.roster summary:hover{color:var(--tsv-blue)}
-  details[open].roster summary::before{transform:rotate(90deg)}
-  .roster-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:10px}
-  .roster-team{background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:12px}
-  .roster-team h3{margin:.2rem 0 .4rem;font-size:1rem;color:var(--tsv-blue)}
-  .roster-team ul{margin:0;padding-left:1.1rem}
-  .roster-team li{padding:2px 0}
+  .roster summary{font-weight:700;cursor:pointer}
+  .roster-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .roster-team{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fff}
+  .roster-team h3{margin:6px 0 8px}
 
-  /* Empty state */
-  .empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
-  .empty-state-icon{font-size:3rem;margin-bottom:12px;opacity:.5}
-
-  /* Mobile */
+  /* Responsive */
+  @media (max-width:1100px){
+    .filters{grid-template-columns:repeat(3,minmax(0,1fr))}
+  }
   @media (max-width:760px){
-    .filters{grid-template-columns:1fr 1fr}
+    .filters{grid-template-columns:repeat(1,minmax(0,1fr))}
     .filters .search-container{grid-column:1/-1}
     table{min-width:680px}
     .actions .btn{flex:1 1 auto}
@@ -176,22 +147,22 @@
 
   <div class="topbar">
     <div class="wrap">
-      <img src="https://tsv-ug.de/wp-content/uploads/2024/02/tsv-logo.webp" alt="TSV Logo" onerror="this.style.display='none'">
-      <div class="title">TSV UG Kegeln – Spielpläne 2025/26</div>
+      <img src="https://tsv-ug.de/wp-content/uploads/2024/02/tsv-logo.webp" alt="TSV UG" />
+      <div class="title">TSV Unterpfaffenhofen · Spielpläne G1/G2/G3 (2025/26)</div>
     </div>
   </div>
 
   <div class="container">
-    <div class="error-message" id="errorMessage"></div>
-
     <section class="card">
+      <div class="error-message" id="errorBox"></div>
+
       <div class="filters" id="filters">
         <div class="search-container">
           <label for="search">Suche</label>
-          <div style="position:relative">
+          <div class="field">
             <span class="search-icon">🔍</span>
             <input type="text" id="search" class="search-input" placeholder="Gegner, Liga, Team...">
-            <button class="search-clear" id="searchClear">✕</button>
+            <button class="search-clear" id="searchClear" aria-label="Eingabe löschen">✕</button>
           </div>
         </div>
         <div>
@@ -200,12 +171,7 @@
         </div>
         <div>
           <label for="teamLiga">Mannschaft · Liga</label>
-          <select id="teamLiga">
-            <option value="">Alle</option>
-            <option value="G1|Kreisliga 2">G1 – Kreisliga 2</option>
-            <option value="G2|Kreisklasse 1">G2 – Kreisklasse 1</option>
-            <option value="G3|Kreisklasse 2">G3 – Kreisklasse 2</option>
-          </select>
+          <select id="teamLiga"><option value="">Alle</option></select>
         </div>
         <div>
           <label for="gegner">Gegner</label>
@@ -258,11 +224,7 @@
           <tbody></tbody>
         </table>
       </div>
-      <div class="empty-state" id="emptyState" style="display:none">
-        <div class="empty-state-icon">🎳</div>
-        <div>Keine Spiele gefunden</div>
-        <div style="font-size:.9rem;margin-top:8px">Versuchen Sie andere Filtereinstellungen</div>
-      </div>
+      <div class="empty-state" id="emptyState" style="display:none;padding:18px;color:var(--muted)">Keine Spiele gefunden.</div>
     </section>
 
     <section class="card">
@@ -271,11 +233,11 @@
         <div class="roster-grid">
           <div class="roster-team">
             <h3>🥇 Team G1 (Kreisliga 2)</h3>
-            <ul><li>Max Mustermann</li><li>Hans Schmidt</li><li>Peter Weber</li><li>Klaus Meyer</li><li>Thomas Bauer</li><li>Michael Fischer</li></ul>
+            <ul><li>Max Mustermann</li><li>Hans Schmidt</li><li>Peter Weber</li><li>Karl Huber</li><li>Josef Maier</li><li>Franz König</li><li>Andreas Hofmann</li></ul>
           </div>
           <div class="roster-team">
             <h3>🥈 Team G2 (Kreisklasse 1)</h3>
-            <ul><li>Andreas Müller</li><li>Stefan Wagner</li><li>Robert Koch</li><li>Frank Richter</li><li>Wolfgang Klein</li><li>Helmut Groß</li></ul>
+            <ul><li>Andreas Müller</li><li>Stefan Wagner</li><li>Ralf Becker</li><li>Georg Lehmann</li><li>Frank Richter</li><li>Wolfgang Klein</li><li>Helmut Groß</li></ul>
           </div>
           <div class="roster-team">
             <h3>🥉 Team G3 (Kreisklasse 2)</h3>
@@ -294,6 +256,7 @@
     dateCount: {},
     currentSort: { field: 'date', direction: 'asc' },
     filters: {
+      quick: '',
       ha: '',
       teamLiga: '',
       gegner: '',
@@ -303,48 +266,13 @@
     }
   };
 
-  // ------ Utils ------
-  const fmtDE = (iso) => {
-    if (!iso) return '';
-    const [y, m, d] = iso.split('-');
-    return `${d}.${m}.${y}`;
-  };
-
-  const parseISO = (iso, time = '00:00') => {
-    const t = (time && /^\d{1,2}:\d{2}$/.test(time)) ? time : '00:00';
-    return new Date(`${iso}T${t}`);
-  };
-
-  const monthKey = (iso) => {
-    if (!iso) return '';
-    const [y, m] = iso.split('-');
-    return `${y}-${m}`;
-  };
-
-  const isToday = (iso) => {
-    const today = new Date();
-    const gameDate = new Date(iso);
-    return today.toDateString() === gameDate.toDateString();
-  };
-
-  const debounce = (func, wait) => {
-    let timeout;
-    return function executedFunction(...args) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
-  };
-
-  const showError = (message) => {
-    const errorEl = document.getElementById('errorMessage');
-    errorEl.textContent = message;
-    errorEl.style.display = 'block';
+  // ------ Helpers ------
+  const showError = (msg) => {
+    const el = document.getElementById('errorBox');
+    el.textContent = msg;
+    el.style.display = 'block';
     setTimeout(() => {
-      errorEl.style.display = 'none';
+      el.style.display = 'none';
     }, 5000);
   };
 
@@ -396,83 +324,84 @@
   // ------ Data Loading ------
   async function loadData() {
     try {
-      // Try to load real data first, fall back to mock data
-      let data;
-      try {
-        const res = await fetch('tsv_spiele_gesamt.json', { cache: 'no-store' });
-        if (res.ok) {
-          data = await res.json();
-        } else {
-          throw new Error('JSON file not found');
-        }
-      } catch {
-        // Use mock data if JSON file doesn't exist
-        data = generateMockData();
-      }
-      
-      AppState.dateCount = {};
-      data.forEach(r => {
-        AppState.dateCount[r.Datum] = (AppState.dateCount[r.Datum] || 0) + 1;
-      });
-      
-      AppState.data = data;
-      populateOpponentFilter(data);
-      loadFiltersFromURL();
+      // Hier später per fetch echte Daten laden – aktuell Dummy:
+      const rows = generateMockData();
+      AppState.data = rows;
+      AppState.filteredData = rows;
+      updateFiltersFromData(rows);
       render();
-      hideLoading();
-    } catch (error) {
-      console.error('Fehler beim Laden der Daten:', error);
-      showError('Fehler beim Laden der Spielpläne. Verwende Beispieldaten.');
-      
-      // Fallback to mock data
-      const data = generateMockData();
-      AppState.dateCount = {};
-      data.forEach(r => {
-        AppState.dateCount[r.Datum] = (AppState.dateCount[r.Datum] || 0) + 1;
-      });
-      AppState.data = data;
-      populateOpponentFilter(data);
-      render();
+    } catch (e) {
+      console.error(e);
+      showError('Daten konnten nicht geladen werden.');
+    } finally {
       hideLoading();
     }
   }
 
-  // ------ URL State Management ------
-  function updateURL() {
-    const params = new URLSearchParams();
-    Object.entries(AppState.filters).forEach(([key, value]) => {
-      if (value && value !== '' && value !== false) {
-        params.set(key, value);
-      }
-    });
-    const newURL = params.toString() ? `${window.location.pathname}?${params}` : window.location.pathname;
-    window.history.replaceState({}, '', newURL);
+  function updateFiltersFromData(rows){
+    // Team/Liga Kombos
+    const combos = Array.from(new Set(rows.map(r => `${r.Team}|${r.Liga}`))).sort();
+    const tl = document.getElementById('teamLiga');
+    tl.innerHTML = '<option value="">Alle</option>' + combos.map(c => `<option value="${c}">${c.replace('|',' · ')}</option>`).join('');
+    // Gegner
+    const sel = document.getElementById('gegner');
+    const vals = Array.from(new Set(rows.map(r => r.Gegner).filter(Boolean))).sort();
+    sel.innerHTML = '<option value="">Alle</option>' + vals.map(v => `<option>${v}</option>`).join('');
   }
 
-  function loadFiltersFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    Object.keys(AppState.filters).forEach(key => {
-      const value = params.get(key);
-      if (value !== null) {
-        AppState.filters[key] = key === 'hidePast' ? value === 'true' : value;
-        
-        // Update UI elements
-        const element = document.getElementById(key);
-        if (element) {
-          if (element.type === 'checkbox') {
-            element.checked = AppState.filters[key];
-          } else {
-            element.value = AppState.filters[key];
-          }
-        }
-      }
-    });
-    
-    // Update search clear button
-    updateSearchClear();
+  // ------ Formatting / Utils ------
+  const fmtDE = (iso) => {
+    if(!iso) return '';
+    const [y,m,d] = iso.split('-');
+    return `${d}.${m}.${y}`;
+  };
+  const parseISO = (iso, time = '00:00') => {
+    const t = (time && /^\d{1,2}:\d{2}$/.test(time)) ? time : '00:00';
+    return new Date(`${iso}T${t}`);
+  };
+  const monthKey = (iso) => {
+    if (!iso) return '';
+    const [y, m] = iso.split('-');
+    return `${y}-${m}`;
+  };
+  const isToday = (iso) => {
+    const today = new Date();
+    const gameDate = new Date(iso);
+    return today.toDateString() === gameDate.toDateString();
+  };
+  const debounce = (func, wait) => {
+    let t; 
+    return (...args)=>{ clearTimeout(t); t=setTimeout(()=>func.apply(this,args), wait); };
+  };
+
+  // ------ Rendering ------
+  function render() {
+    AppState.filteredData = applyFilters();
+    updateStats(AppState.filteredData);
+    renderTable();
+    updateURL();
   }
 
-  // ------ Filtering ------
+  function applySorting(rows) {
+    const { field, direction } = AppState.currentSort;
+    const copy = [...rows];
+    return copy.sort((a, b) => {
+      let aVal, bVal;
+      switch (field) {
+        case 'date': aVal = parseISO(a.Datum, a.Uhrzeit); bVal = parseISO(b.Datum, b.Uhrzeit); break;
+        case 'time': aVal = a.Uhrzeit; bVal = b.Uhrzeit; break;
+        case 'team': aVal = a.Team; bVal = b.Team; break;
+        case 'home': aVal = a.Heim; bVal = b.Heim; break;
+        case 'away': aVal = a.Auswärts; bVal = b.Auswärts; break;
+        case 'liga': aVal = a.Liga; bVal = b.Liga; break;
+        default: aVal = a.Datum; bVal = b.Datum;
+      }
+      if (aVal instanceof Date && bVal instanceof Date) return (direction==='asc') ? aVal-bVal : bVal-aVal;
+      const cmp = String(aVal).localeCompare(String(bVal));
+      return (direction==='asc') ? cmp : -cmp;
+    });
+  }
+
   function applyFilters(rows = AppState.data) {
     const f = AppState.filters;
     let out = [...rows];
@@ -485,12 +414,36 @@
     }
     if (f.gegner) out = out.filter(r => (r.Gegner || '') === f.gegner);
     if (f.weekday) out = out.filter(r => (r.Wochentag || '') === f.weekday);
+
+    // Quick date filters
+    if (f.quick === 'today') {
+      out = out.filter(r => isToday(r.Datum));
+    } else if (f.quick === 'week') {
+      const today = new Date();
+      // Montag als Wochenstart
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - ((today.getDay()+6)%7));
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      out = out.filter(r => {
+        const gameDate = new Date(r.Datum);
+        return gameDate >= startOfWeek && gameDate <= endOfWeek;
+      });
+    } else if (f.quick === 'month') {
+      const today = new Date();
+      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      out = out.filter(r => {
+        const gameDate = new Date(r.Datum);
+        return gameDate >= startOfMonth && gameDate <= endOfMonth;
+      });
+    }
     
-    // Date filter
+    // „Vergangenes ausblenden“
     if (f.hidePast) {
       const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      out = out.filter(r => parseISO(r.Datum, r.Uhrzeit || '00:00') >= today);
+      today.setHours(0,0,0,0);
+      out = out.filter(r => parseISO(r.Datum, r.Uhrzeit) >= today);
     }
 
     // Search filter
@@ -508,136 +461,37 @@
     return applySorting(out);
   }
 
-  function applySorting(rows) {
-    const { field, direction } = AppState.currentSort;
-    
-    return rows.sort((a, b) => {
-      let aVal, bVal;
-      
-      switch (field) {
-        case 'date':
-          aVal = parseISO(a.Datum, a.Uhrzeit || '00:00');
-          bVal = parseISO(b.Datum, b.Uhrzeit || '00:00');
-          break;
-        case 'time':
-          aVal = a.Uhrzeit || '00:00';
-          bVal = b.Uhrzeit || '00:00';
-          break;
-        case 'team':
-          aVal = a.Team || '';
-          bVal = b.Team || '';
-          break;
-        case 'home':
-          aVal = a.Heim || '';
-          bVal = b.Heim || '';
-          break;
-        case 'away':
-          aVal = a.Auswärts || '';
-          bVal = b.Auswärts || '';
-          break;
-        case 'liga':
-          aVal = a.Liga || '';
-          bVal = b.Liga || '';
-          break;
-        default:
-          return 0;
-      }
-      
-      let comparison = 0;
-      if (aVal instanceof Date && bVal instanceof Date) {
-        comparison = aVal - bVal;
-      } else {
-        comparison = String(aVal).localeCompare(String(bVal));
-      }
-      
-      return direction === 'asc' ? comparison : -comparison;
-    });
-  }
-
-  function populateOpponentFilter(rows) {
-    const sel = document.getElementById('gegner');
-    const vals = Array.from(new Set(rows.map(r => r.Gegner).filter(Boolean))).sort();
-    sel.innerHTML = '<option value="">Alle</option>' + vals.map(v => `<option>${v}</option>`).join('');
-  }
-
-  // ------ Statistics ------
-  function updateStats(rows) {
-    const statsEl = document.getElementById('stats');
-    const total = rows.length;
-    const home = rows.filter(r => r["TSV Heim/Auswärts"] === 'Heim').length;
-    const away = rows.filter(r => r["TSV Heim/Auswärts"] === 'Auswärts').length;
-    const teams = new Set(rows.map(r => r.Team)).size;
-    
-    statsEl.innerHTML = `
-      <div class="stat">
-        <div class="stat-value">${total}</div>
-        <div class="stat-label">Spiele gesamt</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">${home}</div>
-        <div class="stat-label">Heimspiele</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">${away}</div>
-        <div class="stat-label">Auswärtsspiele</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">${teams}</div>
-        <div class="stat-label">Teams aktiv</div>
-      </div>
-    `;
-  }
-
-  // ------ Rendering ------
-  function render() {
-    AppState.filteredData = applyFilters();
-    updateStats(AppState.filteredData);
-    renderTable();
-    updateURL();
-  }
-
-  function renderTable() {
-    const tb = document.querySelector('#games tbody');
-    const emptyState = document.getElementById('emptyState');
+  // ------ Table ------
+  function renderTable(){
+    const tbody = document.querySelector('#games tbody');
+    tbody.innerHTML = '';
     const rows = AppState.filteredData;
-    
-    tb.innerHTML = '';
-    
-    if (rows.length === 0) {
-      emptyState.style.display = 'block';
-      return;
-    }
-    
-    emptyState.style.display = 'none';
+
+    // Count same-day games for badge
+    AppState.dateCount = rows.reduce((acc,r)=>{ acc[r.Datum]=(acc[r.Datum]||0)+1; return acc; }, {});
+
     let lastMonth = '';
-
     rows.forEach(r => {
-      // Hauptzeile
-      const tr = document.createElement('tr');
-      
-      // Heute markieren
-      if (isToday(r.Datum)) {
-        tr.classList.add('today');
-      }
-
-      // Monatsbeginn markieren
       const mk = monthKey(r.Datum);
-      if (mk && mk !== lastMonth) {
-        tr.classList.add('month-sep');
-        lastMonth = mk;
+      if (mk !== lastMonth && lastMonth !== '') {
+        const sep = document.createElement('tr');
+        sep.className = 'month-sep';
+        sep.innerHTML = `<td colspan="9"></td>`;
+        tbody.appendChild(sep);
       }
+      lastMonth = mk;
 
-      // Datum + Badge + Chevron
+      const tr = document.createElement('tr');
+
+      // Datum (+ Mehrfach-Badge)
       const tdDate = document.createElement('td');
       tdDate.className = 'date-cell';
       tdDate.style.cursor = 'pointer';
-      
       const chev = document.createElement('span');
       chev.className = 'chev';
       chev.textContent = '▸';
       tdDate.appendChild(chev);
       tdDate.appendChild(document.createTextNode(fmtDE(r.Datum)));
-      
       const cnt = AppState.dateCount[r.Datum] || 0;
       if (cnt > 1) {
         const badge = document.createElement('span');
@@ -659,27 +513,22 @@
       tdTime.textContent = r.Uhrzeit || '';
       tr.appendChild(tdTime);
 
-      // Team (Chip)
-      const teamTd = document.createElement('td');
-      teamTd.className = 'team-cell';
-      const t = (r.Team || '').toUpperCase();
-      let teamClass = 'team-g3';
-      if (t === 'G1') teamClass = 'team-g1';
-      else if (t === 'G2') teamClass = 'team-g2';
-      teamTd.innerHTML = `<span class="chip ${teamClass}">${t || ''}</span>`;
-      tr.appendChild(teamTd);
+      // Team
+      const tdTeam = document.createElement('td');
+      tdTeam.textContent = r.Team || '';
+      tr.appendChild(tdTeam);
 
-      // Heim – Auswärts
+      // Heim / – / Auswärts
       const tdHeim = document.createElement('td');
       tdHeim.className = 'club-cell';
       tdHeim.textContent = r.Heim || '';
       tr.appendChild(tdHeim);
-      
+
       const tdSep = document.createElement('td');
-      tdSep.className = 'sep-cell';
       tdSep.textContent = '–';
+      tdSep.style.textAlign = 'center';
       tr.appendChild(tdSep);
-      
+
       const tdAus = document.createElement('td');
       tdAus.className = 'club-cell';
       tdAus.textContent = r.Auswärts || '';
@@ -697,45 +546,15 @@
       tr.appendChild(haTd);
 
       // Liga
-      const ligaTd = document.createElement('td');
-      ligaTd.className = 'liga-cell';
-      ligaTd.textContent = r.Liga || '';
-      tr.appendChild(ligaTd);
+      const tdLiga = document.createElement('td');
+      tdLiga.className = 'liga-cell';
+      tdLiga.textContent = r.Liga || '';
+      tr.appendChild(tdLiga);
 
-      // Ausklapp-Zeile
-      const ex = document.createElement('tr');
-      ex.className = 'expand-row';
-      ex.style.display = 'none';
-      const exTd = document.createElement('td');
-      exTd.colSpan = 9;
-      exTd.innerHTML = `
-        <div class="expand-box">
-          <div class="expand-field">Bahndienst: <strong>Noch offen</strong></div>
-          <div class="expand-field">Vertretung: <strong>Noch offen</strong></div>
-          <div class="expand-link"><a href="#roster" data-open-roster>Zur Mannschaftsaufstellung</a></div>
-        </div>
-      `;
-      ex.appendChild(exTd);
-
-      function toggleRow() {
-        const open = ex.style.display !== 'none';
-        ex.style.display = open ? 'none' : '';
-        tr.classList.toggle('row-open', !open);
-      }
-      tdDate.addEventListener('click', toggleRow);
-
-      // Roster-Link
-      exTd.addEventListener('click', (e) => {
-        const a = e.target.closest('[data-open-roster]');
-        if (!a) return;
-        const roster = document.getElementById('roster');
-        roster.setAttribute('open', '');
-        setTimeout(() => roster.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-      });
-
-      tb.appendChild(tr);
-      tb.appendChild(ex);
+      tbody.appendChild(tr);
     });
+
+    document.getElementById('emptyState').style.display = rows.length ? 'none' : 'block';
   }
 
   // ------ Sorting ------
@@ -745,145 +564,121 @@
     } else {
       AppState.currentSort = { field, direction: 'asc' };
     }
-    
-    // Update header styles
-    document.querySelectorAll('thead th').forEach(th => {
-      th.classList.remove('sort-asc', 'sort-desc');
-    });
-    
+    document.querySelectorAll('thead th.sortable').forEach(th => th.classList.remove('sort-asc','sort-desc'));
     const header = document.querySelector(`[data-sort="${field}"]`);
-    if (header) {
-      header.classList.add(AppState.currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
-    }
-    
+    if (header) header.classList.add(AppState.currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
     render();
   }
 
   // ------ Quick Filters ------
   function handleQuickFilter(type) {
-    // Reset all quick filters
+    // reset visual
     document.querySelectorAll('.quick-filter').forEach(btn => btn.classList.remove('active'));
-    
-    const today = new Date();
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay() + 1);
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
-    
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-    
-    switch (type) {
-      case 'today':
-        AppState.filters = { ...AppState.filters, hidePast: true };
-        AppState.filteredData = AppState.data.filter(r => isToday(r.Datum));
-        break;
-      case 'week':
-        AppState.filters = { ...AppState.filters, hidePast: true };
-        AppState.filteredData = AppState.data.filter(r => {
-          const gameDate = new Date(r.Datum);
-          return gameDate >= startOfWeek && gameDate <= endOfWeek;
-        });
-        break;
-      case 'month':
-        AppState.filters = { ...AppState.filters, hidePast: true };
-        AppState.filteredData = AppState.data.filter(r => {
-          const gameDate = new Date(r.Datum);
-          return gameDate >= startOfMonth && gameDate <= endOfMonth;
-        });
-        break;
-      case 'home':
-        AppState.filters = { ...AppState.filters, ha: 'Heim' };
-        document.getElementById('ha').value = 'Heim';
-        break;
-      case 'away':
-        AppState.filters = { ...AppState.filters, ha: 'Auswärts' };
-        document.getElementById('ha').value = 'Auswärts';
-        break;
+    // store quick type
+    AppState.filters.quick = type || '';
+    // map home/away
+    if (type === 'home') {
+      AppState.filters.ha = 'Heim';
+      document.getElementById('ha').value = 'Heim';
+    } else if (type === 'away') {
+      AppState.filters.ha = 'Auswärts';
+      document.getElementById('ha').value = 'Auswärts';
     }
-    
-    document.querySelector(`[data-filter="${type}"]`).classList.add('active');
+    // date quick filters imply hidePast
+    if (type === 'today' || type === 'week' || type === 'month') {
+      AppState.filters.hidePast = true;
+      document.getElementById('hidePast').checked = true;
+    }
+    // activate button
+    const btn = document.querySelector(`[data-filter="${type}"]`);
+    if (btn) btn.classList.add('active');
     render();
   }
 
   // ------ Search ------
-  function updateSearchClear() {
-    const clearBtn = document.getElementById('searchClear');
-    clearBtn.classList.toggle('visible', AppState.filters.search.length > 0);
+  function updateSearchClear(){
+    const v = document.getElementById('search').value;
+    document.getElementById('searchClear').style.opacity = v ? 1 : 0;
   }
-
-  const debouncedSearch = debounce((value) => {
-    AppState.filters.search = value;
+  const debouncedSearch = debounce((value)=>{
+    AppState.filters.search = value.trim();
+    updateSearchClear();
     render();
   }, 300);
 
-  // ------ Export Functions ------
-  function downloadPDF() {
-    window.print();
+  // ------ Stats ------
+  function updateStats(rows) {
+    const statsEl = document.getElementById('stats');
+    const total = rows.length;
+    const home = rows.filter(r => r["TSV Heim/Auswärts"] === 'Heim').length;
+    const away = rows.filter(r => r["TSV Heim/Auswärts"] === 'Auswärts').length;
+    const teams = new Set(rows.map(r => r.Team)).size;
+    
+    statsEl.innerHTML = `
+      <div class="stat">
+        <div class="stat-value">${total}</div>
+        <div class="stat-label">Spiele</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">${home}</div>
+        <div class="stat-label">Heimspiele</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">${away}</div>
+        <div class="stat-label">Auswärtsspiele</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">${teams}</div>
+        <div class="stat-label">Teams aktiv</div>
+      </div>
+    `;
   }
 
+  // ------ Export Functions ------
+  function downloadPDF() { window.print(); }
   function exportICS() {
     const rows = AppState.filteredData;
     const pad = n => String(n).padStart(2, '0');
     const lines = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
-      'PRODID:-//TSV Unterpfaffenhofen//Spielpläne//DE'
+      'PRODID:-//TSV UG//Spiele//DE'
     ];
-    
-    rows.forEach(r => {
-      if (!r.Datum) return;
-      const dt = parseISO(r.Datum, r.Uhrzeit || '00:00');
-      const start = dt.getFullYear() + pad(dt.getMonth() + 1) + pad(dt.getDate()) + 'T' + pad(dt.getHours()) + pad(dt.getMinutes()) + '00';
-      const summary = `${r.Team || ''} · ${r.Heim || ''} - ${r.Auswärts || ''}`;
-      const desc = `${r.Liga || ''}`;
-      
+    rows.forEach(r=>{
+      const dt = parseISO(r.Datum, r.Uhrzeit);
+      const dtStart = `${dt.getFullYear()}${pad(dt.getMonth()+1)}${pad(dt.getDate())}T${pad(dt.getHours())}${pad(dt.getMinutes())}00`;
       lines.push('BEGIN:VEVENT');
-      lines.push('DTSTART:' + start);
-      lines.push('DTEND:' + start);
-      lines.push('SUMMARY:' + summary.replace(/,/g, '\\,'));
-      lines.push('DESCRIPTION:' + desc.replace(/,/g, '\\,'));
+      lines.push(`DTSTART:${dtStart}`);
+      lines.push(`SUMMARY:${r.Team}: ${r.Heim} – ${r.Auswärts} (${r.Liga})`);
       lines.push('END:VEVENT');
     });
-    
     lines.push('END:VCALENDAR');
-    const blob = new Blob([lines.join('\n')], { type: 'text/calendar;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
+    const blob = new Blob([lines.join('\n')], {type:'text/calendar'});
     const a = document.createElement('a');
-    a.href = url;
-    a.download = 'tsv-spielplan.ics';
+    a.href = URL.createObjectURL(blob);
+    a.download = 'tsv_spiele.ics';
     a.click();
-    URL.revokeObjectURL(url);
   }
-
   function exportExcel() {
     const rows = AppState.filteredData;
-    const header = ['Datum', 'Wochentag', 'Uhrzeit', 'Team', 'Heim', 'Auswärts', 'TSV Heim/Auswärts', 'Gegner', 'Liga'];
-    const csv = [header.join(';')].concat(
-      rows.map(r => [
-        fmtDE(r.Datum),
-        r.Wochentag || '',
-        r.Uhrzeit || '',
-        r.Team || '',
-        (r.Heim || '').replace(/;/g, ','),
-        (r.Auswärts || '').replace(/;/g, ','),
-        r["TSV Heim/Auswärts"] || '',
-        (r.Gegner || '').replace(/;/g, ','),
-        r.Liga || ''
-      ].join(';'))
-    ).join('\n');
-    
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
+    const header = ['Datum','Wochentag','Uhrzeit','Team','Heim','-','Auswärts','TSV','Liga'];
+    const csv = [header.join(';')].concat(rows.map(r=>[
+      fmtDE(r.Datum), r.Wochentag, r.Uhrzeit, r.Team, r.Heim, '-', r.Auswärts, r["TSV Heim/Auswärts"]||'', r.Liga
+    ].join(';'))).join('\n');
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
     const a = document.createElement('a');
-    a.href = url;
-    a.download = 'tsv-spielplan.csv';
+    a.href = URL.createObjectURL(blob);
+    a.download = 'tsv_spiele.csv';
     a.click();
-    URL.revokeObjectURL(url);
+  }
+
+  function updateURL(){
+    // optional: State in URL schreiben, aktuell nicht genutzt
   }
 
   function resetFilters() {
     AppState.filters = {
+      quick: '',
       ha: '',
       teamLiga: '',
       gegner: '',
@@ -891,12 +686,8 @@
       hidePast: false,
       search: ''
     };
-    
-    ['ha', 'teamLiga', 'gegner', 'weekday', 'search'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
+    ['ha', 'teamLiga', 'gegner', 'weekday', 'search'].forEach(id => { document.getElementById(id).value = ''; });
     document.getElementById('hidePast').checked = false;
-    
     document.querySelectorAll('.quick-filter').forEach(btn => btn.classList.remove('active'));
     updateSearchClear();
     render();
@@ -911,19 +702,12 @@
         render();
       });
     });
-
-    document.getElementById('hidePast').addEventListener('change', (e) => {
-      AppState.filters.hidePast = e.target.checked;
-      render();
-    });
+    document.getElementById('hidePast').addEventListener('change', (e) => { AppState.filters.hidePast = e.target.checked; render(); });
 
     // Search events
     const searchInput = document.getElementById('search');
-    searchInput.addEventListener('input', (e) => {
-      debouncedSearch(e.target.value);
-      updateSearchClear();
-    });
-
+    searchInput.addEventListener('input', (e) => { debouncedSearch(e.target.value); });
+    searchInput.addEventListener('keydown', (e) => { if (e.key === 'Escape') { searchInput.value=''; AppState.filters.search=''; updateSearchClear(); render(); }});
     document.getElementById('searchClear').addEventListener('click', () => {
       searchInput.value = '';
       AppState.filters.search = '';
@@ -933,18 +717,12 @@
 
     // Sort events
     document.querySelectorAll('thead th.sortable').forEach(th => {
-      th.addEventListener('click', () => {
-        const field = th.getAttribute('data-sort');
-        handleSort(field);
-      });
+      th.addEventListener('click', () => handleSort(th.getAttribute('data-sort')));
     });
 
     // Quick filter events
     document.querySelectorAll('.quick-filter').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const filter = btn.getAttribute('data-filter');
-        handleQuickFilter(filter);
-      });
+      btn.addEventListener('click', () => handleQuickFilter(btn.getAttribute('data-filter')));
     });
 
     // Button events
@@ -955,12 +733,7 @@
   }
 
   // ------ Initialization ------
-  function init() {
-    setupEventListeners();
-    loadData();
-  }
-
-  // Start the application
+  function init() { setupEventListeners(); loadData(); }
   init();
 </script>
 </body>
