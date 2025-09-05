@@ -58,25 +58,43 @@
 
    
   /* Search */
-.search-container{position:relative}
-
-.search-input{
-  padding-left:36px;   /* mehr Platz für die Lupe */
-  padding-right:34px;  /* Platz für Clear-Button */
+.search-container {
+  position: relative;
 }
 
-.search-clear{
-  position:absolute;right:6px;top:50%;
-  transform:translateY(-50%);
-  background:none;border:none;color:var(--muted);
-  cursor:pointer;padding:4px 6px;border-radius:4px;
-  opacity:0;transition:opacity var(--transition),background var(--transition),color var(--transition);
-  z-index:2;font-size:14px;line-height:1;
-  pointer-events:none; /* unsichtbar = nicht klickbar */
+.search-input {
+  padding-right: 34px; /* Platz für den Clear-Button */
 }
 
-.search-clear:hover{background:#f3f4f6;color:var(--text)}
-.search-clear.visible{opacity:1;pointer-events:auto}
+.search-clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity var(--transition), background var(--transition), color var(--transition);
+  z-index: 2;
+  font-size: 14px;
+  line-height: 1;
+  pointer-events: none; /* unsichtbar = nicht klickbar */
+}
+
+.search-clear:hover {
+  background: #f3f4f6;
+  color: var(--text);
+}
+
+.search-clear.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 
   
   /* Quick filters */
