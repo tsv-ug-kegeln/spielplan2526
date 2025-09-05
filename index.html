@@ -56,46 +56,12 @@
   .filters .toggle{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;transition:background-color var(--transition)}
   .filters .toggle:hover{background:#f9fafb}
 
-   
-  /* Search */
-.search-container {
-  position: relative;
-}
-
-.search-input {
-  padding-right: 34px; /* Platz für den Clear-Button */
-}
-
-.search-clear {
-  position: absolute;
-  right: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: var(--muted);
-  cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 4px;
-  opacity: 0;
-  transition: opacity var(--transition), background var(--transition), color var(--transition);
-  z-index: 2;
-  font-size: 14px;
-  line-height: 1;
-  pointer-events: none; /* unsichtbar = nicht klickbar */
-}
-
-.search-clear:hover {
-  background: #f3f4f6;
-  color: var(--text);
-}
-
-.search-clear.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-
+   /* Search */
+  .search-container{position:relative}
+  .search-input{padding-left:12px;padding-right:28px}
+  .search-clear{position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;padding:2px 4px;border-radius:3px;opacity:0;transition:opacity var(--transition);z-index:2;font-size:12px;line-height:1}
+  .search-clear:hover{background:#f3f4f6;color:var(--text)}
+  .search-clear.visible{opacity:1}
   
   /* Quick filters */
   .quick-filters{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
