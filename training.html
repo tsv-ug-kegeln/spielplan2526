@@ -79,7 +79,7 @@
     }
     .controls{
       display:grid;
-      grid-template-columns: 1fr 180px auto auto;
+      grid-template-columns: 1fr auto auto;
       gap:10px;
       align-items:center;
     }
@@ -105,6 +105,7 @@
       cursor:pointer;
       background:var(--tsv-blue);
       color:white;
+      white-space:nowrap;
     }
     .btn.secondary{
       background:white;
@@ -153,28 +154,37 @@
       background:#fbfdff;
     }
     tr:last-child td{border-bottom:0}
+
     .cell-edit{
       border-radius:10px;
       padding:8px 10px;
       border:1px solid transparent;
       background:transparent;
       min-height:36px;
+      white-space:nowrap;
     }
-    .cell-edit[contenteditable="true"]{
-      cursor:text;
-    }
+    .cell-edit[contenteditable="true"]{ cursor:text; }
     .cell-edit[contenteditable="true"]:focus{
       outline:none;
       border-color:rgba(11,61,145,.35);
       background:white;
       box-shadow:0 0 0 4px rgba(11,61,145,.10);
     }
-    .sum{
-      font-weight:800;
-      color:#0b2d66;
+    .saving{
+      border-color:rgba(247,198,0,.6) !important;
+      background:rgba(247,198,0,.10) !important;
     }
+    .sum{font-weight:800;color:#0b2d66}
     .muted{color:var(--muted)}
     .col-small{width:92px}
+    .errorbox{
+      margin-top:12px;
+      padding:12px;
+      border:1px solid #fecaca;
+      background:#fff1f2;
+      border-radius:12px;
+      color:#991b1b;
+    }
   </style>
 </head>
 
@@ -186,7 +196,7 @@
       </div>
       <div class="title">
         <h1>TSV UG Kegeln – Training</h1>
-        <div class="sub">Namen eintragen (öffentlich) · Ergebnisse nur mit Trainer-PIN</div>
+        <div class="sub">Eintragen & Ergebnisse pflegen (öffentlich)</div>
       </div>
       <div class="badge" id="status">offline</div>
     </div>
@@ -196,28 +206,26 @@
     <div class="panel">
       <div class="controls">
         <input id="search" placeholder="Suche (Name/Spieler/in) …" oninput="render()" />
-        <input id="pin" type="password" placeholder="Trainer-PIN" oninput="render()" />
         <div class="btnrow">
           <button class="btn" onclick="load()">Neu laden</button>
           <button class="btn secondary" onclick="resetFilters()">Zurücksetzen</button>
         </div>
       </div>
       <div class="hint">
-        Öffentlich editierbar: <b>Spalte B</b> (Name). Mit PIN: zusätzlich <b>Bahn 1–4</b>. Gesamt wird automatisch gerechnet.
+        Editierbar: <b>Name</b> und <b>Bahn 1–4</b>. Gesamt wird aus dem Sheet übernommen (Formeln).
       </div>
+      <div id="err"></div>
     </div>
 
     <div class="sections" id="sections">Lade…</div>
   </main>
 
 <script>
-  // TODO: Eintragen: Apps-Script WebApp URL (doGet/doPost Endpoint)
+  // HIER EINTRAGEN: Apps-Script WebApp URL (Deploy → Web-App URL)
   const APPS_SCRIPT_URL = "PASTE_YOUR_WEBAPP_URL_HERE";
 
-  // Wir lesen/anzeigen nur die relevanten Zeilenblöcke.
-  // Erwartetes Sheet-Format wie in deiner Excel: Slot-Header + 4 Spielerzeilen usw.
-  let rows = []; // raw rows from backend
-  let slots = []; // parsed slots
+  let rows = [];  // raw 2D array
+  let slots = []; // parsed blocks
 
   function setStatus(ok, msg){
     const el = document.getElementById('status');
@@ -226,54 +234,71 @@
     el.style.borderColor = ok ? "rgba(247,198,0,.35)" : "rgba(255,255,255,.25)";
   }
 
+  function showError(msg){
+    const err = document.getElementById('err');
+    if(!msg){ err.innerHTML = ""; return; }
+    err.innerHTML = `<div class="errorbox">${escapeHtml(msg)}</div>`;
+  }
+
   async function load(){
+    showError("");
     setStatus(false, "lade…");
+
+    if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("PASTE_YOUR_WEBAPP_URL_HERE")){
+      setStatus(false, "offline");
+      document.getElementById('sections').textContent =
+        "APPS_SCRIPT_URL fehlt. Bitte oben in der Datei eintragen.";
+      return;
+    }
+
     try{
-      const res = await fetch(APPS_SCRIPT_URL + "?action=get");
+      const res = await fetch(APPS_SCRIPT_URL + "?action=get", { cache: "no-store" });
       const json = await res.json();
-      rows = json.values; // 2D Array
+      if(!json.ok) throw new Error(json.error || "Konnte Tabelle nicht lesen.");
+      rows = json.values || [];
       parseSlots();
       render();
       setStatus(true, "online");
     }catch(e){
       console.error(e);
-      document.getElementById('sections').textContent =
-        "Konnte Daten nicht laden. Prüfe APPS_SCRIPT_URL / WebApp-Berechtigungen.";
       setStatus(false, "offline");
+      showError("Konnte Daten nicht laden. Prüfe WebApp-Deploy (Zugriff: Jeder) und URL.");
+      document.getElementById('sections').textContent = "Laden fehlgeschlagen.";
     }
   }
 
   function resetFilters(){
     document.getElementById('search').value = "";
-    document.getElementById('pin').value = "";
     render();
   }
 
   function parseSlots(){
-    // Wir erkennen Slot-Header an: Spalte B enthält z.B. "17:00 - 18:00"
-    // und Spalte C enthält "Bahn 1"
+    // Erkennung eures Excel-Layouts:
+    // Slot-Header: Spalte B enthält "17:00 - 18:00" und Spalte C enthält "Bahn 1"
     slots = [];
     for(let r=0; r<rows.length; r++){
-      const A = rows[r]?.[0] ?? "";
       const B = rows[r]?.[1] ?? "";
       const C = rows[r]?.[2] ?? "";
+      const isTimeRow =
+        typeof B === "string" && B.includes(":") && B.includes("-") &&
+        typeof C === "string" && C.toLowerCase().includes("bahn");
 
-      const isTimeRow = (typeof B === "string" && B.includes(":") && B.includes("-") && typeof C === "string" && C.toLowerCase().includes("bahn"));
       if(isTimeRow){
         const time = B.trim();
         const players = [];
-        // nächste 4 Zeilen als Spieler (wie in deiner Datei)
         for(let k=1; k<=4; k++){
           const rr = r+k;
           if(!rows[rr]) continue;
-          const pA = rows[rr][0] ?? "";
-          const pB = rows[rr][1] ?? "";
-          const b1 = rows[rr][2] ?? "";
-          const b2 = rows[rr][3] ?? "";
-          const b3 = rows[rr][4] ?? "";
-          const b4 = rows[rr][5] ?? "";
-          const sum = rows[rr][6] ?? "";
-          players.push({ rowIndex: rr+1, label:pA, name:pB, b1, b2, b3, b4, sum });
+          players.push({
+            rowIndex: rr+1, // 1-basiert für Sheet
+            label: rows[rr][0] ?? "",
+            name:  rows[rr][1] ?? "",
+            b1:    rows[rr][2] ?? "",
+            b2:    rows[rr][3] ?? "",
+            b3:    rows[rr][4] ?? "",
+            b4:    rows[rr][5] ?? "",
+            sum:   rows[rr][6] ?? ""
+          });
         }
         slots.push({ time, players });
       }
@@ -282,9 +307,6 @@
 
   function render(){
     const q = (document.getElementById('search').value || "").toLowerCase().trim();
-    const pin = (document.getElementById('pin').value || "").trim();
-    const canEditPoints = pin.length > 0; // tatsächliche Prüfung macht der Server
-
     const container = document.getElementById('sections');
     container.innerHTML = "";
 
@@ -308,7 +330,7 @@
       const head = document.createElement('div');
       head.className = "slot-head";
       head.innerHTML = `<div class="time">${escapeHtml(slot.time)}</div>
-                        <div class="meta">4 Bahnen · Punkte mit PIN</div>`;
+                        <div class="meta">4 Bahnen</div>`;
       card.appendChild(head);
 
       const tbl = document.createElement('table');
@@ -325,25 +347,22 @@
           </tr>
         </thead>
       `;
+
       const tb = document.createElement('tbody');
 
       slot.players.forEach(p => {
         const tr = document.createElement('tr');
 
         tr.appendChild(tdText(p.label, true));
-
-        // Name (Spalte B) immer editierbar
-        tr.appendChild(tdEdit(p.rowIndex, 2, p.name, true));
-
-        // Punkte (C-F) nur wenn PIN eingegeben (Server entscheidet final)
-        tr.appendChild(tdEdit(p.rowIndex, 3, p.b1, canEditPoints));
-        tr.appendChild(tdEdit(p.rowIndex, 4, p.b2, canEditPoints));
-        tr.appendChild(tdEdit(p.rowIndex, 5, p.b3, canEditPoints));
-        tr.appendChild(tdEdit(p.rowIndex, 6, p.b4, canEditPoints));
+        tr.appendChild(tdEdit(p.rowIndex, 2, p.name)); // Name (B)
+        tr.appendChild(tdEdit(p.rowIndex, 3, p.b1));   // C
+        tr.appendChild(tdEdit(p.rowIndex, 4, p.b2));   // D
+        tr.appendChild(tdEdit(p.rowIndex, 5, p.b3));   // E
+        tr.appendChild(tdEdit(p.rowIndex, 6, p.b4));   // F
 
         const sumTd = document.createElement('td');
         sumTd.className = "sum";
-        sumTd.textContent = p.sum;
+        sumTd.textContent = p.sum ?? "";
         tr.appendChild(sumTd);
 
         tb.appendChild(tr);
@@ -362,42 +381,62 @@
     return td;
   }
 
-  function tdEdit(row, col, value, editable){
+  function tdEdit(row, col, value){
     const td = document.createElement('td');
     const div = document.createElement('div');
     div.className = "cell-edit";
     div.textContent = value ?? "";
-    if(editable){
-      div.setAttribute("contenteditable","true");
-      div.addEventListener("blur", () => saveCell(row, col, div.textContent));
-    }else{
-      div.setAttribute("contenteditable","false");
-      div.classList.add("muted");
-    }
+    div.setAttribute("contenteditable","true");
+
+    // Speichern bei Fokusverlust
+    div.addEventListener("blur", async () => {
+      const newValue = div.textContent;
+      // Keine Aktion, wenn nix geändert wurde (grob)
+      if(String(newValue ?? "") === String(value ?? "")) return;
+
+      div.classList.add("saving");
+      const ok = await saveCell(row, col, newValue);
+      div.classList.remove("saving");
+      if(ok) value = newValue; // local update
+    });
+
+    // Enter beendet Edit (wie Spreadsheet)
+    div.addEventListener("keydown", (e) => {
+      if(e.key === "Enter"){
+        e.preventDefault();
+        div.blur();
+      }
+    });
+
     td.appendChild(div);
     return td;
   }
 
   async function saveCell(row, col, value){
-    const pin = (document.getElementById('pin').value || "").trim();
+    showError("");
     try{
       const res = await fetch(APPS_SCRIPT_URL, {
         method:"POST",
         headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ action:"set", row, col, value, pin })
+        body: JSON.stringify({ action:"set", row, col, value })
       });
       const json = await res.json();
-      if(!json.ok) throw new Error(json.error || "Unbekannter Fehler");
-      // optional: neu laden, um Summen aktualisiert zu sehen
+      if(!json.ok) throw new Error(json.error || "Speichern fehlgeschlagen.");
+      // Reload damit Summen (G) sofort korrekt sind
       await load();
+      return true;
     }catch(e){
-      alert(e.message);
+      console.error(e);
+      showError(e.message);
       await load();
+      return false;
     }
   }
 
   function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+    return String(s).replace(/[&<>"']/g, m => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+    }[m]));
   }
 
   load();
