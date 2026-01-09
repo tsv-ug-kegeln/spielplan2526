@@ -18,272 +18,109 @@
       --radius:16px;
     }
     *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background:var(--bg);
-      color:var(--text);
-    }
-
-    /* Header */
-    .header{
-      background:linear-gradient(180deg,var(--tsv-blue),#072f70);
-      color:white;
-      padding:14px 14px 18px;
-      position:sticky;
-      top:0;
-      z-index:10;
-      box-shadow:0 6px 18px rgba(2,6,23,.18);
-    }
-    .header-inner{
-      max-width:1100px;
-      margin:0 auto;
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
-    .logo{
-      width:44px;height:44px;border-radius:50%;
-      background:white;
-      display:flex;align-items:center;justify-content:center;
-      overflow:hidden;
-      box-shadow:0 8px 20px rgba(0,0,0,.25);
-      flex:0 0 auto;
-    }
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);}
+    .header{background:linear-gradient(180deg,var(--tsv-blue),#072f70);color:white;padding:14px 14px 18px;position:sticky;top:0;z-index:10;box-shadow:0 6px 18px rgba(2,6,23,.18);}
+    .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px;}
+    .logo{width:44px;height:44px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,.25);flex:0 0 auto;}
     .logo img{width:100%;height:100%;object-fit:cover}
-    .title{
-      display:flex;flex-direction:column;gap:2px;
-      min-width:0;
-    }
+    .title{display:flex;flex-direction:column;gap:2px;min-width:0;}
     .title h1{margin:0;font-size:18px;line-height:1.2}
     .title .sub{font-size:13px;color:rgba(255,255,255,.85)}
-    .badge{
-      margin-left:auto;
-      background:rgba(247,198,0,.18);
-      border:1px solid rgba(247,198,0,.35);
-      color:var(--tsv-yellow);
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      white-space:nowrap;
-    }
-
-    /* Main */
+    .badge{margin-left:auto;background:rgba(247,198,0,.18);border:1px solid rgba(247,198,0,.35);color:var(--tsv-yellow);padding:6px 10px;border-radius:999px;font-size:12px;white-space:nowrap;}
     .wrap{max-width:1100px;margin:16px auto;padding:0 14px 40px}
-    .panel{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:12px;
-    }
-    .controls{
-      display:grid;
-      grid-template-columns: 1fr auto auto;
-      gap:10px;
-      align-items:center;
-    }
-    @media (max-width:820px){
-      .controls{grid-template-columns:1fr 1fr; }
-      .controls .btnrow{grid-column:1/-1;display:flex;gap:10px}
-    }
-    input{
-      width:100%;
-      padding:12px 12px;
-      border-radius:12px;
-      border:1px solid var(--line);
-      font-size:15px;
-      outline:none;
-      background:white;
-    }
-    input:focus{border-color:rgba(11,61,145,.45); box-shadow:0 0 0 4px rgba(11,61,145,.12);}
-    .btn{
-      border:0;
-      padding:12px 14px;
-      border-radius:12px;
-      font-weight:600;
-      cursor:pointer;
-      background:var(--tsv-blue);
-      color:white;
-      white-space:nowrap;
-    }
-    .btn.secondary{
-      background:white;
-      color:var(--tsv-blue);
-      border:1px solid rgba(11,61,145,.25);
-    }
-    .btn:active{transform:translateY(1px)}
+    .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;}
+    .controls{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;}
+    @media (max-width:820px){.controls{grid-template-columns:1fr 1fr}.controls .btnrow{grid-column:1/-1;display:flex;gap:10px}}
+    input{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);font-size:15px;outline:none;background:white;}
+    .btn{border:0;padding:12px 14px;border-radius:12px;font-weight:600;cursor:pointer;background:var(--tsv-blue);color:white;white-space:nowrap;}
+    .btn.secondary{background:white;color:var(--tsv-blue);border:1px solid rgba(11,61,145,.25);}
     .hint{margin-top:10px;color:var(--muted);font-size:13px}
-
-    /* Sections */
     .sections{margin-top:14px;display:grid;gap:14px}
-    .slot{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    .slot-head{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:12px 14px;
-      background:linear-gradient(90deg,rgba(247,198,0,.25),rgba(247,198,0,.05));
-      border-bottom:1px solid var(--line);
-    }
-    .slot-head .time{
-      font-weight:800;
-      color:#0b2d66;
-      letter-spacing:.2px;
-    }
+    .slot{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+    .slot-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:linear-gradient(90deg,rgba(247,198,0,.25),rgba(247,198,0,.05));border-bottom:1px solid var(--line);}
+    .slot-head .time{font-weight:800;color:#0b2d66;}
     .slot-head .meta{font-size:12px;color:var(--muted)}
-    table{
-      width:100%;
-      border-collapse:separate;
-      border-spacing:0;
-    }
-    th,td{
-      padding:10px 10px;
-      border-bottom:1px solid var(--line);
-      font-size:14px;
-      vertical-align:middle;
-    }
-    th{
-      text-align:left;
-      color:var(--muted);
-      font-weight:700;
-      background:#fbfdff;
-    }
+    table{width:100%;border-collapse:separate;border-spacing:0}
+    th,td{padding:10px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:middle;}
+    th{text-align:left;color:var(--muted);font-weight:700;background:#fbfdff;}
     tr:last-child td{border-bottom:0}
-
-    .cell-edit{
-      border-radius:10px;
-      padding:8px 10px;
-      border:1px solid transparent;
-      background:transparent;
-      min-height:36px;
-      white-space:nowrap;
-    }
-    .cell-edit[contenteditable="true"]{ cursor:text; }
-    .cell-edit[contenteditable="true"]:focus{
-      outline:none;
-      border-color:rgba(11,61,145,.35);
-      background:white;
-      box-shadow:0 0 0 4px rgba(11,61,145,.10);
-    }
-    .saving{
-      border-color:rgba(247,198,0,.6) !important;
-      background:rgba(247,198,0,.10) !important;
-    }
+    .cell-edit{border-radius:10px;padding:8px 10px;border:1px solid transparent;background:transparent;min-height:36px;white-space:nowrap;}
+    .cell-edit[contenteditable="true"]{cursor:text}
+    .cell-edit[contenteditable="true"]:focus{outline:none;border-color:rgba(11,61,145,.35);background:white;box-shadow:0 0 0 4px rgba(11,61,145,.10);}
+    .saving{border-color:rgba(247,198,0,.6)!important;background:rgba(247,198,0,.10)!important;}
     .sum{font-weight:800;color:#0b2d66}
     .muted{color:var(--muted)}
     .col-small{width:92px}
-    .errorbox{
-      margin-top:12px;
-      padding:12px;
-      border:1px solid #fecaca;
-      background:#fff1f2;
-      border-radius:12px;
-      color:#991b1b;
-    }
+    .errorbox{margin-top:12px;padding:12px;border:1px solid #fecaca;background:#fff1f2;border-radius:12px;color:#991b1b;}
   </style>
 </head>
 
 <body>
-  <header class="header">
-    <div class="header-inner">
-      <div class="logo">
-        <img alt="TSV Logo" src="https://tsv-ug.de/wp-content/uploads/2024/02/tsv-logo.webp">
-      </div>
-      <div class="title">
-        <h1>TSV UG Kegeln – Training</h1>
-        <div class="sub">Eintragen & Ergebnisse pflegen (öffentlich)</div>
-      </div>
-      <div class="badge" id="status">offline</div>
+<header class="header">
+  <div class="header-inner">
+    <div class="logo"><img alt="TSV Logo" src="https://tsv-ug.de/wp-content/uploads/2024/02/tsv-logo.webp"></div>
+    <div class="title">
+      <h1>TSV UG Kegeln – Training</h1>
+      <div class="sub">Eintragen & Ergebnisse pflegen (öffentlich)</div>
     </div>
-  </header>
+    <div class="badge" id="status">lade…</div>
+  </div>
+</header>
 
-  <main class="wrap">
-    <div class="panel">
-      <div class="controls">
-        <input id="search" placeholder="Suche (Name/Spieler/in) …" oninput="render()" />
-        <div class="btnrow">
-          <button class="btn" onclick="load()">Neu laden</button>
-          <button class="btn secondary" onclick="resetFilters()">Zurücksetzen</button>
-        </div>
+<main class="wrap">
+  <div class="panel">
+    <div class="controls">
+      <input id="search" placeholder="Suche (Name/Spieler/in) …" oninput="render()" />
+      <div class="btnrow">
+        <button class="btn" onclick="load()">Neu laden</button>
+        <button class="btn secondary" onclick="resetFilters()">Zurücksetzen</button>
       </div>
-      <div class="hint">
-        Editierbar: <b>Name</b> und <b>Bahn 1–4</b>. Gesamt wird aus dem Sheet übernommen (Formeln).
-      </div>
-      <div id="err"></div>
     </div>
+    <div class="hint">Editierbar: <b>Name</b> und <b>Bahn 1–4</b>. Gesamt kommt aus dem Sheet.</div>
+    <div id="err"></div>
+  </div>
 
-    <div class="sections" id="sections">Lade…</div>
-  </main>
+  <div class="sections" id="sections">Lade…</div>
+</main>
 
 <script>
-  // HIER EINTRAGEN: Apps-Script WebApp URL (Deploy → Web-App URL)
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyz123/exec";
+  let rows = [];
+  let slots = [];
 
-
-  let rows = [];  // raw 2D array
-  let slots = []; // parsed blocks
-
-  function setStatus(ok, msg){
-    const el = document.getElementById('status');
-    el.textContent = msg;
-    el.style.color = ok ? "var(--tsv-yellow)" : "rgba(255,255,255,.8)";
-    el.style.borderColor = ok ? "rgba(247,198,0,.35)" : "rgba(255,255,255,.25)";
-  }
-
+  function setStatus(msg){ document.getElementById('status').textContent = msg; }
   function showError(msg){
     const err = document.getElementById('err');
-    if(!msg){ err.innerHTML = ""; return; }
-    err.innerHTML = `<div class="errorbox">${escapeHtml(msg)}</div>`;
+    err.innerHTML = msg ? `<div class="errorbox">${escapeHtml(msg)}</div>` : '';
   }
 
-  async function load(){
+  function resetFilters(){ document.getElementById('search').value = ""; render(); }
+
+  function load(){
     showError("");
-    setStatus(false, "lade…");
-
-    if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("PASTE_YOUR_WEBAPP_URL_HERE")){
-      setStatus(false, "offline");
-      document.getElementById('sections').textContent =
-        "APPS_SCRIPT_URL fehlt. Bitte oben in der Datei eintragen.";
-      return;
-    }
-
-    try{
-      const res = await fetch(APPS_SCRIPT_URL + "?action=get", { cache: "no-store" });
-      const json = await res.json();
-      if(!json.ok) throw new Error(json.error || "Konnte Tabelle nicht lesen.");
-      rows = json.values || [];
-      parseSlots();
-      render();
-      setStatus(true, "online");
-    }catch(e){
-      console.error(e);
-      setStatus(false, "offline");
-      showError("Konnte Daten nicht laden. Prüfe WebApp-Deploy (Zugriff: Jeder) und URL.");
-      document.getElementById('sections').textContent = "Laden fehlgeschlagen.";
-    }
-  }
-
-  function resetFilters(){
-    document.getElementById('search').value = "";
-    render();
+    setStatus("lade…");
+    google.script.run
+      .withSuccessHandler((res) => {
+        if(!res?.ok) throw new Error(res?.error || "Konnte Tabelle nicht lesen.");
+        rows = res.values || [];
+        parseSlots();
+        render();
+        setStatus("online");
+      })
+      .withFailureHandler((e) => {
+        console.error(e);
+        showError("Konnte Daten nicht laden (Apps Script).");
+        setStatus("offline");
+      })
+      .getTable();
   }
 
   function parseSlots(){
-    // Erkennung eures Excel-Layouts:
-    // Slot-Header: Spalte B enthält "17:00 - 18:00" und Spalte C enthält "Bahn 1"
     slots = [];
     for(let r=0; r<rows.length; r++){
       const B = rows[r]?.[1] ?? "";
       const C = rows[r]?.[2] ?? "";
-      const isTimeRow =
-        typeof B === "string" && B.includes(":") && B.includes("-") &&
-        typeof C === "string" && C.toLowerCase().includes("bahn");
-
+      const isTimeRow = typeof B === "string" && B.includes(":") && B.includes("-")
+        && typeof C === "string" && C.toLowerCase().includes("bahn");
       if(isTimeRow){
         const time = B.trim();
         const players = [];
@@ -291,7 +128,7 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyz123/exec";
           const rr = r+k;
           if(!rows[rr]) continue;
           players.push({
-            rowIndex: rr+1, // 1-basiert für Sheet
+            rowIndex: rr+1,
             label: rows[rr][0] ?? "",
             name:  rows[rr][1] ?? "",
             b1:    rows[rr][2] ?? "",
@@ -312,60 +149,43 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyz123/exec";
     container.innerHTML = "";
 
     const filtered = slots.map(s => {
-      const players = s.players.filter(p => {
-        if(!q) return true;
-        return (String(p.label).toLowerCase().includes(q) || String(p.name).toLowerCase().includes(q));
-      });
+      const players = s.players.filter(p => !q || String(p.label).toLowerCase().includes(q) || String(p.name).toLowerCase().includes(q));
       return { ...s, players };
     }).filter(s => s.players.length > 0 || !q);
 
-    if(filtered.length === 0){
-      container.textContent = "Keine Treffer – andere Suche probieren.";
-      return;
-    }
+    if(filtered.length === 0){ container.textContent = "Keine Treffer."; return; }
 
     filtered.forEach(slot => {
       const card = document.createElement('section');
       card.className = "slot";
-
       const head = document.createElement('div');
       head.className = "slot-head";
-      head.innerHTML = `<div class="time">${escapeHtml(slot.time)}</div>
-                        <div class="meta">4 Bahnen</div>`;
+      head.innerHTML = `<div class="time">${escapeHtml(slot.time)}</div><div class="meta">4 Bahnen</div>`;
       card.appendChild(head);
 
       const tbl = document.createElement('table');
       tbl.innerHTML = `
-        <thead>
-          <tr>
-            <th>Spieler/in</th>
-            <th>Name</th>
-            <th class="col-small">Bahn 1</th>
-            <th class="col-small">Bahn 2</th>
-            <th class="col-small">Bahn 3</th>
-            <th class="col-small">Bahn 4</th>
-            <th class="col-small">Gesamt</th>
-          </tr>
-        </thead>
+        <thead><tr>
+          <th>Spieler/in</th><th>Name</th>
+          <th class="col-small">Bahn 1</th><th class="col-small">Bahn 2</th>
+          <th class="col-small">Bahn 3</th><th class="col-small">Bahn 4</th>
+          <th class="col-small">Gesamt</th>
+        </tr></thead>
       `;
 
       const tb = document.createElement('tbody');
-
       slot.players.forEach(p => {
         const tr = document.createElement('tr');
-
         tr.appendChild(tdText(p.label, true));
-        tr.appendChild(tdEdit(p.rowIndex, 2, p.name)); // Name (B)
-        tr.appendChild(tdEdit(p.rowIndex, 3, p.b1));   // C
-        tr.appendChild(tdEdit(p.rowIndex, 4, p.b2));   // D
-        tr.appendChild(tdEdit(p.rowIndex, 5, p.b3));   // E
-        tr.appendChild(tdEdit(p.rowIndex, 6, p.b4));   // F
-
+        tr.appendChild(tdEdit(p.rowIndex, 2, p.name));
+        tr.appendChild(tdEdit(p.rowIndex, 3, p.b1));
+        tr.appendChild(tdEdit(p.rowIndex, 4, p.b2));
+        tr.appendChild(tdEdit(p.rowIndex, 5, p.b3));
+        tr.appendChild(tdEdit(p.rowIndex, 6, p.b4));
         const sumTd = document.createElement('td');
         sumTd.className = "sum";
         sumTd.textContent = p.sum ?? "";
         tr.appendChild(sumTd);
-
         tb.appendChild(tr);
       });
 
@@ -389,58 +209,33 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyz123/exec";
     div.textContent = value ?? "";
     div.setAttribute("contenteditable","true");
 
-    // Speichern bei Fokusverlust
-    div.addEventListener("blur", async () => {
+    div.addEventListener("keydown", (e) => {
+      if(e.key === "Enter"){ e.preventDefault(); div.blur(); }
+    });
+
+    div.addEventListener("blur", () => {
       const newValue = div.textContent;
-      // Keine Aktion, wenn nix geändert wurde (grob)
       if(String(newValue ?? "") === String(value ?? "")) return;
 
       div.classList.add("saving");
-      const ok = await saveCell(row, col, newValue);
-      div.classList.remove("saving");
-      if(ok) value = newValue; // local update
-    });
-
-    // Enter beendet Edit (wie Spreadsheet)
-    div.addEventListener("keydown", (e) => {
-      if(e.key === "Enter"){
-        e.preventDefault();
-        div.blur();
-      }
+      google.script.run
+        .withSuccessHandler((res) => {
+          div.classList.remove("saving");
+          if(!res?.ok) { showError(res?.error || "Speichern fehlgeschlagen."); load(); return; }
+          value = newValue;
+          load(); // damit Summen aktualisieren
+        })
+        .withFailureHandler((e) => {
+          div.classList.remove("saving");
+          showError("Speichern fehlgeschlagen.");
+          load();
+        })
+        .setCell(row, col, newValue);
     });
 
     td.appendChild(div);
     return td;
   }
 
-  async function saveCell(row, col, value){
-    showError("");
-    try{
-      const res = await fetch(APPS_SCRIPT_URL, {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ action:"set", row, col, value })
-      });
-      const json = await res.json();
-      if(!json.ok) throw new Error(json.error || "Speichern fehlgeschlagen.");
-      // Reload damit Summen (G) sofort korrekt sind
-      await load();
-      return true;
-    }catch(e){
-      console.error(e);
-      showError(e.message);
-      await load();
-      return false;
-    }
-  }
-
   function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, m => ({
-      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
-    }[m]));
-  }
-
-  load();
-</script>
-</body>
-</html>
+    return String(s).
