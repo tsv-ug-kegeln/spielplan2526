@@ -97,4 +97,215 @@
 
 <script>
   const API_URL = "https://script.google.com/macros/s/AKfycbxlKV08yq9bhaADy9oBzYHRwj96O-PZjsysilruRzFo1SX0WGa9Cct8Lc0yL-a0VVs/exec";
-  document.getElementById('apiText').
+  document.getElementById('apiText').textContent = API_URL;
+
+  let rows = [];
+  let slots = [];
+
+  function setStatus(msg){ document.getElementById('status').textContent = msg; }
+  function showError(msg){
+    const err = document.getElementById('err');
+    err.innerHTML = msg ? `<div class="errorbox">${escapeHtml(msg)}</div>` : '';
+  }
+  function showDebug(obj){
+    const dbg = document.getElementById('dbg');
+    if (!obj) { dbg.innerHTML = ""; return; }
+    dbg.innerHTML = `<div class="debugbox"><b>Debug</b><pre>${escapeHtml(JSON.stringify(obj, null, 2))}</pre></div>`;
+  }
+  function resetFilters(){ document.getElementById('search').value = ""; render(); }
+
+  async function load(){
+    showError("");
+    showDebug(null);
+    document.getElementById('sections').textContent = "Lade…";
+    document.getElementById('slotInfo').textContent = "";
+    setStatus("lade…");
+
+    try{
+      const url = API_URL + "?action=get";
+      const res = await fetch(url, { method: "GET", cache: "no-store" });
+
+      // harte Fehler sichtbar machen
+      if (!res.ok) {
+        const txt = await res.text().catch(()=> "");
+        throw new Error("HTTP " + res.status + " " + res.statusText + (txt ? " | " + txt.slice(0,200) : ""));
+      }
+
+      const data = await res.json();
+      showDebug({ fetched: url, ok: data?.ok, rows: data?.values?.length });
+
+      if (!data || data.ok !== true) throw new Error(data?.error || "API ok!=true");
+
+      rows = data.values || [];
+      parseSlots();
+
+      document.getElementById('slotInfo').textContent =
+        `Geladen: ${rows.length} Zeilen • Erkannte Zeitblöcke: ${slots.length}`;
+
+      render();
+      setStatus("online");
+
+      if (slots.length === 0) {
+        showError("Daten geladen, aber keine Zeitblöcke erkannt. (Parser findet keine 'Uhrzeit'-Blöcke)");
+        document.getElementById('sections').textContent = "";
+      }
+
+    } catch (e){
+      console.error(e);
+      setStatus("offline");
+      showError("Konnte Daten nicht laden: " + (e?.message || e));
+      document.getElementById('sections').textContent = "";
+    }
+  }
+
+  // robust zu deinem JSON: Block beginnt bei Zeile mit Spalte B = "Uhrzeit"
+  function parseSlots(){
+    slots = [];
+
+    for (let r = 0; r < rows.length; r++) {
+      const b = String(rows[r]?.[1] ?? "").trim().toLowerCase();
+      if (b === "uhrzeit") {
+        const time = String(rows[r+1]?.[1] ?? "").trim();
+        if (!time) continue;
+
+        // Spielerzeilen: r+2..r+5 (4 Spieler)
+        const players = [];
+        for (let k = 2; k <= 5; k++) {
+          const rr = r + k;
+          if (!rows[rr]) continue;
+
+          players.push({
+            rowIndex: rr + 1,
+            label: rows[rr][0] ?? "",
+            name:  rows[rr][1] ?? "",
+            b1:    rows[rr][2] ?? "",
+            b2:    rows[rr][3] ?? "",
+            b3:    rows[rr][4] ?? "",
+            b4:    rows[rr][5] ?? "",
+            sum:   rows[rr][6] ?? ""
+          });
+        }
+        slots.push({ time, players });
+      }
+    }
+  }
+
+  function render(){
+    const q = (document.getElementById('search').value || "").toLowerCase().trim();
+    const container = document.getElementById('sections');
+    container.innerHTML = "";
+
+    if (!slots || slots.length === 0) return;
+
+    const filtered = slots.map(s => {
+      const players = s.players.filter(p => !q || String(p.label).toLowerCase().includes(q) || String(p.name).toLowerCase().includes(q));
+      return { ...s, players };
+    }).filter(s => s.players.length > 0 || !q);
+
+    if (filtered.length === 0){ container.textContent = "Keine Treffer."; return; }
+
+    filtered.forEach(slot => {
+      const card = document.createElement('section');
+      card.className = "slot";
+      card.innerHTML = `<div class="slot-head"><div class="time">${escapeHtml(slot.time)}</div><div class="muted">4 Bahnen</div></div>`;
+
+      const tbl = document.createElement('table');
+      tbl.innerHTML = `
+        <thead><tr>
+          <th>Spieler/in</th><th>Name</th>
+          <th class="col-small">Bahn 1</th><th class="col-small">Bahn 2</th>
+          <th class="col-small">Bahn 3</th><th class="col-small">Bahn 4</th>
+          <th class="col-small">Gesamt</th>
+        </tr></thead>
+      `;
+
+      const tb = document.createElement('tbody');
+
+      slot.players.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.appendChild(tdText(p.label, true));
+        tr.appendChild(tdEdit(p.rowIndex, 2, p.name));
+        tr.appendChild(tdEdit(p.rowIndex, 3, p.b1));
+        tr.appendChild(tdEdit(p.rowIndex, 4, p.b2));
+        tr.appendChild(tdEdit(p.rowIndex, 5, p.b3));
+        tr.appendChild(tdEdit(p.rowIndex, 6, p.b4));
+
+        const sumTd = document.createElement('td');
+        sumTd.className = "sum";
+        sumTd.textContent = p.sum ?? "";
+        tr.appendChild(sumTd);
+
+        tb.appendChild(tr);
+      });
+
+      tbl.appendChild(tb);
+      card.appendChild(tbl);
+      container.appendChild(card);
+    });
+  }
+
+  function tdText(val, muted=false){
+    const td = document.createElement('td');
+    if(muted) td.className = "muted";
+    td.textContent = val ?? "";
+    return td;
+  }
+
+  function tdEdit(row, col, value){
+    const td = document.createElement('td');
+    const div = document.createElement('div');
+    div.className = "cell-edit";
+    div.textContent = value ?? "";
+    div.contentEditable = "true";
+
+    div.addEventListener("keydown", (e) => {
+      if(e.key === "Enter"){ e.preventDefault(); div.blur(); }
+    });
+
+    div.addEventListener("focus", () => {
+      // “Name hier eintragen” beim ersten Fokus automatisch markieren (kein Autolöschen)
+      // Nutzer tippt einfach drüber.
+    });
+
+    div.addEventListener("blur", async () => {
+      const newValue = div.textContent;
+      if(String(newValue ?? "") === String(value ?? "")) return;
+
+      div.classList.add("saving");
+      try{
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "set", row, col, value: newValue })
+        });
+
+        if (!res.ok) {
+          const txt = await res.text().catch(()=> "");
+          throw new Error("HTTP " + res.status + " " + res.statusText + (txt ? " | " + txt.slice(0,200) : ""));
+        }
+
+        const data = await res.json();
+        if(!data?.ok) throw new Error(data?.error || "Speichern fehlgeschlagen");
+
+        value = newValue;
+        await load(); // Summen aktualisieren
+      } catch(e){
+        showError("Speichern fehlgeschlagen: " + (e?.message || e));
+        await load();
+      } finally {
+        div.classList.remove("saving");
+      }
+    });
+
+    td.appendChild(div);
+    return td;
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  }
+
+  load();
+</script>
+</body>
+</html>
