@@ -35,15 +35,18 @@
     input{width:100%;padding:12px 12px;border-radius:12px;border:1px solid var(--line);font-size:15px;outline:none;background:white;}
     .btn{border:0;padding:12px 14px;border-radius:12px;font-weight:600;cursor:pointer;background:var(--tsv-blue);color:white;white-space:nowrap;}
     .btn.secondary{background:white;color:var(--tsv-blue);border:1px solid rgba(11,61,145,.25);}
-    .hint{margin-top:10px;color:var(--muted);font-size:13px}
+    .hint{margin-top:10px;color:var(--muted);font-size:13px;line-height:1.35}
     .sections{margin-top:14px;display:grid;gap:14px}
+
     .slot{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
     .slot-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:linear-gradient(90deg,rgba(247,198,0,.25),rgba(247,198,0,.05));border-bottom:1px solid var(--line);}
     .slot-head .time{font-weight:800;color:#0b2d66;}
+
     table{width:100%;border-collapse:separate;border-spacing:0;}
     th,td{padding:10px 10px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:middle;}
     th{text-align:left;color:var(--muted);font-weight:700;background:#fbfdff;}
     tr:last-child td{border-bottom:0}
+
     .cell-edit{border-radius:10px;padding:8px 10px;border:1px solid transparent;background:transparent;min-height:36px;white-space:nowrap;}
     .cell-edit:focus{outline:none;border-color:rgba(11,61,145,.35);background:white;box-shadow:0 0 0 4px rgba(11,61,145,.10);}
     .saving{border-color:rgba(247,198,0,.6)!important;background:rgba(247,198,0,.10)!important;}
@@ -51,6 +54,8 @@
     .muted{color:var(--muted)}
     .col-small{width:92px}
     .errorbox{margin-top:12px;padding:12px;border:1px solid #fecaca;background:#fff1f2;border-radius:12px;color:#991b1b;line-height:1.35;}
+    .debugbox{margin-top:12px;padding:12px;border:1px solid var(--line);background:#fbfdff;border-radius:12px;color:#0f172a;line-height:1.35;}
+    .debugbox pre{margin:10px 0 0;white-space:pre-wrap;max-height:240px;overflow:auto;background:white;border:1px solid var(--line);padding:10px;border-radius:10px;}
     code{background:#f1f5f9;padding:2px 6px;border-radius:8px}
   </style>
 </head>
@@ -79,194 +84,17 @@
 
     <div class="hint">
       Editierbar: <b>Name</b> und <b>Bahn 1–4</b>. Gesamt kommt aus dem Sheet.
-      <br>
-      API: <code id="apiText"></code>
+      <br>API: <code id="apiText"></code>
+      <br><span id="slotInfo" class="muted"></span>
     </div>
 
     <div id="err"></div>
+    <div id="dbg"></div>
   </div>
 
   <div class="sections" id="sections">Lade…</div>
 </main>
 
 <script>
-  // ✅ Deine WebApp-URL ist hier bereits eingetragen
   const API_URL = "https://script.google.com/macros/s/AKfycbxlKV08yq9bhaADy9oBzYHRwj96O-PZjsysilruRzFo1SX0WGa9Cct8Lc0yL-a0VVs/exec";
-  document.getElementById('apiText').textContent = API_URL;
-
-  let rows = [];
-  let slots = [];
-
-  function setStatus(msg){ document.getElementById('status').textContent = msg; }
-  function showError(msg){
-    const err = document.getElementById('err');
-    err.innerHTML = msg ? `<div class="errorbox">${escapeHtml(msg)}</div>` : '';
-  }
-  function resetFilters(){ document.getElementById('search').value = ""; render(); }
-
-  async function load(){
-    showError("");
-    setStatus("lade…");
-    document.getElementById('sections').textContent = "Lade…";
-
-    try{
-      const res = await fetch(API_URL + "?action=get", { method: "GET", cache: "no-store" });
-      const data = await res.json();
-      if (!data || data.ok !== true) throw new Error(data?.error || "API ok!=true");
-
-      rows = data.values || [];
-      parseSlots();
-      render();
-      setStatus("online");
-    } catch (e){
-      console.error(e);
-      setStatus("offline");
-      showError("Konnte Daten nicht laden: " + (e?.message || e));
-      document.getElementById('sections').textContent = "";
-    }
-  }
-
-  // Parser passend zu deinem Sheet (Screenshot):
-  // Zeile r: Spalte B == "Uhrzeit"
-  // Zeile r+1: Spalte B == "17:00 - 18:00"
-  // Zeilen r+2..r+5: 4 Spieler
-  function parseSlots(){
-    slots = [];
-    for (let r = 0; r < rows.length; r++) {
-      const row = rows[r] || [];
-      if (String(row[1] || "").trim().toLowerCase() === "uhrzeit") {
-        const timeRow = rows[r + 1] || [];
-        const time = String(timeRow[1] || "").trim();
-        if (!time) continue;
-
-        const players = [];
-        for (let k = 2; k <= 5; k++) {
-          const rr = r + k;
-          if (!rows[rr]) continue;
-
-          players.push({
-            rowIndex: rr + 1,
-            label: rows[rr][0] ?? "",
-            name:  rows[rr][1] ?? "",
-            b1:    rows[rr][2] ?? "",
-            b2:    rows[rr][3] ?? "",
-            b3:    rows[rr][4] ?? "",
-            b4:    rows[rr][5] ?? "",
-            sum:   rows[rr][6] ?? ""
-          });
-        }
-        slots.push({ time, players });
-      }
-    }
-  }
-
-  function render(){
-    const q = (document.getElementById('search').value || "").toLowerCase().trim();
-    const container = document.getElementById('sections');
-    container.innerHTML = "";
-
-    if (!slots || slots.length === 0) {
-      container.textContent = "";
-      return;
-    }
-
-    const filtered = slots.map(s => {
-      const players = s.players.filter(p => !q || String(p.label).toLowerCase().includes(q) || String(p.name).toLowerCase().includes(q));
-      return { ...s, players };
-    }).filter(s => s.players.length > 0 || !q);
-
-    if (filtered.length === 0){ container.textContent = "Keine Treffer."; return; }
-
-    filtered.forEach(slot => {
-      const card = document.createElement('section');
-      card.className = "slot";
-      card.innerHTML = `<div class="slot-head"><div class="time">${escapeHtml(slot.time)}</div><div class="muted">4 Bahnen</div></div>`;
-
-      const tbl = document.createElement('table');
-      tbl.innerHTML = `
-        <thead><tr>
-          <th>Spieler/in</th><th>Name</th>
-          <th class="col-small">Bahn 1</th><th class="col-small">Bahn 2</th>
-          <th class="col-small">Bahn 3</th><th class="col-small">Bahn 4</th>
-          <th class="col-small">Gesamt</th>
-        </tr></thead>
-      `;
-
-      const tb = document.createElement('tbody');
-
-      slot.players.forEach(p => {
-        const tr = document.createElement('tr');
-        tr.appendChild(tdText(p.label, true));
-        tr.appendChild(tdEdit(p.rowIndex, 2, p.name));
-        tr.appendChild(tdEdit(p.rowIndex, 3, p.b1));
-        tr.appendChild(tdEdit(p.rowIndex, 4, p.b2));
-        tr.appendChild(tdEdit(p.rowIndex, 5, p.b3));
-        tr.appendChild(tdEdit(p.rowIndex, 6, p.b4));
-
-        const sumTd = document.createElement('td');
-        sumTd.className = "sum";
-        sumTd.textContent = p.sum ?? "";
-        tr.appendChild(sumTd);
-
-        tb.appendChild(tr);
-      });
-
-      tbl.appendChild(tb);
-      card.appendChild(tbl);
-      container.appendChild(card);
-    });
-  }
-
-  function tdText(val, muted=false){
-    const td = document.createElement('td');
-    if(muted) td.className = "muted";
-    td.textContent = val ?? "";
-    return td;
-  }
-
-  function tdEdit(row, col, value){
-    const td = document.createElement('td');
-    const div = document.createElement('div');
-    div.className = "cell-edit";
-    div.textContent = value ?? "";
-    div.contentEditable = "true";
-
-    div.addEventListener("keydown", (e) => {
-      if(e.key === "Enter"){ e.preventDefault(); div.blur(); }
-    });
-
-    div.addEventListener("blur", async () => {
-      const newValue = div.textContent;
-      if(String(newValue ?? "") === String(value ?? "")) return;
-
-      div.classList.add("saving");
-      try{
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "set", row, col, value: newValue })
-        });
-        const data = await res.json();
-        if(!data?.ok) throw new Error(data?.error || "Speichern fehlgeschlagen");
-        value = newValue;
-        await load(); // Summen aktualisieren
-      } catch(e){
-        showError("Speichern fehlgeschlagen: " + (e?.message || e));
-        await load();
-      } finally {
-        div.classList.remove("saving");
-      }
-    });
-
-    td.appendChild(div);
-    return td;
-  }
-
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-  }
-
-  load();
-</script>
-</body>
-</html>
+  document.getElementById('apiText').
